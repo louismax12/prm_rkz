@@ -101,12 +101,12 @@ btnLogout.addEventListener('click', () => {
 
 // --- ROUTING & UI STATE ---
 function showLogin() {
-    viewLogin.classList.add('active');
+    viewLogin.classList.remove('hidden');
     appLayout.classList.add('hidden');
 }
 
 function showApp() {
-    viewLogin.classList.remove('active');
+    viewLogin.classList.add('hidden');
     appLayout.classList.remove('hidden');
     
     // Set User Info
