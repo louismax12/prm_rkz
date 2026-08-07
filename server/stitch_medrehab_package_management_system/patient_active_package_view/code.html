@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Patient Active Package View</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-primary-container": "#dee9ff",
+                      "on-secondary-container": "#646468",
+                      "error": "#ba1a1a",
+                      "surface-container-highest": "#dee3e8",
+                      "outline": "#717783",
+                      "on-tertiary-fixed": "#191c1d",
+                      "tertiary-fixed": "#e1e3e4",
+                      "surface-dim": "#d6dae0",
+                      "secondary": "#5e5e62",
+                      "primary-fixed-dim": "#a5c8ff",
+                      "surface-container-high": "#e4e9ee",
+                      "tertiary-fixed-dim": "#c5c7c8",
+                      "on-secondary-fixed": "#1a1b1e",
+                      "on-surface": "#171c20",
+                      "on-primary-fixed": "#001c3a",
+                      "on-tertiary": "#ffffff",
+                      "on-error": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "surface-container-lowest": "#ffffff",
+                      "on-secondary": "#ffffff",
+                      "on-surface-variant": "#414752",
+                      "secondary-fixed": "#e3e2e6",
+                      "secondary-fixed-dim": "#c7c6ca",
+                      "surface-container-low": "#f0f4fa",
+                      "inverse-on-surface": "#edf1f7",
+                      "primary": "#005196",
+                      "inverse-primary": "#a5c8ff",
+                      "tertiary-container": "#67696a",
+                      "surface-variant": "#dee3e8",
+                      "on-tertiary-container": "#e8e9ea",
+                      "surface-container": "#eaeef4",
+                      "primary-fixed": "#d4e3ff",
+                      "on-primary-fixed-variant": "#004785",
+                      "tertiary": "#4e5152",
+                      "on-background": "#171c20",
+                      "secondary-container": "#e3e2e6",
+                      "surface": "#f6faff",
+                      "background": "#f6faff",
+                      "error-container": "#ffdad6",
+                      "surface-bright": "#f6faff",
+                      "on-tertiary-fixed-variant": "#454748",
+                      "inverse-surface": "#2c3135",
+                      "on-error-container": "#93000a",
+                      "outline-variant": "#c1c6d4",
+                      "surface-tint": "#005faf",
+                      "primary-container": "#0069c0",
+                      "on-secondary-fixed-variant": "#46474a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "stack-dense": "4px",
+                      "stack-compact": "8px",
+                      "sidebar-width": "240px",
+                      "gutter": "16px",
+                      "margin-page": "24px"
+              },
+              "fontFamily": {
+                      "body-md": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "label-sm": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "display-sm": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "label-md": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "headline-md": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "body-sm": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "mono-data": [
+                              "monospace"
+                      ],
+                      "headline-sm": [
+                              "Plus Jakarta Sans"
+                      ]
+              },
+              "fontSize": {
+                      "body-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-sm": [
+                              "11px",
+                              {
+                                      "lineHeight": "14px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "display-sm": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-md": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-sm": [
+                              "13px",
+                              {
+                                      "lineHeight": "18px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "mono-data": [
+                              "13px",
+                              {
+                                      "lineHeight": "18px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-sm": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+            }
+          }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md text-body-md antialiased min-h-screen flex">
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 h-full w-[240px] bg-surface-container-low flex flex-col justify-between py-6 border-r border-outline-variant z-50">
+<div>
+<!-- Header/Logo Area -->
+<div class="px-gutter mb-8 flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">local_hospital</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">PRM RKZ</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Clinical Management</p>
+</div>
+</div>
+<!-- Navigation Tabs -->
+<ul class="flex flex-col">
+<!-- Active Tab: Pelayanan (ERM) -->
+<li>
+<a class="flex items-center gap-3 px-gutter py-3 bg-primary-container text-on-primary-container font-bold border-r-4 border-primary hover:bg-surface-container-high transition-transform duration-150 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">medical_services</span>
+<span class="font-label-md text-label-md">Pelayanan (ERM)</span>
+</a>
+</li>
+<!-- Inactive Tabs -->
+<li>
+<a class="flex items-center gap-3 px-gutter py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors hover:bg-surface-container-high transition-transform duration-150 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-md text-label-md">Kasir / Pembelian</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-gutter py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors hover:bg-surface-container-high transition-transform duration-150 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">database</span>
+<span class="font-label-md text-label-md">Master Data</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-gutter py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors hover:bg-surface-container-high transition-transform duration-150 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-md text-label-md">Laporan &amp; Audit</span>
+</a>
+</li>
+</ul>
+</div>
+<!-- Footer Tabs -->
+<ul class="flex flex-col mt-auto pt-6 border-t border-outline-variant mx-gutter">
+<li>
+<a class="flex items-center gap-3 py-2 text-on-surface-variant hover:bg-surface-container-high transition-colors rounded" href="#">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="font-label-md text-label-md">Administrator (ADMIN)</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 py-2 text-error hover:bg-error-container transition-colors rounded mt-1" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-md text-label-md">Logout</span>
+</a>
+</li>
+</ul>
+</nav>
+<!-- Main Content Area -->
+<div class="ml-[240px] flex-1 flex flex-col min-h-screen">
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 left-[240px] h-16 bg-surface flex justify-between items-center px-gutter w-full z-40 border-b border-outline-variant">
+<!-- Left Side (Empty or Breadcrumbs usually, but based on JSON, it's minimal) -->
+<div class="flex items-center gap-4">
+<span class="font-headline-sm text-headline-sm font-black text-on-surface">PRM RKZ</span>
+</div>
+<!-- Right Side Actions -->
+<div class="flex items-center gap-6">
+<!-- Search -->
+<div class="flex items-center bg-surface-container-low border border-outline-variant rounded px-3 py-1.5 focus-within:border-primary transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px] mr-2">search</span>
+<input class="bg-transparent border-none outline-none font-body-sm text-body-sm text-on-surface w-48 placeholder-outline" placeholder="Search patient..." type="text"/>
+<button class="ml-2 font-label-sm text-label-sm text-primary font-semibold hover:bg-surface-container-lowest transition-all">Cari</button>
+</div>
+<!-- Icons -->
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container-lowest transition-all hover:opacity-80">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container-lowest transition-all hover:opacity-80">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest border border-outline ml-2 overflow-hidden">
+<img alt="Administrator Avatar" class="w-full h-full object-cover" data-alt="A small, professional headshot avatar of a male hospital administrator wearing a light blue shirt, set against a neutral grey background. The lighting is soft and corporate." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnWG791wpFmFlmH0JHVHYXm2uV7QSBpU9lowW58gtKOhaalr5g3Zri5ye4kdz4jV1ri4TfXYLhkfzCrmASaXYz3XZ0GXJP4OnwAgV_uNndr4got_wAsQdWuIH0G7fYRIv69se-HhYb5rWftzAzBQ2cBGG7vXTeCZSoTGiy7yH-UnxYW-4N9hEDPJ4IT-kzFu3EjJLiHnXHQtcLySps480-vo3GfgCZ5AP4P1sEsp_ts-UimQ587ZMq8g"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Workspace Canvas -->
+<main class="pt-[88px] px-margin-page pb-margin-page flex-1 flex flex-col gap-6">
+<!-- Context Action Row -->
+<div class="flex items-center text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px] mr-1">arrow_back</span>
+<a class="hover:underline font-label-md text-label-md" href="#">Back to Search Results</a>
+</div>
+<!-- Top Patient Header Card -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-lg p-gutter shadow-sm flex items-center justify-between">
+<div class="flex items-center gap-6">
+<!-- Avatar / Initial -->
+<div class="w-16 h-16 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-headline-md text-headline-md font-bold">
+                        JD
+                    </div>
+<!-- Core Info -->
+<div class="flex flex-col gap-1">
+<h2 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-2">
+                            John Doe
+                            <span class="bg-surface-container-highest text-on-surface-variant px-2 py-0.5 rounded font-label-sm text-label-sm">Active</span>
+</h2>
+<div class="flex items-center gap-4 font-body-sm text-body-sm text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">calendar_today</span> 04/12/1985 (38th)</span>
+<span class="text-outline">|</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">male</span> Laki-laki</span>
+<span class="text-outline">|</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">health_and_safety</span> BPJS Kesehatan</span>
+</div>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="px-4 py-2 bg-surface text-primary border border-outline-variant rounded font-label-md text-label-md hover:bg-surface-container-low transition-colors">
+                        View Full Profile
+                    </button>
+</div>
+</section>
+<!-- Split-Screen Module: 40 / 60 -->
+<div class="flex flex-row gap-6 items-start">
+<!-- Left Column (40%): Active Package Summary Card -->
+<div class="w-[40%] flex flex-col gap-4 bg-surface-container-lowest border border-outline-variant rounded-lg p-gutter shadow-sm h-full">
+<div class="flex items-center justify-between border-b border-outline-variant pb-3 mb-1">
+<h3 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">assignment</span>
+                            Active Package
+                        </h3>
+</div>
+<div class="flex flex-col gap-stack-compact">
+<h4 class="font-headline-sm text-headline-sm text-on-surface">Paket Stroke 12 Sesi</h4>
+<!-- Progress Indicator -->
+<div class="mt-2 mb-4">
+<div class="flex justify-between items-end mb-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Progress</span>
+<span class="font-label-md text-label-md text-primary">Sesi 4/12 Selesai</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full transition-all duration-500 w-[33.33%]"></div>
+</div>
+</div>
+<!-- Data List -->
+<div class="flex flex-col gap-3 bg-surface-container-low rounded p-3 border border-outline-variant">
+<div class="flex justify-between items-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">event_busy</span> Exp. Date
+                                </span>
+<span class="font-body-sm text-body-sm text-on-surface font-medium">31 Des 2023</span>
+</div>
+<div class="h-[1px] w-full bg-outline-variant opacity-50"></div>
+<div class="flex justify-between items-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">stethoscope</span> Assigned Therapist
+                                </span>
+<span class="font-body-sm text-body-sm text-on-surface font-medium">Dr. Sarah Jenkins</span>
+</div>
+<div class="h-[1px] w-full bg-outline-variant opacity-50"></div>
+<div class="flex justify-between items-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">category</span> Package Type
+                                </span>
+<span class="font-body-sm text-body-sm text-on-surface font-medium">Neurological Rehab</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column (60%): Session History Timeline -->
+<div class="w-[60%] flex flex-col bg-surface-container-lowest border border-outline-variant rounded-lg p-gutter shadow-sm">
+<!-- Header Area -->
+<div class="flex justify-between items-center border-b border-outline-variant pb-4 mb-2">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">history</span>
+                                Session History
+                            </h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Record of completed treatments in current package.</p>
+</div>
+<button class="bg-primary text-on-primary px-4 py-2 rounded flex items-center gap-2 hover:bg-primary-container transition-colors shadow-sm active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px]">play_arrow</span>
+<span class="font-label-md text-label-md">Log/Start Today's Session</span>
+</button>
+</div>
+<!-- High-Density Data Table / List -->
+<div class="flex flex-col mt-2">
+<!-- Table Header -->
+<div class="flex px-2 py-2 bg-surface-container-low border-b border-outline-variant font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider sticky top-0">
+<div class="w-1/4">Date</div>
+<div class="w-1/4">Time</div>
+<div class="w-2/5">Therapist</div>
+<div class="w-auto flex-1 text-right">Status</div>
+</div>
+<!-- Rows -->
+<div class="flex flex-col">
+<!-- Session 4 -->
+<div class="flex items-center px-2 py-3 border-b border-outline-variant hover:bg-surface transition-colors cursor-default">
+<div class="w-1/4 font-mono-data text-mono-data text-on-surface">15 Nov 2023</div>
+<div class="w-1/4 font-mono-data text-mono-data text-on-surface-variant">09:00 - 10:00</div>
+<div class="w-2/5 font-body-sm text-body-sm text-on-surface">Dr. Sarah Jenkins</div>
+<div class="w-auto flex-1 text-right">
+<span class="inline-flex items-center gap-1 bg-surface-variant text-on-surface px-2 py-0.5 rounded font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> Completed
+                                    </span>
+</div>
+</div>
+<!-- Session 3 -->
+<div class="flex items-center px-2 py-3 border-b border-outline-variant hover:bg-surface transition-colors cursor-default">
+<div class="w-1/4 font-mono-data text-mono-data text-on-surface">12 Nov 2023</div>
+<div class="w-1/4 font-mono-data text-mono-data text-on-surface-variant">14:00 - 15:00</div>
+<div class="w-2/5 font-body-sm text-body-sm text-on-surface">Dr. Sarah Jenkins</div>
+<div class="w-auto flex-1 text-right">
+<span class="inline-flex items-center gap-1 bg-surface-variant text-on-surface px-2 py-0.5 rounded font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> Completed
+                                    </span>
+</div>
+</div>
+<!-- Session 2 -->
+<div class="flex items-center px-2 py-3 border-b border-outline-variant hover:bg-surface transition-colors cursor-default">
+<div class="w-1/4 font-mono-data text-mono-data text-on-surface">08 Nov 2023</div>
+<div class="w-1/4 font-mono-data text-mono-data text-on-surface-variant">10:30 - 11:30</div>
+<div class="w-2/5 font-body-sm text-body-sm text-on-surface">Ftr. Budi Santoso</div>
+<div class="w-auto flex-1 text-right">
+<span class="inline-flex items-center gap-1 bg-surface-variant text-on-surface px-2 py-0.5 rounded font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> Completed
+                                    </span>
+</div>
+</div>
+<!-- Session 1 -->
+<div class="flex items-center px-2 py-3 hover:bg-surface transition-colors cursor-default">
+<div class="w-1/4 font-mono-data text-mono-data text-on-surface">05 Nov 2023</div>
+<div class="w-1/4 font-mono-data text-mono-data text-on-surface-variant">09:00 - 10:00</div>
+<div class="w-2/5 font-body-sm text-body-sm text-on-surface">Dr. Sarah Jenkins</div>
+<div class="w-auto flex-1 text-right">
+<span class="inline-flex items-center gap-1 bg-surface-variant text-on-surface px-2 py-0.5 rounded font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> Completed
+                                    </span>
+</div>
+</div>
+</div>
+<!-- Empty State Example if needed -->
+<!-- <div class="py-8 flex flex-col items-center justify-center text-on-surface-variant opacity-60">
+                            <span class="material-symbols-outlined text-[32px] mb-2">history_toggle_off</span>
+                            <span class="font-body-sm text-body-sm">No sessions recorded yet.</span>
+                        </div> -->
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

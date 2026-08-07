@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PRM RKZ - Laporan &amp; Audit</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+        /* Custom scrollbar for clinical panels if needed */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f0f4fa; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c1c6d4; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #717783; 
+        }
+    </style>
+<!-- Tailwind CSS with specific configuration -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-container": "#dee9ff",
+                        "on-secondary-container": "#646468",
+                        "error": "#ba1a1a",
+                        "surface-container-highest": "#dee3e8",
+                        "outline": "#717783",
+                        "on-tertiary-fixed": "#191c1d",
+                        "tertiary-fixed": "#e1e3e4",
+                        "surface-dim": "#d6dae0",
+                        "secondary": "#5e5e62",
+                        "primary-fixed-dim": "#a5c8ff",
+                        "surface-container-high": "#e4e9ee",
+                        "tertiary-fixed-dim": "#c5c7c8",
+                        "on-secondary-fixed": "#1a1b1e",
+                        "on-surface": "#171c20",
+                        "on-primary-fixed": "#001c3a",
+                        "on-tertiary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-surface-variant": "#414752",
+                        "secondary-fixed": "#e3e2e6",
+                        "secondary-fixed-dim": "#c7c6ca",
+                        "surface-container-low": "#f0f4fa",
+                        "inverse-on-surface": "#edf1f7",
+                        "primary": "#005196",
+                        "inverse-primary": "#a5c8ff",
+                        "tertiary-container": "#67696a",
+                        "surface-variant": "#dee3e8",
+                        "on-tertiary-container": "#e8e9ea",
+                        "surface-container": "#eaeef4",
+                        "primary-fixed": "#d4e3ff",
+                        "on-primary-fixed-variant": "#004785",
+                        "tertiary": "#4e5152",
+                        "on-background": "#171c20",
+                        "secondary-container": "#e3e2e6",
+                        "surface": "#f6faff",
+                        "background": "#f6faff",
+                        "error-container": "#ffdad6",
+                        "surface-bright": "#f6faff",
+                        "on-tertiary-fixed-variant": "#454748",
+                        "inverse-surface": "#2c3135",
+                        "on-error-container": "#93000a",
+                        "outline-variant": "#c1c6d4",
+                        "surface-tint": "#005faf",
+                        "primary-container": "#0069c0",
+                        "on-secondary-fixed-variant": "#46474a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "stack-dense": "4px",
+                        "stack-compact": "8px",
+                        "sidebar-width": "240px",
+                        "gutter": "16px",
+                        "margin-page": "24px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Plus Jakarta Sans", "sans-serif"],
+                        "label-sm": ["Plus Jakarta Sans", "sans-serif"],
+                        "display-sm": ["Plus Jakarta Sans", "sans-serif"],
+                        "label-md": ["Plus Jakarta Sans", "sans-serif"],
+                        "headline-md": ["Plus Jakarta Sans", "sans-serif"],
+                        "body-sm": ["Plus Jakarta Sans", "sans-serif"],
+                        "mono-data": ["monospace"],
+                        "headline-sm": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-sm": ["11px", { "lineHeight": "14px", "fontWeight": "500" }],
+                        "display-sm": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "mono-data": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+</head>
+<body class="bg-background text-on-surface font-body-md text-body-md antialiased overflow-x-hidden">
+<!-- SideNavBar Component -->
+<aside class="fixed left-0 top-0 h-full w-[240px] bg-surface-container-low border-r border-outline-variant flex flex-col justify-between py-6 z-50">
+<!-- Header / Logo -->
+<div class="px-6 mb-8 flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">local_hospital</span>
+</div>
+<div>
+<div class="font-headline-md text-headline-md font-bold text-primary">PRM RKZ</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">Clinical Management</div>
+</div>
+</div>
+<!-- Main Navigation -->
+<nav class="flex-1 px-3 space-y-1 overflow-y-auto">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">medical_services</span>
+<span class="font-label-md text-label-md">Pelayanan (ERM)</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">payments</span>
+<span class="font-label-md text-label-md">Kasir / Pembelian</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">database</span>
+<span class="font-label-md text-label-md">Master Data</span>
+</a>
+<!-- Active Tab -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary-container text-on-primary-container font-bold border-r-4 border-primary scale-[0.98] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span class="font-label-md text-label-md">Laporan &amp; Audit</span>
+</a>
+</nav>
+<!-- Footer Navigation -->
+<div class="px-3 mt-4 space-y-1 border-t border-outline-variant pt-4 mx-3">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors group" href="#">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="font-label-md text-label-md">Administrator (ADMIN)</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors group" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-md text-label-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- TopAppBar Component -->
+<header class="fixed top-0 right-0 left-[240px] h-16 bg-surface border-b border-outline-variant flex justify-between items-center px-gutter z-40 transition-all">
+<!-- Left Title (Optional context based on active tab) -->
+<div class="flex items-center gap-2">
+<h1 class="font-headline-sm text-headline-sm font-black text-on-surface">PRM RKZ</h1>
+<span class="text-outline-variant">/</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Executive Analytics</span>
+</div>
+<!-- Right Actions -->
+<div class="flex items-center gap-4">
+<!-- Search / Primary Action -->
+<button class="flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded-full hover:bg-primary-container hover:text-on-primary-container transition-colors font-label-md text-label-md">
+<span class="material-symbols-outlined text-[18px]">search</span>
+                Cari
+            </button>
+<!-- Icon Actions -->
+<div class="flex items-center gap-1 border-l border-outline-variant pl-4 ml-2">
+<button class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container-lowest transition-all opacity-80">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container-lowest transition-all">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+<!-- Profile Avatar -->
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant ml-2 bg-surface-container-high">
+<img alt="Administrator Avatar" class="w-full h-full object-cover" data-alt="A professional headshot of a clinical administrator in a modern, well-lit medical office. Light mode aesthetic, sharp focus, corporate minimalist style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJZzFpBxLTgiR04vlcXUuWztpP16SjrO70K2lHieMjPgVAZBNWFC6eq4-CmCXIuZveXf1wOljimhwKvGw7G4ErltJFiE_R-OSoDoqwdRig9ebObxh59JEJqIGCgcbWzpdRZdo5poVCyBVMsLpiflGignwowd7CXE41oLLxCNZr5jUxaISQk4rnlwVvWGE099b-VaGHtDrR0G5-SoezJ_--2PGQED6aT7rJ3dCfTb3Jr858H4NZBF9srg"/>
+</div>
+</div>
+</header>
+<!-- Main Workspace Content -->
+<main class="ml-[240px] mt-16 p-margin-page min-h-[calc(100vh-64px)]">
+<!-- Header Section -->
+<div class="mb-6 flex justify-between items-end">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-1">Managerial Overview</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Real-time performance metrics and clinical facility utilization for Q3.</p>
+</div>
+<div class="flex gap-2">
+<select class="form-select text-label-sm font-label-sm rounded-lg border-outline-variant bg-surface-container-lowest py-1.5 pl-3 pr-8 focus:ring-primary focus:border-primary text-on-surface">
+<option>This Month</option>
+<option>Last Quarter</option>
+<option>Year to Date</option>
+</select>
+<button class="p-1.5 border border-outline-variant rounded-lg bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container-low">
+<span class="material-symbols-outlined text-[18px]">download</span>
+</button>
+</div>
+</div>
+<!-- Top Row: 3 Metrics (Bento Style) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-6">
+<!-- Metric 1: Revenue -->
+<div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-5 flex flex-col justify-between hover:shadow-sm transition-shadow relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-primary/5 rounded-full blur-xl group-hover:bg-primary/10 transition-colors"></div>
+<div class="flex justify-between items-start mb-4 relative z-10">
+<div class="p-2 bg-surface-container-low rounded-lg text-primary">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<span class="inline-flex items-center gap-1 text-[10px] font-bold text-surface-tint bg-primary-fixed px-2 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-[12px]">trending_up</span> +12.4%
+                    </span>
+</div>
+<div class="relative z-10">
+<h3 class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider">Revenue Generated</h3>
+<div class="font-display-sm text-display-sm text-on-surface">Rp 842.5M</div>
+</div>
+</div>
+<!-- Metric 2: Utilization -->
+<div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-5 flex flex-col justify-between hover:shadow-sm transition-shadow relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-tertiary-container/5 rounded-full blur-xl group-hover:bg-tertiary-container/10 transition-colors"></div>
+<div class="flex justify-between items-start mb-4 relative z-10">
+<div class="p-2 bg-surface-container-low rounded-lg text-tertiary">
+<span class="material-symbols-outlined">pie_chart</span>
+</div>
+<span class="inline-flex items-center gap-1 text-[10px] font-bold text-on-surface-variant bg-surface-container-high px-2 py-0.5 rounded-full">
+                        Target: 85%
+                    </span>
+</div>
+<div class="relative z-10">
+<h3 class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider">Package Utilization %</h3>
+<div class="flex items-baseline gap-2">
+<div class="font-display-sm text-display-sm text-on-surface">87.2%</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full mt-2">
+<div class="bg-primary h-1.5 rounded-full" style="width: 87.2%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Metric 3: Workload -->
+<div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-5 flex flex-col justify-between hover:shadow-sm transition-shadow relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-error-container/20 rounded-full blur-xl group-hover:bg-error-container/40 transition-colors"></div>
+<div class="flex justify-between items-start mb-4 relative z-10">
+<div class="p-2 bg-error-container text-on-error-container rounded-lg">
+<span class="material-symbols-outlined">vital_signs</span>
+</div>
+<span class="inline-flex items-center gap-1 text-[10px] font-bold text-on-error-container bg-error-container/50 px-2 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-[12px]">warning</span> Critical
+                    </span>
+</div>
+<div class="relative z-10">
+<h3 class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider">Staff Workload Index</h3>
+<div class="flex items-end gap-2">
+<div class="font-display-sm text-display-sm text-on-surface">1.14</div>
+<span class="font-label-sm text-label-sm text-outline mb-1">Ratio (Pts/Staff)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Middle Section: 2 Charts -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
+<!-- Chart 1: Clustered Bar (Popular Packages) -->
+<div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-5 flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Popular Packages</h3>
+<button class="p-1 rounded text-on-surface-variant hover:bg-surface-container-low">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+<!-- Stylized Bar Chart using HTML/CSS for strict reliability -->
+<div class="flex-1 flex flex-col justify-end gap-4 relative pl-8 pb-6 mt-4">
+<!-- Y-Axis Guides -->
+<div class="absolute left-8 right-0 top-0 bottom-6 flex flex-col justify-between border-l border-outline-variant z-0">
+<div class="border-b border-surface-container border-dashed w-full h-0 relative"><span class="absolute -left-8 -top-2 text-[10px] text-outline">300</span></div>
+<div class="border-b border-surface-container border-dashed w-full h-0 relative"><span class="absolute -left-8 -top-2 text-[10px] text-outline">200</span></div>
+<div class="border-b border-surface-container border-dashed w-full h-0 relative"><span class="absolute -left-8 -top-2 text-[10px] text-outline">100</span></div>
+<div class="border-b border-outline-variant w-full h-0 relative"><span class="absolute -left-6 -top-2 text-[10px] text-outline">0</span></div>
+</div>
+<!-- Bars Container -->
+<div class="flex justify-around items-end w-full h-48 relative z-10 px-4">
+<!-- Group 1 -->
+<div class="flex gap-1 items-end h-full w-16 group">
+<div class="w-1/2 bg-primary rounded-t-sm transition-all hover:opacity-80" style="height: 85%;" title="Inpatient: 255"></div>
+<div class="w-1/2 bg-primary-fixed-dim rounded-t-sm transition-all hover:opacity-80" style="height: 45%;" title="Outpatient: 135"></div>
+<span class="absolute -bottom-6 left-1/6 text-[10px] text-on-surface-variant font-label-sm w-16 text-center">Fisioterapi</span>
+</div>
+<!-- Group 2 -->
+<div class="flex gap-1 items-end h-full w-16 group">
+<div class="w-1/2 bg-primary rounded-t-sm transition-all hover:opacity-80" style="height: 60%;" title="Inpatient: 180"></div>
+<div class="w-1/2 bg-primary-fixed-dim rounded-t-sm transition-all hover:opacity-80" style="height: 75%;" title="Outpatient: 225"></div>
+<span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-on-surface-variant font-label-sm w-20 text-center leading-tight">Rehab<br/>Stroke</span>
+</div>
+<!-- Group 3 -->
+<div class="flex gap-1 items-end h-full w-16 group">
+<div class="w-1/2 bg-primary rounded-t-sm transition-all hover:opacity-80" style="height: 40%;" title="Inpatient: 120"></div>
+<div class="w-1/2 bg-primary-fixed-dim rounded-t-sm transition-all hover:opacity-80" style="height: 30%;" title="Outpatient: 90"></div>
+<span class="absolute -bottom-6 right-1/6 text-[10px] text-on-surface-variant font-label-sm w-16 text-center">Pasca Operasi</span>
+</div>
+</div>
+</div>
+<!-- Legend -->
+<div class="flex justify-center gap-4 mt-6 pt-4 border-t border-surface-container">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 bg-primary rounded-[2px]"></div>
+<span class="text-[11px] text-on-surface-variant">Inpatient</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 bg-primary-fixed-dim rounded-[2px]"></div>
+<span class="text-[11px] text-on-surface-variant">Outpatient</span>
+</div>
+</div>
+</div>
+<!-- Chart 2: Line Chart (Patient Recovery Milestones) -->
+<div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-5 flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Recovery Milestones</h3>
+<p class="text-[11px] text-outline mt-0.5">Avg Days to Target Mobility (MoM)</p>
+</div>
+<div class="bg-surface-container-low rounded-lg p-1 flex">
+<button class="px-2 py-1 text-[10px] font-bold rounded bg-surface-container-lowest shadow-sm text-on-surface">6M</button>
+<button class="px-2 py-1 text-[10px] font-bold rounded text-on-surface-variant hover:text-on-surface">1Y</button>
+</div>
+</div>
+<!-- Stylized SVG Line Chart -->
+<div class="flex-1 relative w-full h-48 mt-4">
+<svg class="w-full h-full overflow-visible" preserveaspectratio="none" viewbox="0 0 400 200">
+<!-- Grid Lines -->
+<line stroke="#eaeef4" stroke-dasharray="4" stroke-width="1" x1="0" x2="400" y1="0" y2="0"></line>
+<line stroke="#eaeef4" stroke-dasharray="4" stroke-width="1" x1="0" x2="400" y1="50" y2="50"></line>
+<line stroke="#eaeef4" stroke-dasharray="4" stroke-width="1" x1="0" x2="400" y1="100" y2="100"></line>
+<line stroke="#eaeef4" stroke-dasharray="4" stroke-width="1" x1="0" x2="400" y1="150" y2="150"></line>
+<line stroke="#c1c6d4" stroke-width="1" x1="0" x2="400" y1="200" y2="200"></line>
+<!-- Area Gradient Definition -->
+<defs>
+<lineargradient id="areaGradient" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#0069c0" stop-opacity="0.2"></stop>
+<stop offset="100%" stop-color="#0069c0" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<!-- Data Area -->
+<path d="M 0 140 C 50 140, 80 110, 133 120 C 180 130, 220 70, 266 80 C 310 90, 350 40, 400 30 L 400 200 L 0 200 Z" fill="url(#areaGradient)"></path>
+<!-- Data Line -->
+<path d="M 0 140 C 50 140, 80 110, 133 120 C 180 130, 220 70, 266 80 C 310 90, 350 40, 400 30" fill="none" stroke="#0069c0" stroke-linecap="round" stroke-width="3"></path>
+<!-- Data Points -->
+<circle cx="0" cy="140" fill="#ffffff" r="4" stroke="#0069c0" stroke-width="2"></circle>
+<circle cx="133" cy="120" fill="#ffffff" r="4" stroke="#0069c0" stroke-width="2"></circle>
+<circle cx="266" cy="80" fill="#ffffff" r="4" stroke="#0069c0" stroke-width="2"></circle>
+<circle class="animate-pulse" cx="400" cy="30" fill="#0069c0" r="5" stroke="#ffffff" stroke-width="2"></circle>
+</svg>
+<!-- X-Axis Labels -->
+<div class="absolute left-0 right-0 -bottom-6 flex justify-between text-[10px] text-outline">
+<span>Jul</span>
+<span>Aug</span>
+<span>Sep</span>
+<span>Oct (Curr)</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

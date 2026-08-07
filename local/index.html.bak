@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRM RKZ - Pelayanan (ERM)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1;
+        }
+
+        .spin {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-slate-100 text-slate-900 font-sans antialiased">
+
+    <!-- ============================================== -->
+    <!-- VIEW: LOGIN                                    -->
+    <!-- ============================================== -->
+    <div id="view-login"
+        class="flex items-center justify-center min-h-screen w-full bg-slate-50 absolute inset-0 z-[100] p-4">
+        <!-- Main Card Container -->
+        <div
+            class="flex flex-col md:flex-row w-full max-w-[1000px] min-h-[600px] bg-white rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] overflow-hidden border border-slate-200">
+
+            <!-- Left Side: Illustration & Branding -->
+            <div class="hidden md:flex flex-col w-1/2 bg-slate-50 p-10 relative overflow-hidden">
+                <!-- Branding -->
+                <div class="relative z-10 flex flex-col gap-4">
+                    <img src="img/logo_rkz.png" alt="Logo RKZ"
+                        class="h-16 w-auto object-contain self-start drop-shadow-md">
+                    <h1 class="text-3xl font-extrabold text-sky-800 tracking-tight">PRM RKZ</h1>
+                    <p class="text-slate-600 mt-3 text-sm leading-relaxed max-w-sm">
+                        Sistem Manajemen Rehabilitasi Medis Terintegrasi. Mengutamakan presisi klinis dan keamanan data
+                        pasien.
+                    </p>
+                </div>
+                <!-- Illustration -->
+                <div class="absolute bottom-0 left-0 right-0 top-32 flex items-end justify-center pointer-events-none">
+                    <!-- Placeholder using a therapeutic image -->
+                    <img src="https://images.unsplash.com/photo-1576671081837-49000212a370?q=80&w=600&auto=format&fit=crop"
+                        alt="Rehabilitasi Medis" class="w-full h-full object-cover opacity-90 mix-blend-multiply" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-50 via-transparent to-transparent"></div>
+                </div>
+            </div>
+
+            <!-- Right Side: Login Form -->
+            <div class="flex flex-col justify-center w-full md:w-1/2 p-10 lg:p-14 bg-white relative z-10">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="material-symbols-outlined text-sky-600 text-[32px]">lock</span>
+                    <h2 class="text-2xl font-bold text-slate-900">Secure Gateway</h2>
+                </div>
+                <p class="text-slate-500 text-sm mb-8">Silakan masuk menggunakan kredensial Enterprise Anda.</p>
+
+                <form id="loginForm" class="flex flex-col gap-5">
+                    <!-- Dropdown Peran (Hanya Visual Sesuai Mockup) -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-2">Pilih Peran Akses</label>
+                        <div class="relative">
+                            <select
+                                class="w-full appearance-none rounded-lg border border-slate-300 bg-white px-4 py-3 pr-10 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 hover:border-slate-400 transition-colors cursor-pointer">
+                                <option value="admin">Administrator</option>
+                                <option value="kasir">Kasir</option>
+                                <option value="manajemen">Manajemen</option>
+                                <option value="erm">Perawat ERM</option>
+                            </select>
+                            <span
+                                class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[20px]">expand_more</span>
+                        </div>
+                    </div>
+
+                    <!-- Username / NIP -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-2">Nomor Induk Karyawan /
+                            NIP</label>
+                        <div class="relative">
+                            <span
+                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[20px]">badge</span>
+                            <input type="text" id="loginUsername" required
+                                class="w-full rounded-lg border border-slate-300 bg-white py-3 pl-10 pr-4 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 hover:border-slate-400 transition-colors placeholder:text-slate-400"
+                                placeholder="Contoh: 12345678">
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-2">Kata Sandi</label>
+                        <div class="relative">
+                            <span
+                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[20px]">vpn_key</span>
+                            <input type="password" id="loginPassword" required
+                                class="w-full rounded-lg border border-slate-300 bg-white py-3 pl-10 pr-10 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 hover:border-slate-400 transition-colors placeholder:text-slate-400"
+                                placeholder="Masukkan kata sandi">
+                            <button type="button"
+                                onclick="const p = document.getElementById('loginPassword'); const i = this.querySelector('span'); if(p.type==='password'){p.type='text';i.textContent='visibility';}else{p.type='password';i.textContent='visibility_off';}"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none flex items-center justify-center">
+                                <span class="material-symbols-outlined text-[20px]">visibility_off</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Error Message -->
+                    <div id="loginMessage"
+                        class="hidden rounded-lg bg-red-50 p-3 text-sm text-red-600 border border-red-100 text-center font-medium">
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" id="btnLogin"
+                        class="mt-2 w-full rounded-lg bg-[#0066cc] hover:bg-[#0052a3] py-3.5 text-sm font-semibold text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0066cc] focus:ring-offset-2 transition-colors flex items-center justify-center">
+                        <span id="loginText" class="flex items-center gap-2">
+                            Masuk Sistem
+                            <span class="material-symbols-outlined text-[18px]">login</span>
+                        </span>
+                        <span id="loginLoader"
+                            class="hidden material-symbols-outlined spin text-[20px]">progress_activity</span>
+                    </button>
+                </form>
+
+                <!-- Help Link -->
+                <div class="mt-8 flex justify-center">
+                    <a href="#"
+                        class="flex items-center gap-1.5 text-xs text-[#0066cc] hover:text-[#0052a3] font-medium">
+                        <span class="material-symbols-outlined text-[16px]">help</span>
+                        Lupa Password / Hubungi IT Helpdesk
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- APP LAYOUT                                     -->
+    <!-- ============================================== -->
+    <div id="app-layout" class="hidden flex-1 flex flex-col min-h-screen w-full">
+        <!-- SideNavBar -->
+        <nav
+            class="fixed left-0 top-0 h-full w-72 bg-slate-950 text-slate-100 flex flex-col justify-between py-6 shadow-xl z-50">
+            <div class="px-6 flex flex-col gap-8">
+                <!-- Brand -->
+                <div class="flex items-center gap-3">
+                    <img src="img/logo_rkz.png" alt="Logo RKZ"
+                        class="h-12 w-auto object-contain bg-white rounded-xl p-1 shadow-lg">
+                    <div>
+                        <h1 class="text-xl font-semibold">PRM RKZ</h1>
+                        <p class="text-sm text-slate-400">Clinical Management</p>
+                    </div>
+                </div>
+                <!-- Navigation Links -->
+                <ul class="flex flex-col gap-2">
+                    <li>
+                        <a href="#" id="menu-erm" data-target="view-erm"
+                            class="nav-item rounded-2xl bg-sky-500/10 text-sky-300 border border-sky-500/20 px-4 py-3 font-semibold transition hover:bg-slate-800 hover:text-white">
+                            <span class="material-symbols-outlined">medical_services</span>
+                            <span>Pelayanan (ERM)</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="menu-kasir" data-target="view-kasir"
+                            class="nav-item rounded-2xl px-4 py-3 text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                            <span class="material-symbols-outlined">payments</span>
+                            <span>Kasir / Pembelian</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="menu-master" data-target="view-master"
+                            class="nav-item rounded-2xl px-4 py-3 text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                            <span class="material-symbols-outlined">database</span>
+                            <span>Master Data</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="menu-audit" data-target="view-audit"
+                            class="nav-item rounded-2xl px-4 py-3 text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                            <span class="material-symbols-outlined">analytics</span>
+                            <span>Laporan & Audit</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <!-- Footer Actions -->
+            <div class="px-6">
+                <div class="rounded-3xl border border-slate-800 bg-slate-900/90 p-4 mb-4">
+                    <div class="flex items-center gap-3">
+                        <div id="userInitial"
+                            class="w-10 h-10 rounded-full bg-sky-500 flex items-center justify-center text-white font-bold">
+                            A</div>
+                        <div>
+                            <p id="userName" class="text-sm font-semibold">Admin</p>
+                            <p id="userRole" class="text-xs text-slate-400">ADMIN</p>
+                        </div>
+                    </div>
+                </div>
+                <button id="btnLogout"
+                    class="w-full flex items-center gap-3 justify-center rounded-2xl border border-slate-800 bg-slate-900 px-4 py-3 text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                    <span class="material-symbols-outlined">logout</span>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content Wrapper -->
+        <div class="ml-72 flex-1 flex flex-col min-h-screen relative bg-slate-100">
+            <header
+                class="sticky top-0 z-40 bg-slate-100/90 backdrop-blur border-b border-slate-200 px-8 py-4 flex items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl font-semibold text-slate-950">Pelayanan Rehabilitasi Medis</h1>
+                    <p class="text-sm text-slate-500">Cari pasien berdasarkan Nomor ERM untuk memotong sesi paket.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button
+                        class="rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition">Notifications</button>
+                    <button class="rounded-full bg-white p-2 shadow-sm"><span
+                            class="material-symbols-outlined text-slate-700">settings</span></button>
+                    <img src="https://i.pravatar.cc/40?img=3" alt="User"
+                        class="h-10 w-10 rounded-full border border-slate-200" />
+                </div>
+            </header>
+
+            <main id="view-erm" class="view-section pt-8 px-8 pb-12 flex-1 flex flex-col gap-8">
+                <section class="grid gap-6">
+                    <div
+                        class="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_30px_60px_-25px_rgba(15,23,42,0.2)]">
+                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                            <div>
+                                <p class="text-sm font-medium uppercase tracking-[0.2em] text-slate-500">Pelayanan
+                                    Rehabilitasi Medis</p>
+                                <h2 class="mt-2 text-3xl font-semibold text-slate-950">Cari pasien berdasarkan Nomor ERM
+                                </h2>
+                                <p class="mt-2 text-sm text-slate-500">Masukkan Nomor ERM untuk melihat paket aktif dan
+                                    riwayat sesi.</p>
+                            </div>
+                            <div class="flex flex-wrap gap-2 text-sm text-slate-500">
+                                <span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-2">Recent
+                                    Searches: ERM1024</span>
+                                <span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-2">ERM0992</span>
+                                <span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-2">ERM1105</span>
+                            </div>
+                        </div>
+
+                        <form id="searchForm" class="mt-6 grid gap-4 lg:grid-cols-[1fr_auto]">
+                            <div class="relative">
+                                <span
+                                    class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+                                <input type="text" id="noErmInput"
+                                    class="w-full rounded-3xl border border-slate-200 bg-slate-50 py-4 pl-14 pr-4 text-base text-slate-900 shadow-sm outline-none transition focus:border-sky-400 focus:ring-4 focus:ring-sky-100"
+                                    placeholder="Nomor ERM (cth: ERM001)" required>
+                            </div>
+                            <button type="submit" id="btnSearch"
+                                class="inline-flex items-center justify-center rounded-3xl bg-sky-600 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-sky-500/20 transition hover:bg-sky-700">
+                                <span class="material-symbols-outlined mr-2">manage_search</span>
+                                Cari
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="grid gap-6 xl:grid-cols-3">
+                        <div
+                            class="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_20px_35px_-20px_rgba(15,23,42,0.15)]">
+                            <p class="text-sm uppercase tracking-[0.18em] text-slate-500">Active Rehab Patients Today
+                            </p>
+                            <p class="mt-5 text-4xl font-semibold text-slate-950">42</p>
+                            <p class="mt-3 text-sm text-slate-500">+3 dari kemarin</p>
+                        </div>
+                        <div
+                            class="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_20px_35px_-20px_rgba(15,23,42,0.15)]">
+                            <p class="text-sm uppercase tracking-[0.18em] text-slate-500">Pending Doctor Approvals</p>
+                            <p class="mt-5 text-4xl font-semibold text-slate-950">5</p>
+                            <p class="mt-3 text-sm text-rose-600">Requires immediate action</p>
+                        </div>
+                        <div
+                            class="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_20px_35px_-20px_rgba(15,23,42,0.15)]">
+                            <p class="text-sm uppercase tracking-[0.18em] text-slate-500">Therapy Room Capacity</p>
+                            <div class="mt-5 flex items-center justify-between gap-3">
+                                <p class="text-4xl font-semibold text-slate-950">85%</p>
+                                <span class="rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-500">Full</span>
+                            </div>
+                            <div class="mt-4 h-3 overflow-hidden rounded-full bg-slate-200">
+                                <div class="h-full w-[85%] rounded-full bg-sky-600"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section
+                    class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm w-full max-w-2xl">
+                    <form id="searchForm">
+                        <label class="block font-label-md text-label-md text-on-surface mb-stack-dense"
+                            for="noErmInput">Nomor Rekam Medis Elektronik (ERM)</label>
+                        <div class="flex gap-4">
+                            <div class="relative flex-1">
+                                <div
+                                    class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-on-surface-variant">
+                                    <span class="material-symbols-outlined">search</span>
+                                </div>
+                                <input type="text" id="noErmInput"
+                                    class="block w-full pl-10 pr-3 py-3 border border-outline-variant rounded-lg bg-surface text-on-surface font-body-md focus:ring-2 focus:ring-primary focus:border-primary placeholder-on-surface-variant/50 transition-shadow"
+                                    placeholder="Nomor ERM (cth: ERM001)" required>
+                            </div>
+                            <button type="submit" id="btnSearch"
+                                class="bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-label-md text-label-md px-6 py-3 rounded-lg shadow-sm transition-colors flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[20px]">manage_search</span>
+                                Cari
+                            </button>
+                        </div>
+                    </form>
+                </section>
+
+                <div id="messageContainer"
+                    class="hidden rounded-3xl border border-slate-200 bg-slate-50 p-4 text-center text-slate-600 shadow-sm">
+                </div>
+
+                <div id="resultSection" class="hidden flex flex-col gap-6">
+                    <div
+                        class="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_20px_35px_-20px_rgba(15,23,42,0.12)]">
+                        <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                            <div class="flex items-center gap-3">
+                                <span class="material-symbols-outlined text-sky-600 text-[26px]">person</span>
+                                <div>
+                                    <p class="text-sm text-slate-500 uppercase tracking-[0.15em]">Pasien</p>
+                                    <h3 class="text-2xl font-semibold text-slate-950"><span id="displayErm"
+                                            class="text-slate-900 font-semibold"></span></h3>
+                                </div>
+                            </div>
+                            <div class="rounded-3xl bg-slate-50 px-4 py-3 text-sm text-slate-500">Status: Paket Aktif
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+                        <div class="space-y-4">
+                            <div
+                                class="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_20px_35px_-20px_rgba(15,23,42,0.12)]">
+                                <div class="flex items-center gap-3 text-slate-900 mb-4">
+                                    <span class="material-symbols-outlined text-sky-600 text-[24px]">assignment</span>
+                                    <h4 class="text-xl font-semibold">Paket Aktif</h4>
+                                </div>
+                                <div id="cardsContainer" class="space-y-4">
+                                    <!-- Cards will be injected by app.js -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div
+                                class="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_20px_35px_-20px_rgba(15,23,42,0.12)]">
+                                <div class="flex items-center gap-3 text-slate-900 mb-4">
+                                    <span class="material-symbols-outlined text-sky-600 text-[24px]">history</span>
+                                    <h4 class="text-xl font-semibold">Riwayat Sesi Terbaru</h4>
+                                </div>
+                                <div class="overflow-hidden rounded-3xl border border-slate-200 bg-slate-50">
+                                    <div class="flex px-4 py-3 text-xs uppercase tracking-[0.24em] text-slate-500">
+                                        <div class="w-1/3">Tanggal</div>
+                                        <div class="w-1/3">Tindakan</div>
+                                        <div class="w-1/3 text-right">Register</div>
+                                    </div>
+                                    <div id="historyContainer"
+                                        class="max-h-[360px] space-y-3 overflow-y-auto px-4 pb-4">
+                                        <!-- History items will be injected by app.js -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- VIEW: KASIR -->
+            <main id="view-kasir"
+                class="view-section hidden pt-8 px-8 pb-12 flex-1 flex flex-col gap-8 max-w-[1400px] w-full">
+                <section class="flex flex-col gap-stack-compact">
+                    <h2 class="font-headline-md text-headline-md font-bold text-on-surface">Kasir / Pembelian Paket</h2>
+                    <p class="font-body-md text-body-md text-on-surface-variant">Tambahkan paket baru untuk pasien
+                        berdasarkan Nomor ERM.</p>
+                </section>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter items-start">
+                    <!-- Form Area -->
+                    <div class="flex flex-col gap-gutter">
+                        <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm">
+                            <form id="kasirForm" class="flex flex-col gap-4">
+                                <div>
+                                    <label
+                                        class="block font-label-md text-label-md text-on-surface mb-stack-dense">Nomor
+                                        Rekam Medis (ERM)</label>
+                                    <div class="relative">
+                                        <span
+                                            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary text-[24px]">person_search</span>
+                                        <input id="kasirErm" required
+                                            class="w-full pl-12 pr-4 py-3 bg-surface border border-outline-variant rounded-lg text-body-md font-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+                                            placeholder="Masukkan ERM (cth: ERM001)" type="text" />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label
+                                        class="block font-label-md text-label-md text-on-surface mb-stack-dense">Pilih
+                                        Master Paket</label>
+                                    <div class="relative">
+                                        <span
+                                            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary text-[24px]">shopping_bag</span>
+                                        <select id="kasirPaket" required
+                                            class="w-full pl-12 pr-4 py-3 bg-surface border border-outline-variant rounded-lg text-body-md font-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors appearance-none cursor-pointer">
+                                            <option value="" disabled selected>Pilih paket...</option>
+                                            <!-- Pilihan paket akan diinjeksi via JS -->
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div id="kasirMessage" class="hidden p-3 rounded-lg text-center font-body-sm"></div>
+
+                                <button type="submit" id="btnBeliPaket"
+                                    class="mt-4 bg-primary hover:bg-primary-container hover:text-on-primary-container text-on-primary font-label-md text-label-md px-6 py-3 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm">
+                                    <span class="material-symbols-outlined text-[20px]">add_circle</span>
+                                    <span>Beli Paket</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- VIEW: MASTER DATA -->
+            <main id="view-master"
+                class="view-section hidden pt-8 px-8 pb-12 flex-1 flex flex-col gap-8 max-w-[1400px] w-full">
+                <section class="flex flex-col gap-stack-compact flex-1">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="font-headline-md text-headline-md font-bold text-on-surface">Master Data Konfigurasi</h2>
+                            <p class="font-body-md text-body-md text-on-surface-variant">Kelola data Master Paket dan Tindakan.</p>
+                        </div>
+                        <button id="btnTambahPaket" class="bg-primary hover:bg-primary-container hover:text-on-primary-container text-on-primary font-label-md text-label-md px-4 py-2 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm">
+                            <span class="material-symbols-outlined text-[20px]">add</span>
+                            <span>Tambah Paket</span>
+                        </button>
+                    </div>
+
+                    <div class="mt-6 bg-surface-container-lowest border border-outline-variant rounded-xl p-0 shadow-sm overflow-hidden flex-1 flex flex-col">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm text-on-surface">
+                                <thead class="bg-surface-container-low text-xs uppercase text-on-surface-variant border-b border-outline-variant">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-4">Nama Paket</th>
+                                        <th scope="col" class="px-6 py-4">Tipe</th>
+                                        <th scope="col" class="px-6 py-4 text-center">Total Sesi</th>
+                                        <th scope="col" class="px-6 py-4 text-center">Masa Berlaku (Hari)</th>
+                                        <th scope="col" class="px-6 py-4 text-right">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableMasterPaket" class="divide-y divide-outline-variant">
+                                    <!-- Data Paket Injected Here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <!-- VIEW: AUDIT -->
+            <main id="view-audit"
+                class="view-section hidden pt-8 px-8 pb-12 flex-1 flex flex-col gap-8 max-w-[1400px] w-full">
+                <section class="flex flex-col gap-stack-compact">
+                    <h2 class="font-headline-md text-headline-md font-bold text-on-surface">Laporan & Audit Analytics
+                    </h2>
+                    <p class="font-body-md text-body-md text-on-surface-variant">Ringkasan penggunaan sesi dan log aktivitas harian.</p>
+                </section>
+
+                <div class="grid gap-6 grid-cols-1 md:grid-cols-3">
+                    <div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-6 shadow-sm flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                            <span class="material-symbols-outlined text-[28px]">group</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-on-surface-variant">Total Pasien Aktif</p>
+                            <p id="auditTotalPasien" class="text-3xl font-bold text-on-surface mt-1">0</p>
+                        </div>
+                    </div>
+                    <div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-6 shadow-sm flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-tertiary/10 flex items-center justify-center text-tertiary">
+                            <span class="material-symbols-outlined text-[28px]">today</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-on-surface-variant">Sesi Dipotong Hari Ini</p>
+                            <p id="auditSesiHariIni" class="text-3xl font-bold text-on-surface mt-1">0</p>
+                        </div>
+                    </div>
+                    <div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-6 shadow-sm flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-error/10 flex items-center justify-center text-error">
+                            <span class="material-symbols-outlined text-[28px]">inventory_2</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-on-surface-variant">Total Sisa Sesi (Global)</p>
+                            <p id="auditSisaSesiGlobal" class="text-3xl font-bold text-on-surface mt-1">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-2 bg-surface-container-lowest border border-outline-variant rounded-xl p-0 shadow-sm overflow-hidden flex-1 flex flex-col">
+                    <div class="px-6 py-4 border-b border-outline-variant bg-surface-container-low flex justify-between items-center">
+                        <h3 class="font-headline-sm text-on-surface font-semibold">Riwayat Log Pemotongan Sesi</h3>
+                        <button class="text-primary hover:text-primary-container text-sm font-medium flex items-center gap-1 transition">
+                            <span class="material-symbols-outlined text-[18px]">download</span> Export CSV
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-on-surface">
+                            <thead class="bg-surface-container-lowest text-xs uppercase text-on-surface-variant border-b border-outline-variant">
+                                <tr>
+                                    <th scope="col" class="px-6 py-4">Waktu</th>
+                                    <th scope="col" class="px-6 py-4">ERM</th>
+                                    <th scope="col" class="px-6 py-4">No. Register</th>
+                                    <th scope="col" class="px-6 py-4">Paket (Sesi Ke)</th>
+                                    <th scope="col" class="px-6 py-4">Tindakan</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableAuditLogs" class="divide-y divide-outline-variant">
+                                <!-- Data Log Injected Here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL: GUNAKAN SESI                            -->
+    <!-- ============================================== -->
+    <div id="useSessionModal"
+        class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-on-surface/50 backdrop-blur-sm p-4">
+        <div
+            class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-xl w-full max-w-md flex flex-col gap-4">
+            <h3 class="font-headline-sm text-headline-sm flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">play_circle</span> Konfirmasi Penggunaan Sesi
+            </h3>
+            <p class="font-body-md text-on-surface-variant">Anda akan memotong 1 sesi dari paket berikut:</p>
+            <div class="bg-surface-container-low p-4 rounded border border-outline-variant">
+                <strong id="modalPaketName" class="block font-headline-sm text-primary mb-2">Paket Name</strong>
+                <p class="font-body-sm text-on-surface-variant">Sisa sesi saat ini: <strong id="modalSisaSesiBaru"
+                        class="text-on-surface font-mono-data"></strong></p>
+            </div>
+
+            <div class="flex flex-col gap-2 mt-2">
+                <label class="font-label-md text-on-surface">No. Register Kunjungan / Pendaftaran (Wajib)</label>
+                <input type="text" id="modalNoKunjungan"
+                    class="w-full px-3 py-2 border border-outline-variant rounded-lg bg-surface text-on-surface font-body-md focus:ring-2 focus:ring-primary focus:border-primary"
+                    placeholder="Misal: REG-24-001" required>
+            </div>
+
+            <div class="flex justify-end gap-3 mt-4">
+                <button type="button"
+                    class="modal-close px-4 py-2 border border-outline-variant text-on-surface-variant rounded-lg hover:bg-surface-container-high transition-colors font-label-md">Batal</button>
+                <button type="button" id="confirmUseBtn"
+                    class="px-4 py-2 bg-primary text-on-primary rounded-lg hover:bg-on-primary-fixed-variant transition-colors font-label-md shadow-sm">Gunakan
+                    Sesi</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL: TAMBAH / EDIT PAKET                     -->
+    <!-- ============================================== -->
+    <div id="modalMasterPaket"
+        class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-on-surface/50 backdrop-blur-sm p-4">
+        <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-xl w-full max-w-md flex flex-col gap-4">
+            <h3 id="modalMasterPaketTitle" class="font-headline-sm text-headline-sm flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">add_box</span> Tambah Paket Baru
+            </h3>
+            
+            <form id="formMasterPaket" class="flex flex-col gap-4">
+                <input type="hidden" id="paketId">
+                <div class="flex flex-col gap-2">
+                    <label class="font-label-md text-on-surface">Nama Paket</label>
+                    <input type="text" id="paketNama" class="w-full px-3 py-2 border border-outline-variant rounded-lg bg-surface text-on-surface font-body-md focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Misal: Paket Stroke 12 Sesi" required>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="font-label-md text-on-surface">Tipe Paket</label>
+                    <select id="paketTipe" class="w-full px-3 py-2 border border-outline-variant rounded-lg bg-surface text-on-surface font-body-md focus:ring-2 focus:ring-primary focus:border-primary" required>
+                        <option value="Rawat Jalan">Rawat Jalan</option>
+                        <option value="Rawat Inap">Rawat Inap</option>
+                        <option value="Homecare">Homecare</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="flex flex-col gap-2">
+                        <label class="font-label-md text-on-surface">Total Sesi</label>
+                        <input type="number" id="paketTotalSesi" class="w-full px-3 py-2 border border-outline-variant rounded-lg bg-surface text-on-surface font-body-md focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Misal: 12" required min="1">
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <label class="font-label-md text-on-surface">Masa Berlaku (Hari)</label>
+                        <input type="number" id="paketMasaBerlaku" class="w-full px-3 py-2 border border-outline-variant rounded-lg bg-surface text-on-surface font-body-md focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Misal: 30" required min="1">
+                    </div>
+                </div>
+                
+                <div class="flex justify-end gap-3 mt-4">
+                    <button type="button" class="modal-close-paket px-4 py-2 border border-outline-variant text-on-surface-variant rounded-lg hover:bg-surface-container-high transition-colors font-label-md">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-primary text-on-primary rounded-lg hover:bg-on-primary-fixed-variant transition-colors font-label-md shadow-sm">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
