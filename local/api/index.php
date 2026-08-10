@@ -107,16 +107,22 @@ if ($endpoint === 'auth') {
     $controller = new KasirController();
     $requestMethod = $_SERVER["REQUEST_METHOD"];
 
-    if ($requestMethod == 'POST' && $action == 'beli_paket') {
-        if(in_array($userPayload['role'], ['admin', 'kasir'])) {
-            $controller->beliPaket();
+    if ($requestMethod == 'GET') {
+        $routeAction = isset($_GET['action']) ? $_GET['action'] : '';
+        if ($routeAction === 'history' || strpos($_SERVER['REQUEST_URI'], 'action=history') !== false) {
+            if(in_array($userPayload['role'], ['admin', 'kasir'])) {
+                $controller->getHistory();
+            } else {
+                http_response_code(403);
+                echo json_encode(array("message" => "Anda tidak memiliki hak akses untuk modul kasir."));
+            }
         } else {
-            http_response_code(403);
-            echo json_encode(array("message" => "Anda tidak memiliki hak akses untuk modul kasir."));
+            http_response_code(400);
+            echo json_encode(array("message" => "Aksi tidak dikenali di modul Kasir. URI: " . $_SERVER['REQUEST_URI']));
         }
     } else {
-        http_response_code(400);
-        echo json_encode(array("message" => "Bad Request or Action Not Found"));
+        http_response_code(405);
+        echo json_encode(array("message" => "Metode $requestMethod tidak diizinkan."));
     }
 } elseif ($endpoint === 'master') {
     if(in_array($userPayload['role'], ['admin'])) {

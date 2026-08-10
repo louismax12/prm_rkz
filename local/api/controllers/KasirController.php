@@ -1,58 +1,62 @@
 <?php
 class KasirController {
     private $db;
-    private $kapasitas;
-    private $paket;
 
     public function __construct() {
         include_once 'config/database.php';
-        include_once 'models/Kapasitas.php';
-        include_once 'models/Paket.php';
-
         $database = new Database();
         $this->db = $database->getConnection();
-        $this->kapasitas = new Kapasitas($this->db);
-        $this->paket = new Paket($this->db);
     }
 
-    public function beliPaket() {
-        $data = json_decode(file_get_contents("php://input"));
+    public function getHistory() {
+        $kategori = isset($_GET['kategori']) ? $_GET['kategori'] : '';
+        $nama = isset($_GET['nama']) ? $_GET['nama'] : '';
+        $asaltabel = isset($_GET['asaltabel']) ? $_GET['asaltabel'] : '';
+        $fcrtambah = isset($_GET['fcrtambah']) ? $_GET['fcrtambah'] : '';
 
-        if(!empty($data->no_erm) && !empty($data->id_paket)) {
-            
-            // 1. Dapatkan detail paket untuk sisa dan expired
-            $this->paket->id = $data->id_paket;
-            if($this->paket->readOne()) {
-                $this->kapasitas->no_erm = $data->no_erm;
-                $this->kapasitas->id_paket = $data->id_paket;
-                
-                // Generate nomor register otomatis (contoh sederhana)
-                $this->kapasitas->nomor_register = "REG-" . date("Ymd-His");
-                
-                $this->kapasitas->sisa = $this->paket->total_sesi;
-                $this->kapasitas->status = 'AKTIF';
-                
-                $tanggal_beli = date("Y-m-d H:i:s");
-                $this->kapasitas->tanggal_beli = $tanggal_beli;
-                
-                // Hitung expired
-                $masa_berlaku = $this->paket->masa_berlaku_hari;
-                $this->kapasitas->tanggal_expired = date('Y-m-d H:i:s', strtotime($tanggal_beli . ' + ' . $masa_berlaku . ' days'));
+        $query = "SELECT 
+                    f.FCRCUST as no_register, 
+                    f.FCRDOKTER as no_erm,
+                    f.FCRNAMA as nama_pasien,
+                    f.FCRDATE as tanggal_transaksi,
+                    f.FCRBARANG as kode_paket,
+                    t.nama as nama_paket,
+                    f.FCRJUMLAH as total_biaya
+                  FROM dbold.fisiosfjual f
+                  JOIN dbold.m_tindakan2026 t ON f.FCRBARANG = t.kode
+                  WHERE 1=1";
+        
+        $params = array();
 
-                if($this->kapasitas->create()) {
-                    http_response_code(201);
-                    echo json_encode(array("message" => "Paket berhasil dibeli dan aktif."));
-                } else {
-                    http_response_code(503);
-                    echo json_encode(array("message" => "Gagal membeli paket. Kesalahan server."));
-                }
-            } else {
-                http_response_code(404);
-                echo json_encode(array("message" => "Master paket tidak ditemukan."));
-            }
-        } else {
-            http_response_code(400);
-            echo json_encode(array("message" => "Data tidak lengkap."));
+        if ($fcrtambah !== '') {
+            $query .= " AND f.FCRTAMBAH = :fcrtambah";
+            $params[':fcrtambah'] = $fcrtambah;
+        }
+        if ($asaltabel !== '') {
+            $query .= " AND t.asaltabel = :asaltabel";
+            $params[':asaltabel'] = $asaltabel;
+        }
+        if ($kategori !== '') {
+            $query .= " AND t.kategori LIKE :kategori";
+            $params[':kategori'] = '%' . $kategori . '%';
+        }
+        if ($nama !== '') {
+            $query .= " AND t.nama LIKE :nama";
+            $params[':nama'] = '%' . $nama . '%';
+        }
+
+        $query .= " ORDER BY f.FCRDATE DESC, f.ID DESC LIMIT 100";
+
+        try {
+            $stmt = $this->db->prepare($query);
+            $stmt->execute($params);
+            $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            http_response_code(200);
+            echo json_encode(array("records" => $records));
+        } catch(PDOException $e) {
+            http_response_code(500);
+            echo json_encode(array("message" => "Database error: " . $e->getMessage()));
         }
     }
 }

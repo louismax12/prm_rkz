@@ -411,78 +411,57 @@ confirmUseBtn.addEventListener('click', () => {
 });
 
 // --- KASIR MODULE LOGIC ---
-const kasirForm = document.getElementById('kasirForm');
-const kasirPaketSelect = document.getElementById('kasirPaket');
-const kasirMessage = document.getElementById('kasirMessage');
-const btnBeliPaket = document.getElementById('btnBeliPaket');
+const tableKasirHistory = document.getElementById('tableKasirHistory');
 
-// Load master paket on load if role allows kasir access
-function loadMasterPaket() {
-    apiFetch(`${API_BASE}/paket`)
+function loadKasirHistory() {
+    if(!tableKasirHistory) return;
+    
+    tableKasirHistory.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-on-surface-variant"><span class="material-symbols-outlined spin">progress_activity</span> Memuat data...</td></tr>';
+    
+    const fKategori = document.getElementById('filterKategori') ? document.getElementById('filterKategori').value : 'PAKET';
+    const fNama = document.getElementById('filterNama') ? document.getElementById('filterNama').value : 'PAKET';
+    const fAsal = document.getElementById('filterAsalTabel') ? document.getElementById('filterAsalTabel').value : '';
+    const fTambah = document.getElementById('filterFcrTambah') ? document.getElementById('filterFcrTambah').value : '';
+
+    apiFetch(`${API_BASE}/kasir?action=history&kategori=${fKategori}&nama=${fNama}&asaltabel=${fAsal}&fcrtambah=${fTambah}`)
         .then(res => res.json())
         .then(data => {
-            if(data.records) {
-                data.records.forEach(p => {
-                    const option = document.createElement('option');
-                    option.value = p.id;
-                    option.textContent = `${p.nama} (${p.total_sesi} Sesi, Exp: ${p.masa_berlaku_hari} hari)`;
-                    kasirPaketSelect.appendChild(option);
+            tableKasirHistory.innerHTML = '';
+            if(data.records && data.records.length > 0) {
+                data.records.forEach(r => {
+                    const tgl = new Date(r.tanggal_transaksi).toLocaleDateString('id-ID', {day: '2-digit', month: 'short', year: 'numeric'});
+                    const biaya = parseInt(r.total_biaya).toLocaleString('id-ID');
+                    
+                    tableKasirHistory.innerHTML += `
+                        <tr class="hover:bg-primary/5 transition-all group">
+                            <td class="py-5 px-6 text-[14px] whitespace-nowrap text-on-surface-variant group-hover:text-primary transition-colors">${tgl}</td>
+                            <td class="py-5 px-6 text-[14px] whitespace-nowrap font-bold text-primary">${r.no_register}</td>
+                            <td class="py-5 px-6 text-[14px] whitespace-nowrap text-on-surface-variant">${r.no_erm}</td>
+                            <td class="py-5 px-6 text-[14px] font-semibold text-on-surface">${r.nama_pasien}</td>
+                            <td class="py-5 px-6 text-[14px] text-on-surface-variant group-hover:text-on-surface transition-colors">${r.nama_paket}</td>
+                            <td class="py-5 px-6 text-[14px] text-right whitespace-nowrap font-bold text-green-600">Rp ${biaya}</td>
+                        </tr>
+                    `;
                 });
+            } else if (data.message) {
+                tableKasirHistory.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-error"><strong>Pesan Server:</strong> ${data.message}</td></tr>`;
+            } else {
+                tableKasirHistory.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-on-surface-variant">Belum ada riwayat transaksi penjualan paket.</td></tr>';
             }
         })
-        .catch(err => console.error("Gagal load master paket", err));
+        .catch(err => {
+            console.error(err);
+            tableKasirHistory.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-error">Gagal memuat data riwayat transaksi.</td></tr>';
+        });
 }
 
-// Ensure loadMasterPaket is called when needed, let's just call it once globally for now
-document.addEventListener('DOMContentLoaded', () => {
-    // wait for auth to finish, so call it in showApp instead
-});
-
-// We override showApp to add loadMasterPaket
+// We override showApp to add loadKasirHistory instead of loadMasterPaket
 const originalShowApp = showApp;
 window.showApp = function() {
     originalShowApp();
     if(currentUser && (currentUser.role === 'admin' || currentUser.role === 'kasir')) {
-        loadMasterPaket();
+        loadKasirHistory();
     }
-}
-
-if (kasirForm) {
-    kasirForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const noErm = document.getElementById('kasirErm').value.trim();
-        const idPaket = kasirPaketSelect.value;
-        
-        btnBeliPaket.disabled = true;
-        btnBeliPaket.innerHTML = '<span class="material-symbols-outlined spin">progress_activity</span> Memproses...';
-        kasirMessage.classList.add('hidden');
-
-        apiFetch(`${API_BASE}/kasir?action=beli_paket`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ no_erm: noErm, id_paket: idPaket })
-        })
-        .then(res => res.json().then(data => ({status: res.status, body: data})))
-        .then(res => {
-            btnBeliPaket.disabled = false;
-            btnBeliPaket.innerHTML = '<span class="material-symbols-outlined text-[20px]">add_circle</span><span>Beli Paket</span>';
-            
-            if(res.status === 201) {
-                kasirMessage.textContent = res.body.message;
-                kasirMessage.className = 'p-3 rounded-lg text-center font-body-sm bg-primary-fixed text-on-primary-fixed block';
-                kasirForm.reset();
-            } else {
-                kasirMessage.textContent = res.body.message || "Gagal";
-                kasirMessage.className = 'p-3 rounded-lg text-center font-body-sm bg-error-container text-on-error-container block';
-            }
-        })
-        .catch(err => {
-            btnBeliPaket.disabled = false;
-            btnBeliPaket.innerHTML = '<span class="material-symbols-outlined text-[20px]">add_circle</span><span>Beli Paket</span>';
-            kasirMessage.textContent = 'Network Error';
-            kasirMessage.className = 'p-3 rounded-lg text-center font-body-sm bg-error-container text-on-error-container block';
-        });
-    });
 }
 
 // --- MASTER DATA MODULE LOGIC ---
@@ -529,7 +508,6 @@ if(formMasterPaket) {
             if(res.status === 201 || res.status === 200) {
                 modalMasterPaket.classList.add('hidden');
                 loadMasterData();
-                loadMasterPaket(); // refresh dropdown kasir
             } else {
                 alert(res.body.message || 'Gagal menyimpan paket');
             }
@@ -584,7 +562,6 @@ window.hapusPaket = function(id) {
         .then(res => {
             if(res.status === 200) {
                 loadMasterData();
-                loadMasterPaket(); // refresh dropdown kasir
             } else {
                 alert(res.body.message || 'Gagal menghapus paket');
             }
@@ -646,3 +623,101 @@ window.switchView = function(viewKey) {
         loadAuditData();
     }
 }
+
+// --- HEADER INTERACTIONS (DROPDOWNS) ---
+function setupHeaderDropdowns() {
+    const btnNotif = document.getElementById('btnHeaderNotif');
+    const ddNotif = document.getElementById('dropdownNotif');
+    
+    const btnSettings = document.getElementById('btnHeaderSettings');
+    const ddSettings = document.getElementById('dropdownSettings');
+    
+    const btnProfile = document.getElementById('btnHeaderProfile');
+    const ddProfile = document.getElementById('dropdownProfile');
+
+    // Close all dropdowns
+    function closeAllDropdowns() {
+        [ddNotif, ddSettings, ddProfile].forEach(dd => {
+            if (dd) {
+                dd.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+            }
+        });
+    }
+
+    function toggleDropdown(dd) {
+        if (!dd) return;
+        const isClosed = dd.classList.contains('opacity-0');
+        closeAllDropdowns();
+        if (isClosed) {
+            dd.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
+        }
+    }
+
+    if (btnNotif) btnNotif.addEventListener('click', (e) => { e.stopPropagation(); toggleDropdown(ddNotif); });
+    if (btnSettings) btnSettings.addEventListener('click', (e) => { e.stopPropagation(); toggleDropdown(ddSettings); });
+    if (btnProfile) btnProfile.addEventListener('click', (e) => { e.stopPropagation(); toggleDropdown(ddProfile); });
+
+    // Close on click outside
+    document.addEventListener('click', () => closeAllDropdowns());
+    
+    // Prevent closing when clicking inside dropdowns
+    [ddNotif, ddSettings, ddProfile].forEach(dd => {
+        if (dd) dd.addEventListener('click', (e) => e.stopPropagation());
+    });
+
+    // Logout from header
+    const btnHeaderLogout = document.getElementById('btnHeaderLogout');
+    if (btnHeaderLogout) {
+        btnHeaderLogout.addEventListener('click', () => {
+            btnLogout.click();
+        });
+    }
+}
+
+// --- DARK MODE LOGIC ---
+function setupDarkMode() {
+    const btnToggleTheme = document.getElementById('btnToggleTheme');
+    const themeIcon = document.getElementById('themeIcon');
+    const themeToggleThumb = document.getElementById('themeToggleThumb');
+    const themeToggleTrack = document.getElementById('themeToggleTrack');
+    const htmlElement = document.documentElement;
+    
+    // Load preference
+    const isDarkMode = localStorage.getItem('prm_theme') === 'dark';
+    
+    function applyTheme(isDark) {
+        if (isDark) {
+            htmlElement.classList.add('dark');
+            if (themeIcon) {
+                themeIcon.textContent = 'light_mode';
+                themeIcon.classList.add('text-primary');
+            }
+            if (themeToggleThumb) themeToggleThumb.classList.add('translate-x-4');
+            if (themeToggleTrack) themeToggleTrack.classList.add('bg-primary');
+        } else {
+            htmlElement.classList.remove('dark');
+            if (themeIcon) {
+                themeIcon.textContent = 'dark_mode';
+                themeIcon.classList.remove('text-primary');
+            }
+            if (themeToggleThumb) themeToggleThumb.classList.remove('translate-x-4');
+            if (themeToggleTrack) themeToggleTrack.classList.remove('bg-primary');
+        }
+    }
+
+    applyTheme(isDarkMode);
+
+    if (btnToggleTheme) {
+        btnToggleTheme.addEventListener('click', () => {
+            const willBeDark = !htmlElement.classList.contains('dark');
+            localStorage.setItem('prm_theme', willBeDark ? 'dark' : 'light');
+            applyTheme(willBeDark);
+        });
+    }
+}
+
+// Initialize header functions
+document.addEventListener('DOMContentLoaded', () => {
+    setupHeaderDropdowns();
+    setupDarkMode();
+});
