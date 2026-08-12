@@ -225,88 +225,66 @@
             <header
                 class="h-16 shrink-0 bg-surface border-b border-outline-variant flex justify-end items-center px-gutter z-40">
                 <div class="flex items-center gap-4 relative">
-                    
+
                     <!-- NOTIFICATIONS -->
                     <div class="relative">
-                        <button id="btnHeaderNotif" class="w-10 h-10 rounded-full hover:bg-surface-container-lowest transition-all flex items-center justify-center text-on-surface-variant relative focus:outline-none">
+                        <button id="btnHeaderNotif"
+                            class="w-10 h-10 rounded-full hover:bg-surface-container-lowest transition-all flex items-center justify-center text-on-surface-variant relative focus:outline-none">
                             <span class="material-symbols-outlined">notifications</span>
-                            <span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full animate-pulse"></span>
+                            <span id="notifBadge"
+                                class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full animate-pulse hidden"></span>
                         </button>
                         <!-- Notif Dropdown -->
-                        <div id="dropdownNotif" class="absolute right-0 mt-2 w-80 bg-white/90 backdrop-blur-xl border border-outline-variant/30 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] opacity-0 pointer-events-none transition-all transform origin-top-right scale-95 z-50 overflow-hidden flex flex-col">
-                            <div class="p-4 border-b border-outline-variant/20 flex justify-between items-center bg-surface-container-lowest/50">
+                        <div id="dropdownNotif"
+                            class="absolute right-0 mt-2 w-80 bg-white/90 backdrop-blur-xl border border-outline-variant/30 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] opacity-0 pointer-events-none transition-all transform origin-top-right scale-95 z-50 overflow-hidden flex flex-col">
+                            <div
+                                class="p-4 border-b border-outline-variant/20 flex justify-between items-center bg-surface-container-lowest/50">
                                 <h4 class="font-bold text-on-surface text-[15px]">Notifikasi</h4>
-                                <button class="text-primary text-[12px] font-semibold hover:underline">Tandai sudah dibaca</button>
+                                <button id="btnReadNotif"
+                                    class="text-primary text-[12px] font-semibold hover:underline">Tandai sudah
+                                    dibaca</button>
                             </div>
-                            <div class="max-h-[300px] overflow-y-auto p-2 flex flex-col gap-1">
-                                <div class="p-3 hover:bg-surface-container-lowest rounded-xl transition-colors cursor-pointer flex gap-3">
-                                    <div class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                                        <span class="material-symbols-outlined text-[18px]">receipt_long</span>
-                                    </div>
-                                    <div class="flex flex-col">
-                                        <p class="text-[13px] text-on-surface font-semibold leading-tight">Transaksi Baru (Kasir)</p>
-                                        <p class="text-[12px] text-on-surface-variant mt-1 line-clamp-2">Transaksi untuk pasien TN EDDY WIDJAJA telah berhasil ditambahkan.</p>
-                                        <p class="text-[10px] text-primary mt-1">2 menit yang lalu</p>
-                                    </div>
-                                </div>
-                                <div class="p-3 hover:bg-surface-container-lowest rounded-xl transition-colors cursor-pointer flex gap-3 opacity-60">
-                                    <div class="w-8 h-8 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center shrink-0">
-                                        <span class="material-symbols-outlined text-[18px]">assignment_turned_in</span>
-                                    </div>
-                                    <div class="flex flex-col">
-                                        <p class="text-[13px] text-on-surface font-medium leading-tight">Sesi Berhasil Dipotong</p>
-                                        <p class="text-[12px] text-on-surface-variant mt-1">Sesi pasien NY EVELIEN SOPAHELUWAKAN telah dipotong.</p>
-                                        <p class="text-[10px] text-on-surface-variant mt-1">1 jam yang lalu</p>
-                                    </div>
-                                </div>
+                            <div id="notifContainer" class="max-h-[300px] overflow-y-auto p-2 flex flex-col gap-1">
+                                <!-- Data notifikasi diisi oleh app.js -->
                             </div>
                             <div class="p-3 border-t border-outline-variant/20 text-center">
-                                <button class="text-[13px] font-semibold text-primary hover:underline">Lihat Semua Notifikasi</button>
+                                <button class="text-[13px] font-semibold text-primary hover:underline">Lihat Semua
+                                    Notifikasi</button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- SETTINGS -->
-                    <div class="relative">
-                        <button id="btnHeaderSettings" class="w-10 h-10 rounded-full hover:bg-surface-container-lowest transition-all flex items-center justify-center text-on-surface-variant focus:outline-none">
-                            <span class="material-symbols-outlined">settings</span>
-                        </button>
-                        <!-- Settings Dropdown -->
-                        <div id="dropdownSettings" class="absolute right-0 mt-2 w-64 bg-white/90 backdrop-blur-xl border border-outline-variant/30 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] opacity-0 pointer-events-none transition-all transform origin-top-right scale-95 z-50 p-2">
-                            <div class="px-3 py-2 text-[12px] font-bold text-on-surface-variant uppercase tracking-wider mb-1">Pengaturan Tampilan</div>
-                            <button id="btnToggleTheme" class="w-full flex items-center justify-between p-3 hover:bg-surface-container-lowest rounded-xl transition-colors text-left group">
-                                <div class="flex items-center gap-3 text-on-surface group-hover:text-primary transition-colors">
-                                    <span class="material-symbols-outlined" id="themeIcon">dark_mode</span>
-                                    <span class="font-medium text-[14px]">Mode Gelap</span>
-                                </div>
-                                <div class="w-10 h-6 bg-surface-container-high rounded-full relative transition-colors shadow-inner" id="themeToggleTrack">
-                                    <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow-sm transition-transform" id="themeToggleThumb"></div>
-                                </div>
-                            </button>
-                        </div>
-                    </div>
+
 
                     <div class="h-8 w-px bg-outline-variant mx-2"></div>
-                    
+
                     <!-- PROFILE -->
                     <div class="relative">
-                        <button id="btnHeaderProfile" class="w-8 h-8 rounded-full border border-outline-variant bg-primary text-white flex items-center justify-center font-bold text-[14px] focus:outline-none hover:ring-2 hover:ring-primary/30 transition-all cursor-pointer">
+                        <button id="btnHeaderProfile"
+                            class="w-8 h-8 rounded-full border border-outline-variant bg-primary text-white flex items-center justify-center font-bold text-[14px] focus:outline-none hover:ring-2 hover:ring-primary/30 transition-all cursor-pointer">
                             A
                         </button>
                         <!-- Profile Dropdown -->
-                        <div id="dropdownProfile" class="absolute right-0 mt-2 w-56 bg-white/90 backdrop-blur-xl border border-outline-variant/30 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] opacity-0 pointer-events-none transition-all transform origin-top-right scale-95 z-50 p-2">
+                        <div id="dropdownProfile"
+                            class="absolute right-0 mt-2 w-56 bg-white/90 backdrop-blur-xl border border-outline-variant/30 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] opacity-0 pointer-events-none transition-all transform origin-top-right scale-95 z-50 p-2">
                             <div class="p-3 mb-2 flex items-center gap-3 border-b border-outline-variant/20">
-                                <div class="w-10 h-10 rounded-full bg-primary-container text-primary flex items-center justify-center font-bold text-[16px]">A</div>
+                                <div
+                                    class="w-10 h-10 rounded-full bg-primary-container text-primary flex items-center justify-center font-bold text-[16px]">
+                                    A</div>
                                 <div class="flex flex-col">
-                                    <span class="font-bold text-on-surface text-[14px] truncate" id="headerProfileName">Admin</span>
-                                    <span class="text-[11px] text-on-surface-variant uppercase font-medium">Administrator</span>
+                                    <span class="font-bold text-on-surface text-[14px] truncate"
+                                        id="headerProfileName">Admin</span>
+                                    <span
+                                        class="text-[11px] text-on-surface-variant uppercase font-medium">Administrator</span>
                                 </div>
                             </div>
-                            <button class="w-full flex items-center gap-3 p-3 hover:bg-surface-container-lowest rounded-xl transition-colors text-left text-on-surface">
+                            <!-- <button
+                                class="w-full flex items-center gap-3 p-3 hover:bg-surface-container-lowest rounded-xl transition-colors text-left text-on-surface">
                                 <span class="material-symbols-outlined text-[20px]">manage_accounts</span>
                                 <span class="font-medium text-[13px]">Edit Profil</span>
-                            </button>
-                            <button id="btnHeaderLogout" class="w-full flex items-center gap-3 p-3 hover:bg-error-container rounded-xl transition-colors text-left text-error group mt-1">
+                            </button> -->
+                            <button id="btnHeaderLogout"
+                                class="w-full flex items-center gap-3 p-3 hover:bg-error-container rounded-xl transition-colors text-left text-error group mt-1">
                                 <span class="material-symbols-outlined text-[20px] group-hover:text-error">logout</span>
                                 <span class="font-medium text-[13px] group-hover:text-error">Keluar Sistem</span>
                             </button>
@@ -444,63 +422,53 @@
                             </div>
 
                             <div class="flex items-center gap-3">
-                                <!-- Filter Kategori -->
-                                <div class="relative">
+                                <!-- Filter Status -->
+                                <div class="relative w-full max-w-[200px]">
+                                    <span
+                                        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[18px] pointer-events-none">filter_list</span>
+                                    <select id="filterStatusDropdown" onchange="loadKasirHistory()"
+                                        class="w-full pl-10 pr-8 py-2.5 bg-white border border-outline-variant/50 rounded-xl font-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none cursor-pointer hover:border-primary/50 shadow-sm">
+                                        <option value="">Status: Semua</option>
+                                        <option value="1">Sudah Selesai</option>
+                                        <option value="0">Belum Selesai</option>
+                                    </select>
+                                    <span
+                                        class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[18px] pointer-events-none">expand_more</span>
+                                </div>
+
+                                <!-- Filter Kategori (Dropdown) -->
+                                <!-- <div class="relative w-full max-w-[200px]">
                                     <span
                                         class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[18px] pointer-events-none">category</span>
-                                    <select id="filterKategori" onchange="loadKasirHistory()"
-                                        class="pl-10 pr-8 py-2.5 bg-white border border-outline-variant/50 rounded-xl font-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none cursor-pointer hover:border-primary/50 shadow-sm">
-                                        <option value="PAKET">Kategori: 'PAKET'</option>
+                                    <select id="filterNamaDropdown" onchange="loadKasirHistory()"
+                                        class="w-full pl-10 pr-8 py-2.5 bg-white border border-outline-variant/50 rounded-xl font-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none cursor-pointer hover:border-primary/50 shadow-sm">
                                         <option value="">Kategori: Semua</option>
+                                        <option value="PAKET">Mengandung 'PAKET'</option>
                                     </select>
                                     <span
                                         class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[18px] pointer-events-none">expand_more</span>
-                                </div>
+                                </div> -->
 
-                                <!-- Filter Nama -->
-                                <div class="relative">
+                                <!-- Filter Nama Bebas (Text Input) -->
+                                <div class="relative w-full max-w-[250px]">
                                     <span
                                         class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[18px] pointer-events-none">search</span>
-                                    <select id="filterNama" onchange="loadKasirHistory()"
-                                        class="pl-10 pr-8 py-2.5 bg-white border border-outline-variant/50 rounded-xl font-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none cursor-pointer hover:border-primary/50 shadow-sm">
-                                        <option value="PAKET">Nama: Mengandung 'PAKET'</option>
-                                        <option value="">Nama: Semua</option>
-                                    </select>
-                                    <span
-                                        class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[18px] pointer-events-none">expand_more</span>
+                                    <input type="text" id="filterNamaText"
+                                        onkeyup="if(event.key === 'Enter') loadKasirHistory()"
+                                        placeholder="Cari paket.."
+                                        class="w-full pl-10 pr-4 py-2.5 bg-white border border-outline-variant/50 rounded-xl font-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm">
                                 </div>
 
-                                <!-- Filter Asal Tabel -->
-                                <div class="relative">
-                                    <span
-                                        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[18px] pointer-events-none">database</span>
-                                    <select id="filterAsalTabel" onchange="loadKasirHistory()"
-                                        class="pl-10 pr-8 py-2.5 bg-white border border-outline-variant/50 rounded-xl font-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none cursor-pointer hover:border-primary/50 shadow-sm">
-                                        <option value="">Semua Asal Tabel</option>
-                                        <option value="SFMASBIA">SFMASBIA</option>
-                                        <option value="RKMASBIA">RKMASBIA</option>
-                                        <option value="ORMASBIA">ORMASBIA</option>
-                                    </select>
-                                    <span
-                                        class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[18px] pointer-events-none">expand_more</span>
-                                </div>
-
-                                <!-- Filter Status -->
-                                <div class="relative">
-                                    <span
-                                        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[18px] pointer-events-none">filter_alt</span>
-                                    <select id="filterFcrTambah" onchange="loadKasirHistory()"
-                                        class="pl-10 pr-8 py-2.5 bg-white border border-outline-variant/50 rounded-xl font-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none cursor-pointer hover:border-primary/50 shadow-sm">
-                                        <option value="">Semua Status</option>
-                                        <option value="T">Hanya 'T'</option>
-                                    </select>
-                                    <span
-                                        class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[18px] pointer-events-none">expand_more</span>
-                                </div>
+                                <!-- Save Button -->
+                                <button id="btnSimpanKasir" onclick="simpanProsesKasir()" disabled
+                                    class="bg-primary hover:bg-primary/90 disabled:bg-surface-variant disabled:text-on-surface-variant disabled:shadow-none disabled:cursor-not-allowed text-white font-label-md px-4 h-15 rounded-xl transition-all flex items-center justify-center shadow-sm ml-2 gap-2">
+                                    <span class="material-symbols-outlined text-[25px]">save</span>
+                                    <span>Simpan & Kunci</span>
+                                </button>
 
                                 <!-- Refresh Button -->
                                 <button onclick="loadKasirHistory()"
-                                    class="bg-primary hover:bg-primary/90 text-white font-label-md w-10 h-10 rounded-xl transition-all flex items-center justify-center shadow-[0_4px_12px_rgb(34,113,231,0.25)] hover:shadow-[0_6px_16px_rgb(34,113,231,0.35)] hover:-translate-y-0.5 ml-2">
+                                    class="bg-primary hover:bg-primary/90 text-white font-label-md w-[90px] h-10 rounded-xl transition-all flex items-center justify-center shadow-[0_4px_12px_rgb(34,113,231,0.25)] hover:shadow-[0_6px_16px_rgb(34,113,231,0.35)] hover:-translate-y-0.5 ml-2">
                                     <span class="material-symbols-outlined text-[20px]">refresh</span>
                                 </button>
                             </div>
@@ -512,6 +480,9 @@
                                 <thead
                                     class="bg-surface-container-lowest/80 text-on-surface-variant font-label-sm border-b border-outline-variant/30 backdrop-blur-md sticky top-0 z-10">
                                     <tr>
+                                        <th class="p-5 font-semibold whitespace-nowrap text-xs w-10">
+                                            <!-- Checkbox Header -->
+                                        </th>
                                         <th
                                             class="p-5 font-semibold whitespace-nowrap text-xs tracking-wider uppercase">
                                             Tgl Transaksi</th>
@@ -752,7 +723,7 @@
         </div>
     </div>
 
-    <script src="app.js"></script>
+    <script src="app.js?v=5"></script>
 </body>
 
 </html>

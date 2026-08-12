@@ -416,14 +416,13 @@ const tableKasirHistory = document.getElementById('tableKasirHistory');
 function loadKasirHistory() {
     if(!tableKasirHistory) return;
     
-    tableKasirHistory.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-on-surface-variant"><span class="material-symbols-outlined spin">progress_activity</span> Memuat data...</td></tr>';
+    tableKasirHistory.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-on-surface-variant"><span class="material-symbols-outlined spin">progress_activity</span> Memuat data...</td></tr>';
     
-    const fKategori = document.getElementById('filterKategori') ? document.getElementById('filterKategori').value : 'PAKET';
-    const fNama = document.getElementById('filterNama') ? document.getElementById('filterNama').value : 'PAKET';
-    const fAsal = document.getElementById('filterAsalTabel') ? document.getElementById('filterAsalTabel').value : '';
-    const fTambah = document.getElementById('filterFcrTambah') ? document.getElementById('filterFcrTambah').value : '';
+    const fNamaDrop = document.getElementById('filterNamaDropdown') ? document.getElementById('filterNamaDropdown').value : '';
+    const fNamaText = document.getElementById('filterNamaText') ? document.getElementById('filterNamaText').value : '';
+    const fStatus = document.getElementById('filterStatusDropdown') ? document.getElementById('filterStatusDropdown').value : '';
 
-    apiFetch(`${API_BASE}/kasir?action=history&kategori=${fKategori}&nama=${fNama}&asaltabel=${fAsal}&fcrtambah=${fTambah}`)
+    apiFetch(`${API_BASE}/kasir?action=history&nama_drop=${encodeURIComponent(fNamaDrop)}&nama_text=${encodeURIComponent(fNamaText)}&status=${encodeURIComponent(fStatus)}`)
         .then(res => res.json())
         .then(data => {
             tableKasirHistory.innerHTML = '';
@@ -432,8 +431,15 @@ function loadKasirHistory() {
                     const tgl = new Date(r.tanggal_transaksi).toLocaleDateString('id-ID', {day: '2-digit', month: 'short', year: 'numeric'});
                     const biaya = parseInt(r.total_biaya).toLocaleString('id-ID');
                     
+                    const isProcessed = r.is_processed == 1;
+                    const checkboxAttrs = isProcessed ? 'checked disabled class="w-4 h-4 text-surface-variant bg-surface-container-lowest border-outline-variant/50 rounded cursor-not-allowed"' : 'class="w-4 h-4 text-primary bg-surface-container-lowest border-outline-variant rounded focus:ring-primary focus:ring-2 cursor-pointer kasir-checkbox" onchange="handleKasirCheckboxChange()"';
+                    const rowClass = isProcessed ? 'bg-surface-container-lowest/50 opacity-60' : 'hover:bg-primary/5 transition-all group';
+
                     tableKasirHistory.innerHTML += `
-                        <tr class="hover:bg-primary/5 transition-all group">
+                        <tr class="${rowClass}">
+                            <td class="py-5 px-6">
+                                <input type="checkbox" value="${r.id_transaksi}" ${checkboxAttrs}>
+                            </td>
                             <td class="py-5 px-6 text-[14px] whitespace-nowrap text-on-surface-variant group-hover:text-primary transition-colors">${tgl}</td>
                             <td class="py-5 px-6 text-[14px] whitespace-nowrap font-bold text-primary">${r.no_register}</td>
                             <td class="py-5 px-6 text-[14px] whitespace-nowrap text-on-surface-variant">${r.no_erm}</td>
@@ -444,15 +450,62 @@ function loadKasirHistory() {
                     `;
                 });
             } else if (data.message) {
-                tableKasirHistory.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-error"><strong>Pesan Server:</strong> ${data.message}</td></tr>`;
+                tableKasirHistory.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-error"><strong>Pesan Server:</strong> ${data.message}</td></tr>`;
             } else {
-                tableKasirHistory.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-on-surface-variant">Belum ada riwayat transaksi penjualan paket.</td></tr>';
+                tableKasirHistory.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-on-surface-variant">Belum ada riwayat transaksi penjualan paket.</td></tr>';
             }
         })
         .catch(err => {
-            console.error(err);
-            tableKasirHistory.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-error">Gagal memuat data riwayat transaksi.</td></tr>';
+            console.error("Kasir error:", err);
+            tableKasirHistory.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-error">Gagal terhubung ke server Kasir.</td></tr>`;
         });
+}
+
+function handleKasirCheckboxChange() {
+    const checkboxes = document.querySelectorAll('.kasir-checkbox:checked');
+    const btnSimpan = document.getElementById('btnSimpanKasir');
+    if (checkboxes.length > 0) {
+        btnSimpan.removeAttribute('disabled');
+    } else {
+        btnSimpan.setAttribute('disabled', 'true');
+    }
+}
+
+function simpanProsesKasir() {
+    const checkboxes = document.querySelectorAll('.kasir-checkbox:checked');
+    const ids = Array.from(checkboxes).map(cb => cb.value);
+
+    if (ids.length === 0) return;
+
+    const btnSimpan = document.getElementById('btnSimpanKasir');
+    const originalText = btnSimpan.innerHTML;
+    btnSimpan.innerHTML = '<span class="material-symbols-outlined spin text-[18px]">progress_activity</span><span>Menyimpan...</span>';
+    btnSimpan.setAttribute('disabled', 'true');
+
+    apiFetch(`${API_BASE}/kasir?action=mark_processed`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: ids })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            loadKasirHistory(); // reload history
+            alert(data.message);
+            // Kembalikan teks asli secara eksplisit
+            btnSimpan.innerHTML = '<span class="material-symbols-outlined text-[18px]">save</span><span>Simpan & Kunci</span>';
+        } else {
+            alert(data.message || 'Gagal menyimpan.');
+            btnSimpan.removeAttribute('disabled');
+            btnSimpan.innerHTML = '<span class="material-symbols-outlined text-[18px]">save</span><span>Simpan & Kunci</span>';
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert('Terjadi kesalahan jaringan.');
+        btnSimpan.removeAttribute('disabled');
+        btnSimpan.innerHTML = '<span class="material-symbols-outlined text-[18px]">save</span><span>Simpan & Kunci</span>';
+    });
 }
 
 // We override showApp to add loadKasirHistory instead of loadMasterPaket
@@ -624,6 +677,89 @@ window.switchView = function(viewKey) {
     }
 }
 
+// --- NOTIFICATIONS LOGIC ---
+function loadNotifications() {
+    const notifContainer = document.getElementById('notifContainer');
+    const notifBadge = document.getElementById('notifBadge');
+    const btnReadNotif = document.getElementById('btnReadNotif');
+    
+    if(!notifContainer) return;
+
+    Promise.all([
+        apiFetch(`${API_BASE}/kasir?action=history`).then(res => res.json()).catch(() => ({records: []})),
+        apiFetch(`${API_BASE}/audit?action=logs`).then(res => res.json()).catch(() => [])
+    ]).then(([kasirData, auditData]) => {
+        let notifications = [];
+
+        if(kasirData && kasirData.records && Array.isArray(kasirData.records)) {
+            kasirData.records.slice(0, 10).forEach(r => {
+                notifications.push({
+                    type: 'kasir',
+                    date: new Date(r.tanggal_transaksi),
+                    title: 'Transaksi Baru (Kasir)',
+                    desc: `Transaksi untuk pasien ${r.nama_pasien} telah berhasil ditambahkan.`,
+                    icon: 'receipt_long'
+                });
+            });
+        }
+
+        if(auditData && Array.isArray(auditData)) {
+            auditData.slice(0, 10).forEach(r => {
+                notifications.push({
+                    type: 'audit',
+                    date: new Date(r.tanggal_paket),
+                    title: 'Penggunaan Sesi Pelayanan',
+                    desc: `Sesi ${r.sesi_ke} pasien ${r.no_erm} untuk tindakan ${r.nama_tindakan} telah dicatat.`,
+                    icon: 'assignment_turned_in'
+                });
+            });
+        }
+
+        notifications.sort((a, b) => b.date - a.date);
+        notifications = notifications.slice(0, 5);
+
+        notifContainer.innerHTML = '';
+        if(notifications.length > 0) {
+            if(notifBadge) notifBadge.classList.remove('hidden');
+            
+            notifications.forEach(n => {
+                const diffMs = new Date() - n.date;
+                const diffMins = Math.floor(diffMs / 60000);
+                let timeText = diffMins < 60 ? `${diffMins} menit yang lalu` : 
+                               (diffMins < 1440 ? `${Math.floor(diffMins/60)} jam yang lalu` : 
+                               `${Math.floor(diffMins/1440)} hari yang lalu`);
+                if(diffMins < 1 || isNaN(diffMins)) timeText = 'Baru saja';
+
+                const bgIcon = n.type === 'kasir' ? 'bg-primary/10 text-primary' : 'bg-surface-container-high text-on-surface-variant';
+
+                notifContainer.innerHTML += `
+                    <div class="p-3 hover:bg-surface-container-lowest rounded-xl transition-colors cursor-pointer flex gap-3 notif-item">
+                        <div class="w-8 h-8 rounded-full ${bgIcon} flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined text-[18px]">${n.icon}</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <p class="text-[13px] text-on-surface font-semibold leading-tight">${n.title}</p>
+                            <p class="text-[12px] text-on-surface-variant mt-1 line-clamp-2">${n.desc}</p>
+                            <p class="text-[10px] text-primary mt-1">${timeText}</p>
+                        </div>
+                    </div>
+                `;
+            });
+        } else {
+            notifContainer.innerHTML = '<div class="p-4 text-center text-[12px] text-on-surface-variant">Belum ada notifikasi baru.</div>';
+            if(notifBadge) notifBadge.classList.add('hidden');
+        }
+    });
+
+    if(btnReadNotif) {
+        btnReadNotif.onclick = () => {
+            if(notifBadge) notifBadge.classList.add('hidden');
+            notifContainer.querySelectorAll('.notif-item').forEach(el => el.classList.add('opacity-60'));
+        };
+    }
+}
+
+
 // --- HEADER INTERACTIONS (DROPDOWNS) ---
 function setupHeaderDropdowns() {
     const btnNotif = document.getElementById('btnHeaderNotif');
@@ -720,4 +856,5 @@ function setupDarkMode() {
 document.addEventListener('DOMContentLoaded', () => {
     setupHeaderDropdowns();
     setupDarkMode();
+    loadNotifications();
 });

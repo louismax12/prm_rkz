@@ -120,6 +120,19 @@ if ($endpoint === 'auth') {
             http_response_code(400);
             echo json_encode(array("message" => "Aksi tidak dikenali di modul Kasir. URI: " . $_SERVER['REQUEST_URI']));
         }
+    } elseif ($requestMethod == 'POST') {
+        $routeAction = isset($_GET['action']) ? $_GET['action'] : '';
+        if ($routeAction === 'mark_processed') {
+            if(in_array($userPayload['role'], ['admin', 'kasir'])) {
+                $controller->markProcessed();
+            } else {
+                http_response_code(403);
+                echo json_encode(array("message" => "Anda tidak memiliki hak akses untuk modul kasir."));
+            }
+        } else {
+            http_response_code(400);
+            echo json_encode(array("message" => "Aksi POST tidak dikenali di modul Kasir. URI: " . $_SERVER['REQUEST_URI']));
+        }
     } else {
         http_response_code(405);
         echo json_encode(array("message" => "Metode $requestMethod tidak diizinkan."));

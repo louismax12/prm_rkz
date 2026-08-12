@@ -8,7 +8,7 @@ class MasterController {
 
     public function __construct() {
         $database = new Database();
-        $this->db = $database->getConnection('keuangan');
+        $this->db = $database->getConnection();
         $this->paket = new Paket($this->db);
     }
 

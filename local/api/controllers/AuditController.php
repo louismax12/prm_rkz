@@ -8,7 +8,7 @@ class AuditController {
 
     public function __construct() {
         $database = new Database();
-        $this->db = $database->getConnection('keuangan');
+        $this->db = $database->getConnection();
         $this->catatan = new Catatan($this->db);
     }
 
