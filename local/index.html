@@ -28,6 +28,45 @@
                 transform: rotate(360deg);
             }
         }
+
+        /* Wrapper Tabel Custom */
+        .table-scroll-container {
+            max-height: 500px;
+            overflow-y: auto;
+            flex: 1;
+            /* Menyesuaikan dengan flexbox parent */
+            min-height: 0;
+        }
+
+        /* Kustomisasi Scrollbar */
+        .table-scroll-container::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .table-scroll-container::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            /* Abu-abu terang */
+            border-radius: 4px;
+        }
+
+        .table-scroll-container::-webkit-scrollbar-thumb {
+            background: #64748b;
+            /* Abu-abu gelap */
+            border-radius: 4px;
+        }
+
+        .table-scroll-container::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        /* Sticky Header untuk th */
+        .table-scroll-container table th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: #ffffff; /* Warna putih solid agar tidak transparan */
+        }
     </style>
 </head>
 
@@ -176,6 +215,13 @@
                         </a>
                     </li>
                     <li>
+                        <a href="#" id="menu-pasien" data-target="view-pasien"
+                            class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors">
+                            <span class="material-symbols-outlined">patient_list</span>
+                            <span class="font-label-md">Data Pasien</span>
+                        </a>
+                    </li>
+                    <li>
                         <a href="#" id="menu-master" data-target="view-master"
                             class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors">
                             <span class="material-symbols-outlined">database</span>
@@ -295,7 +341,82 @@
             </header>
 
             <!-- SCROLLABLE VIEWS CONTAINER -->
-            <div class="flex-1 overflow-y-auto bg-background">
+            <div class="flex-1 overflow-y-auto bg-background flex flex-col">
+                <!-- VIEW: PASIEN -->
+                <main id="view-pasien"
+                    class="view-section py-margin-page px-margin-page flex flex-col gap-6 max-w-[1600px] mx-auto w-full hidden flex-1 min-h-0">
+
+                    <!-- Page Header Section -->
+                    <section class="flex flex-col gap-stack-compact shrink-0">
+                        <h2 class="font-headline-md font-bold text-on-surface">Data Pasien & Riwayat</h2>
+                        <p class="font-body-md text-on-surface-variant">Daftar paket aktif pasien dan detail pemakaian
+                            sesinya.</p>
+                    </section>
+
+                    <!-- Master-Detail Layout (Side-by-Side) -->
+                    <section class="flex flex-row gap-6 flex-1 min-h-0 w-full overflow-hidden">
+                        <!-- Master: Daftar Kapasitas -->
+                        <div
+                            class="flex-[55] bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden flex flex-col min-h-0">
+                            <div
+                                class="px-6 py-4 border-b border-outline-variant bg-surface-container-low flex justify-between items-center shrink-0">
+                                <h3 class="font-headline-sm font-semibold text-on-surface">Daftar Pasien (Kapasitas)
+                                </h3>
+                                <button onclick="loadPasienMaster()"
+                                    class="text-primary hover:text-on-primary-fixed-variant font-label-sm flex items-center gap-1 transition">
+                                    <span class="material-symbols-outlined text-[18px]">refresh</span> Refresh
+                                </button>
+                            </div>
+                            <div class="table-scroll-container">
+                                <table class="w-full text-left font-body-md text-on-surface relative bg-white">
+                                    <thead
+                                        class="bg-surface-container-lowest font-label-sm uppercase text-on-surface-variant shadow-sm bg-white">
+                                        <tr>
+                                            <th class="px-6 py-4 border-b border-outline-variant">Tgl Beli</th>
+                                            <th class="px-6 py-4 border-b border-outline-variant">ERM / Pasien</th>
+                                            <th class="px-6 py-4 border-b border-outline-variant">Paket</th>
+                                            <th class="px-6 py-4 border-b border-outline-variant">Sisa Sesi</th>
+                                            <th class="px-6 py-4 border-b border-outline-variant">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tablePasienMaster" class="divide-y divide-outline-variant">
+                                        <!-- Rows diisi via JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Detail: Riwayat Sesi -->
+                        <div
+                            class="flex-[45] bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden flex flex-col min-h-0">
+                            <div
+                                class="px-6 py-4 border-b border-outline-variant bg-surface-container-low flex justify-between items-center shrink-0 bg-surface-container-lowest">
+                                <h3 class="font-headline-sm font-semibold text-on-surface">Detail Pemakaian Sesi</h3>
+                            </div>
+                            <div class="table-scroll-container">
+                                <table class="w-full text-left font-body-md text-on-surface relative">
+                                    <thead
+                                        class="bg-surface-container-lowest font-label-sm uppercase text-on-surface-variant shadow-sm">
+                                        <tr>
+                                            <th class="px-6 py-4 border-b border-outline-variant">Sesi Ke</th>
+                                            <th class="px-6 py-4 border-b border-outline-variant">Tanggal Pemakaian</th>
+                                            <th class="px-6 py-4 border-b border-outline-variant">Tindakan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tablePasienDetail" class="divide-y divide-outline-variant">
+                                        <tr>
+                                            <td colspan="3" class="text-center py-8 text-on-surface-variant italic">
+                                                Pilih salah satu pasien di tabel sebelah kiri untuk melihat detail
+                                                pemakaian.
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+                </main>
+
                 <!-- VIEW: ERM -->
                 <main id="view-erm"
                     class="view-section py-margin-page px-margin-page flex flex-col gap-8 max-w-[1400px] mx-auto w-full">
@@ -467,8 +588,8 @@
                                 </button>
 
                                 <!-- Refresh Button -->
-                                <button onclick="loadKasirHistory()"
-                                    class="bg-primary hover:bg-primary/90 text-white font-label-md w-[90px] h-10 rounded-xl transition-all flex items-center justify-center shadow-[0_4px_12px_rgb(34,113,231,0.25)] hover:shadow-[0_6px_16px_rgb(34,113,231,0.35)] hover:-translate-y-0.5 ml-2">
+                                <button onclick="loadKasirHistory()" style="width: 170px; height: 50px;"
+                                    class="bg-primary hover:bg-primary/90 text-white font-label-md rounded-xl transition-all flex items-center justify-center shadow-[0_4px_12px_rgb(34,113,231,0.25)] hover:shadow-[0_6px_16px_rgb(34,113,231,0.35)] hover:-translate-y-0.5 ml-2">
                                     <span class="material-symbols-outlined text-[20px]">refresh</span>
                                 </button>
                             </div>
@@ -516,6 +637,9 @@
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+                        <div id="kasirPagination" class="flex justify-center items-center py-4 gap-2 border-t border-outline-variant bg-surface-container-lowest">
+                            <!-- Pagination buttons will be injected here -->
                         </div>
                     </div>
                 </main>
@@ -607,7 +731,7 @@
                         <div
                             class="px-6 py-4 border-b border-outline-variant bg-surface-container-low flex justify-between items-center">
                             <h3 class="font-headline-sm font-semibold text-on-surface">Riwayat Log Pemotongan Sesi</h3>
-                            <button
+                            <button onclick="exportAuditCSV()"
                                 class="text-primary hover:text-on-primary-fixed-variant font-label-sm flex items-center gap-1 transition">
                                 <span class="material-symbols-outlined text-[18px]">download</span> Export CSV
                             </button>
@@ -723,7 +847,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=5"></script>
+    <script src="app.js?v=7"></script>
 </body>
 
 </html>

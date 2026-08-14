@@ -25,7 +25,8 @@ const views = {
     'erm': document.getElementById('view-erm'),
     'kasir': document.getElementById('view-kasir'),
     'master': document.getElementById('view-master'),
-    'audit': document.getElementById('view-audit')
+    'audit': document.getElementById('view-audit'),
+    'pasien': document.getElementById('view-pasien')
 };
 
 // Menus
@@ -33,7 +34,8 @@ const menus = {
     'erm': document.getElementById('menu-erm'),
     'kasir': document.getElementById('menu-kasir'),
     'master': document.getElementById('menu-master'),
-    'audit': document.getElementById('menu-audit')
+    'audit': document.getElementById('menu-audit'),
+    'pasien': document.getElementById('menu-pasien')
 };
 
 // Initialization
@@ -126,22 +128,25 @@ function setupRoleAccess() {
     const role = currentUser.role;
     
     // Reset all menus to hidden first
-    Object.values(menus).forEach(m => m.style.display = 'none');
+    Object.values(menus).forEach(m => { if(m) m.style.display = 'none'; });
 
     let defaultView = 'erm';
 
     if (role === 'admin') {
-        Object.values(menus).forEach(m => m.style.display = 'flex');
+        Object.values(menus).forEach(m => { if(m) m.style.display = 'flex'; });
         defaultView = 'erm';
     } else if (role === 'kasir') {
         menus['kasir'].style.display = 'flex';
         menus['erm'].style.display = 'flex'; // Kasir butuh lihat sisa sesi
+        menus['pasien'].style.display = 'flex';
         defaultView = 'kasir';
     } else if (role === 'manajemen') {
         menus['audit'].style.display = 'flex';
+        menus['pasien'].style.display = 'flex';
         defaultView = 'audit';
     } else if (role === 'erm') {
         menus['erm'].style.display = 'flex';
+        menus['pasien'].style.display = 'flex';
         defaultView = 'erm';
     }
 
@@ -370,6 +375,13 @@ window.openModal = function(record) {
 }
 
 confirmUseBtn.addEventListener('click', () => {
+    const modalNoKunjungan = document.getElementById('modalNoKunjungan');
+    
+    if(!modalNoKunjungan.value.trim()) {
+        alert("No. Register Kunjungan wajib diisi!");
+        return;
+    }
+
     if(!activeKapasitasData) return;
     
     confirmUseBtn.disabled = true;
@@ -382,7 +394,7 @@ confirmUseBtn.addEventListener('click', () => {
     const payload = {
         id_kapasitas: activeKapasitasData.id,
         sisa_saat_ini: activeKapasitasData.sisa,
-        id_tindakan: 1, 
+        id_tindakan: null, 
         no_erm: activeKapasitasData.no_erm,
         no_register_kunjungan: modalNoKunjungan.value.trim() || 'REG-AUTO',
         tanggal_paket: localISOTime,
@@ -413,7 +425,7 @@ confirmUseBtn.addEventListener('click', () => {
 // --- KASIR MODULE LOGIC ---
 const tableKasirHistory = document.getElementById('tableKasirHistory');
 
-function loadKasirHistory() {
+function loadKasirHistory(page = 1) {
     if(!tableKasirHistory) return;
     
     tableKasirHistory.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-on-surface-variant"><span class="material-symbols-outlined spin">progress_activity</span> Memuat data...</td></tr>';
@@ -422,10 +434,13 @@ function loadKasirHistory() {
     const fNamaText = document.getElementById('filterNamaText') ? document.getElementById('filterNamaText').value : '';
     const fStatus = document.getElementById('filterStatusDropdown') ? document.getElementById('filterStatusDropdown').value : '';
 
-    apiFetch(`${API_BASE}/kasir?action=history&nama_drop=${encodeURIComponent(fNamaDrop)}&nama_text=${encodeURIComponent(fNamaText)}&status=${encodeURIComponent(fStatus)}`)
+    apiFetch(`${API_BASE}/kasir?action=history&nama_drop=${encodeURIComponent(fNamaDrop)}&nama_text=${encodeURIComponent(fNamaText)}&status=${encodeURIComponent(fStatus)}&page=${page}`)
         .then(res => res.json())
         .then(data => {
             tableKasirHistory.innerHTML = '';
+            const paginationContainer = document.getElementById('kasirPagination');
+            if (paginationContainer) paginationContainer.innerHTML = '';
+
             if(data.records && data.records.length > 0) {
                 data.records.forEach(r => {
                     const tgl = new Date(r.tanggal_transaksi).toLocaleDateString('id-ID', {day: '2-digit', month: 'short', year: 'numeric'});
@@ -449,6 +464,28 @@ function loadKasirHistory() {
                         </tr>
                     `;
                 });
+
+                // Render Pagination
+                if (data.total_pages > 1 && paginationContainer) {
+                    let pagHtml = `<span class="text-sm text-on-surface-variant mr-4">Total: ${data.total_records} data (Hal ${data.current_page} / ${data.total_pages})</span>`;
+                    
+                    // Prev Button
+                    if (data.current_page > 1) {
+                        pagHtml += `<button onclick="loadKasirHistory(${data.current_page - 1})" class="px-3 py-1 rounded border border-outline-variant hover:bg-surface-container-high transition text-sm">Prev</button>`;
+                    } else {
+                        pagHtml += `<button disabled class="px-3 py-1 rounded border border-outline-variant/50 text-outline-variant cursor-not-allowed text-sm">Prev</button>`;
+                    }
+
+                    // Next Button
+                    if (data.current_page < data.total_pages) {
+                        pagHtml += `<button onclick="loadKasirHistory(${data.current_page + 1})" class="px-3 py-1 rounded border border-outline-variant hover:bg-surface-container-high transition text-sm">Next</button>`;
+                    } else {
+                        pagHtml += `<button disabled class="px-3 py-1 rounded border border-outline-variant/50 text-outline-variant cursor-not-allowed text-sm">Next</button>`;
+                    }
+
+                    paginationContainer.innerHTML = pagHtml;
+                }
+
             } else if (data.message) {
                 tableKasirHistory.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-error"><strong>Pesan Server:</strong> ${data.message}</td></tr>`;
             } else {
@@ -675,6 +712,133 @@ window.switchView = function(viewKey) {
     if(viewKey === 'audit' && currentUser && (currentUser.role === 'admin' || currentUser.role === 'manajemen')) {
         loadAuditData();
     }
+    if(viewKey === 'pasien' && currentUser) {
+        loadPasienMaster();
+    }
+}
+
+// --- PASIEN MODULE LOGIC ---
+const tablePasienMaster = document.getElementById('tablePasienMaster');
+const tablePasienDetail = document.getElementById('tablePasienDetail');
+
+window.loadPasienMaster = function() {
+    if(!tablePasienMaster) return;
+
+    apiFetch(`${API_BASE}/pasien?action=all_kapasitas`)
+        .then(res => res.json())
+        .then(data => {
+            tablePasienMaster.innerHTML = '';
+            // Reset detail
+            if(tablePasienDetail) {
+                tablePasienDetail.innerHTML = `<tr><td colspan="3" class="text-center py-8 text-on-surface-variant italic">Pilih salah satu pasien di tabel sebelah kiri untuk melihat detail.</td></tr>`;
+            }
+
+            if(data && data.records && data.records.length > 0) {
+                data.records.forEach(kap => {
+                    const statusClass = kap.status === 'Aktif' || kap.status === 'AKTIF' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
+                    const row = document.createElement('tr');
+                    row.className = 'hover:bg-surface-container-lowest transition-colors cursor-pointer';
+                    row.onclick = () => {
+                        // Highlight selected row
+                        Array.from(tablePasienMaster.children).forEach(c => c.classList.remove('bg-surface-container-highest'));
+                        row.classList.add('bg-surface-container-highest');
+                        loadPasienDetail(kap.id);
+                    };
+
+                    row.innerHTML = `
+                        <td class="px-6 py-4 text-xs font-mono-data">${new Date(kap.tanggal_beli).toLocaleDateString('id-ID')}</td>
+                        <td class="px-6 py-4">
+                            <div class="font-bold text-primary">${kap.no_erm}</div>
+                            <div class="text-xs text-on-surface-variant">${kap.nama_pasien}</div>
+                        </td>
+                        <td class="px-6 py-4">${kap.nama_paket}</td>
+                        <td class="px-6 py-4 font-bold ${kap.sisa > 0 ? 'text-primary' : 'text-error'}">${kap.sisa} / ${kap.total_sesi}</td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 rounded text-xs ${statusClass}">${kap.status}</span>
+                        </td>
+                    `;
+                    tablePasienMaster.appendChild(row);
+                });
+            } else {
+                tablePasienMaster.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-on-surface-variant italic">Tidak ada data pasien yang memiliki paket.</td></tr>';
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            tablePasienMaster.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-error">Gagal memuat data pasien.</td></tr>';
+        });
+};
+
+window.loadPasienDetail = function(id_kapasitas) {
+    if(!tablePasienDetail) return;
+    
+    tablePasienDetail.innerHTML = '<tr><td colspan="3" class="text-center py-4">Memuat data...</td></tr>';
+    
+    apiFetch(`${API_BASE}/pasien?action=riwayat_by_kapasitas&id_kapasitas=${id_kapasitas}`)
+        .then(res => res.json())
+        .then(data => {
+            tablePasienDetail.innerHTML = '';
+            if(data && data.records && data.records.length > 0) {
+                data.records.forEach(log => {
+                    tablePasienDetail.innerHTML += `
+                        <tr class="hover:bg-surface-container-lowest transition-colors">
+                            <td class="px-6 py-4 font-bold text-primary">Sesi ${log.sesi_ke}</td>
+                            <td class="px-6 py-4 font-mono-data text-xs">${new Date(log.tanggal_paket).toLocaleString('id-ID')}</td>
+                            <td class="px-6 py-4">${log.nama_tindakan}</td>
+                        </tr>
+                    `;
+                });
+            } else {
+                tablePasienDetail.innerHTML = '<tr><td colspan="3" class="text-center py-4 text-on-surface-variant italic">Belum ada pemakaian sesi untuk paket ini.</td></tr>';
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            tablePasienDetail.innerHTML = '<tr><td colspan="3" class="text-center py-4 text-error">Gagal memuat riwayat pemakaian.</td></tr>';
+        });
+};
+
+
+function exportAuditCSV() {
+    apiFetch(`${API_BASE}/audit?action=logs`)
+        .then(res => res.json())
+        .then(data => {
+            if(!data || data.length === 0) {
+                alert('Tidak ada data untuk diexport.');
+                return;
+            }
+
+            // Create CSV headers
+            let csvContent = "Tanggal,No ERM,No Register,Nama Paket,Sesi Ke,Nama Tindakan\n";
+
+            data.forEach(log => {
+                // Escape fields with quotes if they contain commas
+                const escapeCsv = (str) => `"${(str || '').toString().replace(/"/g, '""')}"`;
+                
+                const row = [
+                    escapeCsv(log.tanggal_paket),
+                    escapeCsv(log.no_erm),
+                    escapeCsv(log.no_register_kunjungan),
+                    escapeCsv(log.nama_paket),
+                    escapeCsv(log.sesi_ke),
+                    escapeCsv(log.nama_tindakan)
+                ];
+                csvContent += row.join(",") + "\n";
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", `audit_log_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Gagal mengekspor data.');
+        });
 }
 
 // --- NOTIFICATIONS LOGIC ---

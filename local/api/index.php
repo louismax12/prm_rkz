@@ -90,6 +90,10 @@ if ($endpoint === 'auth') {
         $controller->getKapasitasAktif();
     } elseif ($requestMethod == 'GET' && $action == 'riwayat_sesi') {
         $controller->getRiwayatSesi();
+    } elseif ($requestMethod == 'GET' && $action == 'all_kapasitas') {
+        $controller->getAllKapasitas();
+    } elseif ($requestMethod == 'GET' && $action == 'riwayat_by_kapasitas') {
+        $controller->getRiwayatByKapasitas();
     } elseif ($requestMethod == 'POST' && $action == 'gunakan_sesi') {
         // Cek Role (Kasir dan Admin boleh memotong sesi)
         if(in_array($userPayload['role'], ['admin', 'erm', 'kasir'])) {

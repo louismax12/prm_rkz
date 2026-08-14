@@ -77,7 +77,7 @@ class PasienController {
                 $riwayat_item = array(
                     "id" => $id,
                     "id_kapasitas" => $id_kapasitas,
-                    "nama_tindakan" => isset($nama_tindakan) ? $nama_tindakan : 'Terapi',
+                    "nama_tindakan" => isset($nama_tindakan) ? $nama_tindakan : (isset($nama_paket) ? $nama_paket : 'Terapi'),
                     "no_register_kunjungan" => $no_register_kunjungan,
                     "tanggal_paket" => $tanggal_paket,
                     "sesi_ke" => $sesi_ke
@@ -146,6 +146,78 @@ class PasienController {
         } else {
             http_response_code(400);
             echo json_encode(array("message" => "Data tidak lengkap. Gagal memproses sesi."));
+        }
+    }
+
+    // Endpoint GET: Mendapatkan seluruh kapasitas (master) untuk Menu Pasien
+    public function getAllKapasitas() {
+        $stmt = $this->kapasitas->getAll();
+        $num = $stmt->rowCount();
+
+        if($num > 0){
+            $kapasitas_arr = array();
+            $kapasitas_arr["records"] = array();
+
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                extract($row);
+                $kapasitas_item = array(
+                    "id" => $id,
+                    "no_erm" => $no_erm,
+                    "nama_pasien" => isset($nama_pasien) ? $nama_pasien : 'Tidak diketahui',
+                    "nomor_register" => $nomor_register,
+                    "id_paket" => $id_paket,
+                    "nama_paket" => isset($nama_paket) ? $nama_paket : '',
+                    "total_sesi" => isset($total_sesi) ? $total_sesi : 0,
+                    "sisa" => $sisa,
+                    "tanggal_beli" => $tanggal_beli,
+                    "tanggal_expired" => $tanggal_expired,
+                    "status" => $status
+                );
+                array_push($kapasitas_arr["records"], $kapasitas_item);
+            }
+
+            http_response_code(200);
+            echo json_encode($kapasitas_arr);
+        } else {
+            http_response_code(200);
+            echo json_encode(array("records" => []));
+        }
+    }
+
+    // Endpoint GET: Mendapatkan riwayat catatan berdasarkan id_kapasitas
+    public function getRiwayatByKapasitas() {
+        if (!isset($_GET['id_kapasitas'])) {
+            http_response_code(400);
+            echo json_encode(array("message" => "Parameter id_kapasitas tidak ditemukan."));
+            return;
+        }
+
+        $id_kapasitas = $_GET['id_kapasitas'];
+        $stmt = $this->catatan->getByKapasitas($id_kapasitas);
+        $num = $stmt->rowCount();
+
+        if($num > 0){
+            $riwayat_arr = array();
+            $riwayat_arr["records"] = array();
+
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                extract($row);
+                $riwayat_item = array(
+                    "id" => $id,
+                    "id_kapasitas" => $id_kapasitas,
+                    "nama_tindakan" => isset($nama_tindakan) ? $nama_tindakan : (isset($nama_paket) ? $nama_paket : 'Terapi'),
+                    "no_register_kunjungan" => $no_register_kunjungan,
+                    "tanggal_paket" => $tanggal_paket,
+                    "sesi_ke" => $sesi_ke
+                );
+                array_push($riwayat_arr["records"], $riwayat_item);
+            }
+
+            http_response_code(200);
+            echo json_encode($riwayat_arr);
+        } else {
+            http_response_code(200);
+            echo json_encode(array("records" => []));
         }
     }
 }

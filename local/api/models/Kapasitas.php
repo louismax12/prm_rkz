@@ -60,6 +60,20 @@ class Kapasitas {
         return $stmt;
     }
 
+    // Ambil seluruh kapasitas (untuk Menu Pasien)
+    function getAll(){
+        $query = "SELECT k.*, p.nama as nama_paket, p.total_sesi,
+                         (SELECT FCRNAMA FROM dbold.fisiosfjual WHERE FCRDOKTER = k.no_erm LIMIT 1) as nama_pasien
+                  FROM " . $this->table_name . " k
+                  LEFT JOIN prm_master_paket p ON k.id_paket = p.id
+                  ORDER BY k.tanggal_beli DESC";
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        
+        return $stmt;
+    }
+
     // Kurangi sisa sesi
     function updateSisa(){
         $query = "UPDATE " . $this->table_name . " SET sisa = :sisa, status = :status WHERE id = :id";

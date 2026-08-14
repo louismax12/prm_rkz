@@ -49,13 +49,31 @@ class Catatan {
 
     // Ambil histori catatan berdasarkan no_erm
     function getHistoryByErm($no_erm){
-        $query = "SELECT c.*, t.nama_tindakan 
+        $query = "SELECT c.*, t.nama_tindakan, p.nama as nama_paket 
                   FROM " . $this->table_name . " c
                   LEFT JOIN prm_master_tindakan t ON c.id_tindakan = t.id
+                  LEFT JOIN prm_kapasitas k ON c.id_kapasitas = k.id
+                  LEFT JOIN prm_master_paket p ON k.id_paket = p.id
                   WHERE c.no_erm = ? ORDER BY c.tanggal_paket DESC";
         
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1, $no_erm);
+        $stmt->execute();
+        
+        return $stmt;
+    }
+
+    // Ambil histori catatan berdasarkan id_kapasitas
+    function getByKapasitas($id_kapasitas){
+        $query = "SELECT c.*, t.nama_tindakan, p.nama as nama_paket 
+                  FROM " . $this->table_name . " c
+                  LEFT JOIN prm_master_tindakan t ON c.id_tindakan = t.id
+                  LEFT JOIN prm_kapasitas k ON c.id_kapasitas = k.id
+                  LEFT JOIN prm_master_paket p ON k.id_paket = p.id
+                  WHERE c.id_kapasitas = ? ORDER BY c.tanggal_paket DESC";
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(1, $id_kapasitas);
         $stmt->execute();
         
         return $stmt;
