@@ -376,9 +376,15 @@ window.openModal = function(record) {
 
 confirmUseBtn.addEventListener('click', () => {
     const modalNoKunjungan = document.getElementById('modalNoKunjungan');
+    const modalTindakanDropdown = document.getElementById('modalTindakanDropdown');
     
     if(!modalNoKunjungan.value.trim()) {
         alert("No. Register Kunjungan wajib diisi!");
+        return;
+    }
+    
+    if(!modalTindakanDropdown.value) {
+        alert("Pilih tindakan wajib diisi!");
         return;
     }
 
@@ -394,7 +400,7 @@ confirmUseBtn.addEventListener('click', () => {
     const payload = {
         id_kapasitas: activeKapasitasData.id,
         sisa_saat_ini: activeKapasitasData.sisa,
-        id_tindakan: null, 
+        id_tindakan: document.getElementById('modalTindakanDropdown').value, 
         no_erm: activeKapasitasData.no_erm,
         no_register_kunjungan: modalNoKunjungan.value.trim() || 'REG-AUTO',
         tanggal_paket: localISOTime,
@@ -715,6 +721,29 @@ window.switchView = function(viewKey) {
     if(viewKey === 'pasien' && currentUser) {
         loadPasienMaster();
     }
+    if(viewKey === 'erm' && currentUser) {
+        loadTindakanDropdown();
+    }
+}
+
+window.loadTindakanDropdown = function() {
+    const dropdown = document.getElementById('modalTindakanDropdown');
+    if (!dropdown) return;
+    
+    apiFetch(`${API_BASE}/tindakan`)
+        .then(res => res.json())
+        .then(data => {
+            dropdown.innerHTML = '<option value="" disabled selected>Pilih Tindakan...</option>';
+            if (data.records && data.records.length > 0) {
+                data.records.forEach(t => {
+                    dropdown.innerHTML += `<option value="${t.id}">${t.kode_tindakan} - ${t.nama_tindakan}</option>`;
+                });
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            dropdown.innerHTML = '<option value="" disabled selected>Gagal memuat tindakan...</option>';
+        });
 }
 
 // --- PASIEN MODULE LOGIC ---

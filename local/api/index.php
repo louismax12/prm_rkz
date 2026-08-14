@@ -141,6 +141,17 @@ if ($endpoint === 'auth') {
         http_response_code(405);
         echo json_encode(array("message" => "Metode $requestMethod tidak diizinkan."));
     }
+} elseif ($endpoint === 'tindakan') {
+    include_once 'controllers/TindakanController.php';
+    $controller = new TindakanController();
+    $requestMethod = $_SERVER["REQUEST_METHOD"];
+
+    if ($requestMethod == 'GET') {
+        $controller->readAll();
+    } else {
+        http_response_code(405);
+        echo json_encode(array("message" => "Method Not Allowed"));
+    }
 } elseif ($endpoint === 'master') {
     if(in_array($userPayload['role'], ['admin'])) {
         include_once 'controllers/MasterController.php';
