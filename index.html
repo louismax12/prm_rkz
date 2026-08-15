@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>PRM RKZ - Pelayanan</title>
+    <!-- CSS Tailwind Lokal Hasil Build -->
+    <link href="assets/css/tailwind.css" rel="stylesheet" />
+    <!-- Font dan Icon Lokal -->
+    <link href="node_modules/@fontsource/plus-jakarta-sans/index.css" rel="stylesheet" />
+    <link href="node_modules/material-symbols/index.css" rel="stylesheet" />
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1;
+        }
+
+        .spin {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-background text-on-background font-body-md min-h-screen flex antialiased">
+
+    <!-- ============================================== -->
+    <!-- VIEW: LOGIN                                    -->
+    <!-- ============================================== -->
+    <div id="view-login"
+        class="flex items-center justify-center min-h-screen w-full bg-surface-container-lowest absolute inset-0 z-[100] p-4">
+        <!-- Main Card Container -->
+        <div
+            class="flex flex-col md:flex-row w-full max-w-[1000px] min-h-[600px] bg-surface-container-lowest rounded-2xl shadow-xl border border-outline-variant overflow-hidden">
+
+            <!-- Left Side: Illustration & Branding -->
+            <div class="hidden md:flex flex-col w-1/2 bg-surface-container-low p-10 relative overflow-hidden">
+                <!-- Branding -->
+                <div class="relative z-10 flex flex-col gap-4 h-full">
+                    <img src="img/logo_rkz.png" alt="Logo RKZ"
+                        class="h-16 w-auto object-contain self-start drop-shadow-md">
+                    <h1 class="text-display-sm font-bold text-primary tracking-tight">PRM RKZ</h1>
+                    <p class="text-white mt-auto font-body-md leading-relaxed max-w-sm drop-shadow-md">
+                        Sistem Manajemen Rehabilitasi Medis Terintegrasi. Mengutamakan presisi klinis dan keamanan data
+                        pasien.
+                    </p>
+                </div>
+                <!-- Illustration -->
+                <div class="absolute bottom-0 left-0 right-0 top-0 flex items-end justify-center pointer-events-none">
+                    <img src="img/login_bg.png" alt="Rehabilitasi Medis"
+                        class="w-full h-full object-cover opacity-90 mix-blend-multiply" />
+                    <!-- Gradient overlay supaya teks putih di bawah tetap terbaca (opsional, disesuaikan agar gelap di bawah) -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                </div>
+            </div>
+
+            <!-- Right Side: Login Form -->
+            <div class="flex flex-col justify-center w-full md:w-1/2 p-10 lg:p-14 relative z-10">
+                <!-- <div class="flex items-center gap-3 mb-2">
+                    <span class="material-symbols-outlined text-primary text-[32px]">lock</span>
+                    <h2 class="text-headline-md font-bold text-on-surface">Secure Gateway</h2>
+                </div>
+                <p class="text-on-surface-variant font-body-sm mb-8">Silakan masuk menggunakan kredensial Enterprise Anda.</p> -->
+
+                <form id="loginForm" class="flex flex-col gap-5">
+                    <!-- <div>
+                        <label class="block font-label-md text-on-surface mb-2">Pilih Peran Akses</label>
+                        <div class="relative">
+                            <select class="w-full rounded-lg border border-outline-variant bg-surface px-4 py-3 pr-10 font-body-md text-on-surface focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary appearance-none cursor-pointer">
+                                <option value="admin">Administrator</option>
+                                <option value="kasir">Kasir</option>
+                                <option value="manajemen">Manajemen</option>
+                                <option value="erm">Perawat ERM</option>
+                            </select>
+                            <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[20px]">expand_more</span>
+                        </div>
+                    </div> -->
+
+                    <div>
+                        <label class="block font-label-md text-on-surface mb-2">Nomor Induk Karyawan / NIP</label>
+                        <div class="relative">
+                            <span
+                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">badge</span>
+                            <input type="text" id="loginUsername" required
+                                class="w-full rounded-lg border border-outline-variant bg-surface py-3 pl-10 pr-4 font-body-md text-on-surface focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary placeholder-on-surface-variant"
+                                placeholder="Contoh: 12345678">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block font-label-md text-on-surface mb-2">Kata Sandi</label>
+                        <div class="relative">
+                            <span
+                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">vpn_key</span>
+                            <input type="password" id="loginPassword" required
+                                class="w-full rounded-lg border border-outline-variant bg-surface py-3 pl-10 pr-10 font-body-md text-on-surface focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary placeholder-on-surface-variant"
+                                placeholder="Masukkan kata sandi">
+                            <button type="button"
+                                onclick="const p = document.getElementById('loginPassword'); const i = this.querySelector('span'); if(p.type==='password'){p.type='text';i.textContent='visibility';}else{p.type='password';i.textContent='visibility_off';}"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface focus:outline-none flex items-center justify-center">
+                                <span class="material-symbols-outlined text-[20px]">visibility_off</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="loginMessage"
+                        class="hidden rounded-lg bg-error-container p-3 font-body-sm text-on-error-container border border-error text-center font-medium">
+                    </div>
+
+                    <button type="submit" id="btnLogin"
+                        class="mt-2 w-full rounded-lg bg-primary hover:bg-on-primary-fixed-variant py-3.5 font-label-md text-on-primary shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors flex items-center justify-center">
+                        <span id="loginText" class="flex items-center gap-2">
+                            Masuk Sistem
+                            <span class="material-symbols-outlined text-[18px]">login</span>
+                        </span>
+                        <span id="loginLoader" class=""> </span>
+                    </button>
+                </form>
+
+                <!-- <div class="mt-8 flex justify-center">
+                    <a href="#"
+                        class="flex items-center gap-1.5 font-label-sm text-primary hover:text-on-primary-fixed-variant font-medium">
+                        <span class="material-symbols-outlined text-[16px]">help</span>
+                        Lupa Password / Hubungi IT Helpdesk
+                    </a>
+                </div> -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- APP LAYOUT                                     -->
+    <!-- ============================================== -->
+    <div id="app-layout" class="hidden flex-1 flex flex-col w-full h-screen overflow-hidden">
+
+        <!-- SIDEBAR -->
+        <nav
+            class="fixed left-0 top-0 h-full w-[240px] bg-surface-container-low border-r border-outline-variant flex flex-col justify-between py-6 z-50">
+            <div class="px-gutter flex flex-col gap-8">
+                <!-- Brand -->
+                <div class="flex items-center gap-3">
+                    <div class="brand-logo-wrap">
+                        <img src="img/logo.svg" alt="Logo RKZ" class="brand-logo-img"
+                            style="height: 40px; width: auto; max-width: 100%;">
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <h4 class="m-0 font-bold" style="color: #2271e7; font-size: 20px; line-height: 1;">PRM RKZ</h4>
+                        <h6 class="m-0 mt-1"
+                            style="color: rgba(36, 149, 241, 0.7); font-size: 11px; letter-spacing: 0.5px; font-weight: 600;">
+                            Clinical Management</h6>
+                    </div>
+                </div>
+                <!-- Navigation Links -->
+                <ul class="flex flex-col gap-1">
+                    <li>
+                        <a href="#" id="menu-erm" data-target="view-erm"
+                            class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors">
+                            <span class="material-symbols-outlined">medical_services</span>
+                            <span class="font-label-md">Pelayanan (ERM)</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="menu-kasir" data-target="view-kasir"
+                            class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors">
+                            <span class="material-symbols-outlined">payments</span>
+                            <span class="font-label-md">Kasir / Pembelian</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="menu-master" data-target="view-master"
+                            class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors">
+                            <span class="material-symbols-outlined">database</span>
+                            <span class="font-label-md">Master Data</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="menu-audit" data-target="view-audit"
+                            class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors">
+                            <span class="material-symbols-outlined">analytics</span>
+                            <span class="font-label-md">Laporan & Audit</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Footer Actions -->
+            <div class="px-gutter pt-4 border-t border-outline-variant mt-auto">
+                <ul class="flex flex-col gap-1">
+                    <li>
+                        <div
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg bg-surface-container-lowest border border-outline-variant mb-2">
+                            <div id="userInitial"
+                                class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold font-label-md">
+                                A
+                            </div>
+                            <div class="flex flex-col overflow-hidden">
+                                <span id="userName" class="font-label-md text-on-surface truncate">Admin</span>
+                                <span id="userRole" class="font-label-sm text-on-surface-variant truncate">ADMIN</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <button id="btnLogout"
+                            class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors text-left">
+                            <span class="material-symbols-outlined text-error">logout</span>
+                            <span class="font-label-md text-error">Logout</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- MAIN CONTENT WRAPPER -->
+        <div class="ml-[240px] flex-1 flex flex-col h-full overflow-hidden">
+            <!-- TopAppBar -->
+            <header
+                class="h-16 shrink-0 bg-surface border-b border-outline-variant flex justify-end items-center px-gutter z-40">
+                <div class="flex items-center gap-4 relative">
+
+                    <!-- NOTIFICATIONS -->
+                    <div class="relative">
+                        <button id="btnHeaderNotif"
+                            class="w-10 h-10 rounded-full hover:bg-surface-container-lowest transition-all flex items-center justify-center text-on-surface-variant relative focus:outline-none">
+                            <span class="material-symbols-outlined">notifications</span>
+                            <span id="notifBadge"
+                                class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full animate-pulse hidden"></span>
+                        </button>
+                        <!-- Notif Dropdown -->
+                        <div id="dropdownNotif"
+                            class="absolute right-0 mt-2 w-80 bg-white/90 backdrop-blur-xl border border-outline-variant/30 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] opacity-0 pointer-events-none transition-all transform origin-top-right scale-95 z-50 overflow-hidden flex flex-col">
+                            <div
+                                class="p-4 border-b border-outline-variant/20 flex justify-between items-center bg-surface-container-lowest/50">
+                                <h4 class="font-bold text-on-surface text-[15px]">Notifikasi</h4>
+                                <button id="btnReadNotif"
+                                    class="text-primary text-[12px] font-semibold hover:underline">Tandai sudah
+                                    dibaca</button>
+                            </div>
+                            <div id="notifContainer" class="max-h-[300px] overflow-y-auto p-2 flex flex-col gap-1">
+                                <!-- Data notifikasi diisi oleh app.js -->
+                            </div>
+                            <div class="p-3 border-t border-outline-variant/20 text-center">
+                                <button class="text-[13px] font-semibold text-primary hover:underline">Lihat Semua
+                                    Notifikasi</button>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="h-8 w-px bg-outline-variant mx-2"></div>
+
+                    <!-- PROFILE -->
+                    <div class="relative">
+                        <button id="btnHeaderProfile"
+                            class="w-8 h-8 rounded-full border border-outline-variant bg-primary text-white flex items-center justify-center font-bold text-[14px] focus:outline-none hover:ring-2 hover:ring-primary/30 transition-all cursor-pointer">
+                            A
+                        </button>
+                        <!-- Profile Dropdown -->
+                        <div id="dropdownProfile"
+                            class="absolute right-0 mt-2 w-56 bg-white/90 backdrop-blur-xl border border-outline-variant/30 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] opacity-0 pointer-events-none transition-all transform origin-top-right scale-95 z-50 p-2">
+                            <div class="p-3 mb-2 flex items-center gap-3 border-b border-outline-variant/20">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-primary-container text-primary flex items-center justify-center font-bold text-[16px]">
+                                    A</div>
+                                <div class="flex flex-col">
+                                    <span class="font-bold text-on-surface text-[14px] truncate"
+                                        id="headerProfileName">Admin</span>
+                                    <span
+                                        class="text-[11px] text-on-surface-variant uppercase font-medium">Administrator</span>
+                                </div>
+                            </div>
+                            <!-- <button
+                                class="w-full flex items-center gap-3 p-3 hover:bg-surface-container-lowest rounded-xl transition-colors text-left text-on-surface">
+                                <span class="material-symbols-outlined text-[20px]">manage_accounts</span>
+                                <span class="font-medium text-[13px]">Edit Profil</span>
+                            </button> -->
+                            <button id="btnHeaderLogout"
+                                class="w-full flex items-center gap-3 p-3 hover:bg-error-container rounded-xl transition-colors text-left text-error group mt-1">
+                                <span class="material-symbols-outlined text-[20px] group-hover:text-error">logout</span>
+                                <span class="font-medium text-[13px] group-hover:text-error">Keluar Sistem</span>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </header>
+
+            <!-- SCROLLABLE VIEWS CONTAINER -->
+            <div class="flex-1 overflow-y-auto bg-background">
+                <!-- VIEW: ERM -->
+                <main id="view-erm"
+                    class="view-section py-margin-page px-margin-page flex flex-col gap-8 max-w-[1400px] mx-auto w-full">
+                    <!-- Page Header Section -->
+                    <section class="flex flex-col gap-stack-compact">
+                        <h2 class="font-headline-md font-bold text-on-surface">Pelayanan Rehabilitasi Medis</h2>
+                        <p class="font-body-md text-on-surface-variant">Cari pasien berdasarkan Nomor ERM untuk memotong
+                            sesi paket.</p>
+                    </section>
+
+                    <!-- Search Area -->
+                    <section
+                        class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm w-full max-w-2xl">
+                        <form id="searchForm">
+                            <label class="block font-label-md text-on-surface mb-stack-dense" for="noErmInput">Nomor
+                                Rekam Medis Elektronik (ERM)</label>
+                            <div class="flex gap-4">
+                                <div class="relative flex-1">
+                                    <div
+                                        class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-on-surface-variant">
+                                        <span class="material-symbols-outlined">search</span>
+                                    </div>
+                                    <input type="text" id="noErmInput" required
+                                        class="block w-full pl-10 pr-3 py-3 border border-outline-variant rounded-lg bg-surface text-on-surface font-body-md focus:ring-2 focus:ring-primary focus:border-primary placeholder-on-surface-variant/50 transition-shadow"
+                                        placeholder="Nomor ERM (cth: ERM001)">
+                                </div>
+                                <button type="submit" id="btnSearch"
+                                    class="bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-label-md px-6 py-3 rounded-lg shadow-sm transition-colors flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-[20px]">manage_search</span> Cari
+                                </button>
+                            </div>
+                        </form>
+                        <div class="mt-4 flex gap-2 flex-wrap">
+                            <span class="font-label-sm text-on-surface-variant">Recent Searches:</span>
+                            <button
+                                class="font-label-sm px-2 py-1 bg-surface-container-low rounded hover:bg-surface-container transition-colors text-on-surface"
+                                onclick="document.getElementById('noErmInput').value='ERM001'">ERM001</button>
+                        </div>
+                    </section>
+
+                    <div id="messageContainer"
+                        class="hidden rounded-xl border border-outline-variant bg-surface-container-low p-4 text-center font-body-md text-on-surface-variant shadow-sm max-w-2xl">
+                    </div>
+
+                    <!-- Result Section -->
+                    <div id="resultSection" class="hidden flex-col gap-6">
+                        <!-- Patient Header -->
+                        <div
+                            class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="w-12 h-12 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-[28px]">person</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-headline-md font-bold text-on-surface" id="displayErm"></h3>
+                                    <p class="font-label-sm text-on-surface-variant">Pasien Rehabilitasi Medis</p>
+                                </div>
+                            </div>
+                            <div
+                                class="px-4 py-2 bg-surface-container-low rounded-lg font-label-md text-on-surface-variant border border-outline-variant">
+                                Status: Paket Aktif
+                            </div>
+                        </div>
+
+                        <!-- 2 Column Layout for Packages and History -->
+                        <div class="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-6">
+                            <!-- Left: Active Packages -->
+                            <div class="flex flex-col gap-4">
+                                <h3 class="font-headline-sm font-bold text-on-surface flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-primary">assignment</span> Paket Aktif
+                                </h3>
+                                <div id="cardsContainer" class="flex flex-col gap-4">
+                                    <!-- Dynamic cards injected here -->
+                                </div>
+                            </div>
+
+                            <!-- Right: History -->
+                            <div class="flex flex-col gap-4">
+                                <h3 class="font-headline-sm font-bold text-on-surface flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-primary">history</span> Riwayat Sesi
+                                    Terbaru
+                                </h3>
+                                <div
+                                    class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden flex flex-col h-full max-h-[500px]">
+                                    <div
+                                        class="flex px-4 py-3 bg-surface-container-low border-b border-outline-variant font-label-sm text-on-surface-variant uppercase">
+                                        <div class="w-1/3">Tanggal</div>
+                                        <div class="w-1/3">Tindakan</div>
+                                        <div class="w-1/3 text-right">Register</div>
+                                    </div>
+                                    <div id="historyContainer" class="overflow-y-auto flex-1 p-2 space-y-2">
+                                        <!-- Dynamic history injected here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+
+                <!-- VIEW: KASIR -->
+                <main id="view-kasir"
+                    class="view-section hidden py-margin-page px-margin-page flex flex-col gap-8 max-w-[1400px] mx-auto w-full">
+
+                    <section class="flex flex-col gap-stack-compact">
+                        <h2 class="font-headline-md font-bold text-on-surface">Riwayat Pembelian Paket</h2>
+                        <p class="font-body-md text-on-surface-variant">Daftar transaksi penjualan paket rehabilitasi
+                            medis dari sistem kasir utama.</p>
+                    </section>
+
+                    <!-- Main Data Container (Glassmorphism) -->
+                    <div
+                        class="bg-white/80 backdrop-blur-xl border border-white/40 rounded-2xl flex flex-col flex-1 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
+
+                        <!-- Filters Header -->
+                        <div
+                            class="p-6 border-b border-outline-variant/30 flex items-center justify-between flex-wrap gap-4 bg-surface-container-lowest/50">
+                            <div class="flex items-center gap-2">
+                                <div
+                                    class="w-10 h-10 rounded-lg bg-primary-container/50 flex items-center justify-center text-primary">
+                                    <span class="material-symbols-outlined">receipt_long</span>
+                                </div>
+                                <h3 class="font-title-lg font-bold text-on-surface">Data Transaksi</h3>
+                            </div>
+
+                            <div class="flex items-center gap-3">
+                                <!-- Filter Status -->
+                                <div class="relative w-full max-w-[200px]">
+                                    <span
+                                        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[18px] pointer-events-none">filter_list</span>
+                                    <select id="filterStatusDropdown" onchange="loadKasirHistory()"
+                                        class="w-full pl-10 pr-8 py-2.5 bg-white border border-outline-variant/50 rounded-xl font-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none cursor-pointer hover:border-primary/50 shadow-sm">
+                                        <option value="">Status: Semua</option>
+                                        <option value="1">Sudah Selesai</option>
+                                        <option value="0">Belum Selesai</option>
+                                    </select>
+                                    <span
+                                        class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[18px] pointer-events-none">expand_more</span>
+                                </div>
+
+                                <!-- Filter Kategori (Dropdown) -->
+                                <!-- <div class="relative w-full max-w-[200px]">
+                                    <span
+                                        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[18px] pointer-events-none">category</span>
+                                    <select id="filterNamaDropdown" onchange="loadKasirHistory()"
+                                        class="w-full pl-10 pr-8 py-2.5 bg-white border border-outline-variant/50 rounded-xl font-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none cursor-pointer hover:border-primary/50 shadow-sm">
+                                        <option value="">Kategori: Semua</option>
+                                        <option value="PAKET">Mengandung 'PAKET'</option>
+                                    </select>
+                                    <span
+                                        class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[18px] pointer-events-none">expand_more</span>
+                                </div> -->
+
+                                <!-- Filter Nama Bebas (Text Input) -->
+                                <div class="relative w-full max-w-[250px]">
+                                    <span
+                                        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[18px] pointer-events-none">search</span>
+                                    <input type="text" id="filterNamaText"
+                                        onkeyup="if(event.key === 'Enter') loadKasirHistory()"
+                                        placeholder="Cari paket.."
+                                        class="w-full pl-10 pr-4 py-2.5 bg-white border border-outline-variant/50 rounded-xl font-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm">
+                                </div>
+
+                                <!-- Save Button -->
+                                <button id="btnSimpanKasir" onclick="simpanProsesKasir()" disabled
+                                    class="bg-primary hover:bg-primary/90 disabled:bg-surface-variant disabled:text-on-surface-variant disabled:shadow-none disabled:cursor-not-allowed text-white font-label-md px-4 h-15 rounded-xl transition-all flex items-center justify-center shadow-sm ml-2 gap-2">
+                                    <span class="material-symbols-outlined text-[25px]">save</span>
+                                    <span>Simpan & Kunci</span>
+                                </button>
+
+                                <!-- Refresh Button -->
+                                <button onclick="loadKasirHistory()" style="width: 170px; height: 50px;"
+                                    class="bg-primary hover:bg-primary/90 text-white font-label-md rounded-xl transition-all flex items-center justify-center shadow-[0_4px_12px_rgb(34,113,231,0.25)] hover:shadow-[0_6px_16px_rgb(34,113,231,0.35)] hover:-translate-y-0.5 ml-2">
+                                    <span class="material-symbols-outlined text-[20px]">refresh</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Data Table -->
+                        <div class="overflow-x-auto flex-1">
+                            <table class="w-full text-left border-collapse">
+                                <thead
+                                    class="bg-surface-container-lowest/80 text-on-surface-variant font-label-sm border-b border-outline-variant/30 backdrop-blur-md sticky top-0 z-10">
+                                    <tr>
+                                        <th class="p-5 font-semibold whitespace-nowrap text-xs w-10">
+                                            <!-- Checkbox Header -->
+                                        </th>
+                                        <th
+                                            class="p-5 font-semibold whitespace-nowrap text-xs tracking-wider uppercase">
+                                            Tgl Transaksi</th>
+                                        <th
+                                            class="p-5 font-semibold whitespace-nowrap text-xs tracking-wider uppercase">
+                                            No Register</th>
+                                        <th
+                                            class="p-5 font-semibold whitespace-nowrap text-xs tracking-wider uppercase">
+                                            No ERM</th>
+                                        <th
+                                            class="p-5 font-semibold whitespace-nowrap text-xs tracking-wider uppercase">
+                                            Nama Pasien</th>
+                                        <th
+                                            class="p-5 font-semibold whitespace-nowrap text-xs tracking-wider uppercase">
+                                            Nama Paket</th>
+                                        <th
+                                            class="p-5 font-semibold whitespace-nowrap text-xs tracking-wider uppercase text-right">
+                                            Total Biaya (Rp)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableKasirHistory"
+                                    class="divide-y divide-outline-variant/20 font-body-sm text-on-surface">
+                                    <tr>
+                                        <td colspan="6" class="p-12 text-center text-on-surface-variant">
+                                            <div class="flex flex-col items-center justify-center gap-3">
+                                                <span
+                                                    class="material-symbols-outlined spin text-primary text-4xl opacity-50">progress_activity</span>
+                                                <p>Memuat data transaksi...</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </main>
+
+                <!-- VIEW: MASTER DATA -->
+                <main id="view-master"
+                    class="view-section hidden py-margin-page px-margin-page flex flex-col gap-8 max-w-[1400px] mx-auto w-full">
+                    <section class="flex items-center justify-between">
+                        <div class="flex flex-col gap-stack-compact">
+                            <h2 class="font-headline-md font-bold text-on-surface">Master Data Konfigurasi</h2>
+                            <p class="font-body-md text-on-surface-variant">Kelola data Master Paket dan Tindakan.</p>
+                        </div>
+                        <button id="btnTambahPaket"
+                            class="bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-label-md px-4 py-2 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm">
+                            <span class="material-symbols-outlined text-[20px]">add</span>
+                            <span>Tambah Paket</span>
+                        </button>
+                    </section>
+
+                    <div
+                        class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden flex-1">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left font-body-md text-on-surface">
+                                <thead
+                                    class="bg-surface-container-low font-label-sm uppercase text-on-surface-variant border-b border-outline-variant">
+                                    <tr>
+                                        <th class="px-6 py-4">Nama Paket</th>
+                                        <th class="px-6 py-4">Tipe</th>
+                                        <th class="px-6 py-4 text-center">Total Sesi</th>
+                                        <th class="px-6 py-4 text-center">Masa Berlaku (Hari)</th>
+                                        <th class="px-6 py-4 text-right">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableMasterPaket" class="divide-y divide-outline-variant">
+                                    <!-- Injected via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </main>
+
+                <!-- VIEW: AUDIT -->
+                <main id="view-audit"
+                    class="view-section hidden py-margin-page px-margin-page flex flex-col gap-8 max-w-[1400px] mx-auto w-full">
+                    <section class="flex flex-col gap-stack-compact">
+                        <h2 class="font-headline-md font-bold text-on-surface">Laporan & Audit Analytics</h2>
+                        <p class="font-body-md text-on-surface-variant">Ringkasan penggunaan sesi dan log aktivitas
+                            harian.</p>
+                    </section>
+
+                    <div class="grid gap-6 grid-cols-1 md:grid-cols-3">
+                        <div
+                            class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm flex items-center gap-4">
+                            <div
+                                class="w-12 h-12 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center">
+                                <span class="material-symbols-outlined text-[28px]">group</span>
+                            </div>
+                            <div>
+                                <p class="font-label-sm text-on-surface-variant">Total Pasien Aktif</p>
+                                <p id="auditTotalPasien" class="font-display-sm text-on-surface mt-1">0</p>
+                            </div>
+                        </div>
+                        <div
+                            class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm flex items-center gap-4">
+                            <div
+                                class="w-12 h-12 rounded-full bg-tertiary-container text-on-tertiary-container flex items-center justify-center">
+                                <span class="material-symbols-outlined text-[28px]">today</span>
+                            </div>
+                            <div>
+                                <p class="font-label-sm text-on-surface-variant">Sesi Dipotong Hari Ini</p>
+                                <p id="auditSesiHariIni" class="font-display-sm text-on-surface mt-1">0</p>
+                            </div>
+                        </div>
+                        <div
+                            class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm flex items-center gap-4">
+                            <div
+                                class="w-12 h-12 rounded-full bg-error-container text-on-error-container flex items-center justify-center">
+                                <span class="material-symbols-outlined text-[28px]">inventory_2</span>
+                            </div>
+                            <div>
+                                <p class="font-label-sm text-on-surface-variant">Total Sisa Sesi (Global)</p>
+                                <p id="auditSisaSesiGlobal" class="font-display-sm text-on-surface mt-1">0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden flex-1 flex flex-col">
+                        <div
+                            class="px-6 py-4 border-b border-outline-variant bg-surface-container-low flex justify-between items-center">
+                            <h3 class="font-headline-sm font-semibold text-on-surface">Riwayat Log Pemotongan Sesi</h3>
+                            <button onclick="exportAuditCSV()"
+                                class="text-primary hover:text-on-primary-fixed-variant font-label-sm flex items-center gap-1 transition">
+                                <span class="material-symbols-outlined text-[18px]">download</span> Export CSV
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left font-body-md text-on-surface">
+                                <thead
+                                    class="bg-surface-container-lowest font-label-sm uppercase text-on-surface-variant border-b border-outline-variant">
+                                    <tr>
+                                        <th class="px-6 py-4">Waktu</th>
+                                        <th class="px-6 py-4">ERM</th>
+                                        <th class="px-6 py-4">No. Register</th>
+                                        <th class="px-6 py-4">Paket (Sesi Ke)</th>
+                                        <th class="px-6 py-4">Tindakan</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableAuditLogs" class="divide-y divide-outline-variant">
+                                    <!-- Injected via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </main>
+            </div> <!-- End Scrollable Area -->
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL: GUNAKAN SESI                            -->
+    <!-- ============================================== -->
+    <div id="useSessionModal"
+        class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-on-surface/50 backdrop-blur-sm p-4">
+        <div
+            class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-xl w-full max-w-md flex flex-col gap-4">
+            <h3 class="font-headline-sm flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">play_circle</span> Konfirmasi Penggunaan Sesi
+            </h3>
+            <p class="font-body-md text-on-surface-variant">Anda akan memotong 1 sesi dari paket berikut:</p>
+            <div class="bg-surface-container-low p-4 rounded border border-outline-variant">
+                <strong id="modalPaketName" class="block font-headline-sm text-primary mb-2"></strong>
+                <p class="font-body-sm text-on-surface-variant">Sisa sesi saat ini: <strong id="modalSisaSesiBaru"
+                        class="text-on-surface font-mono-data"></strong></p>
+            </div>
+
+            <div class="flex flex-col gap-2 mt-2">
+                <label class="font-label-md text-on-surface">No. Register Kunjungan / Pendaftaran (Wajib)</label>
+                <input type="text" id="modalNoKunjungan"
+                    class="w-full px-3 py-2 border border-outline-variant rounded-lg bg-surface font-body-md focus:ring-2 focus:ring-primary focus:border-primary"
+                    placeholder="Misal: REG-24-001" required>
+            </div>
+
+            <div class="flex justify-end gap-3 mt-4">
+                <button type="button"
+                    class="modal-close px-4 py-2 border border-outline-variant text-on-surface-variant rounded-lg hover:bg-surface-container-high transition-colors font-label-md">Batal</button>
+                <button type="button" id="confirmUseBtn"
+                    class="px-4 py-2 bg-primary text-on-primary rounded-lg hover:bg-on-primary-fixed-variant transition-colors font-label-md shadow-sm">Gunakan
+                    Sesi</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL: TAMBAH / EDIT PAKET                     -->
+    <!-- ============================================== -->
+    <div id="modalMasterPaket"
+        class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-on-surface/50 backdrop-blur-sm p-4">
+        <div
+            class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-xl w-full max-w-md flex flex-col gap-4">
+            <h3 id="modalMasterPaketTitle" class="font-headline-sm flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">add_box</span> Tambah Paket Baru
+            </h3>
+
+            <form id="formMasterPaket" class="flex flex-col gap-4">
+                <input type="hidden" id="paketId">
+                <div class="flex flex-col gap-2">
+                    <label class="font-label-md text-on-surface">Nama Paket</label>
+                    <input type="text" id="paketNama"
+                        class="w-full px-3 py-2 border border-outline-variant rounded-lg bg-surface font-body-md focus:ring-2 focus:ring-primary focus:border-primary"
+                        placeholder="Misal: Paket Stroke 12 Sesi" required>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="font-label-md text-on-surface">Tipe Paket</label>
+                    <select id="paketTipe"
+                        class="w-full px-3 py-2 border border-outline-variant rounded-lg bg-surface font-body-md focus:ring-2 focus:ring-primary focus:border-primary"
+                        required>
+                        <option value="Rawat Jalan">Rawat Jalan</option>
+                        <option value="Rawat Inap">Rawat Inap</option>
+                        <option value="Homecare">Homecare</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="flex flex-col gap-2">
+                        <label class="font-label-md text-on-surface">Total Sesi</label>
+                        <input type="number" id="paketTotalSesi"
+                            class="w-full px-3 py-2 border border-outline-variant rounded-lg bg-surface font-body-md focus:ring-2 focus:ring-primary focus:border-primary"
+                            placeholder="Misal: 12" required min="1">
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <label class="font-label-md text-on-surface">Masa Berlaku (Hari)</label>
+                        <input type="number" id="paketMasaBerlaku"
+                            class="w-full px-3 py-2 border border-outline-variant rounded-lg bg-surface font-body-md focus:ring-2 focus:ring-primary focus:border-primary"
+                            placeholder="Misal: 30" required min="1">
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 mt-4">
+                    <button type="button"
+                        class="modal-close-paket px-4 py-2 border border-outline-variant text-on-surface-variant rounded-lg hover:bg-surface-container-high transition-colors font-label-md">Batal</button>
+                    <button type="submit"
+                        class="px-4 py-2 bg-primary text-on-primary rounded-lg hover:bg-on-primary-fixed-variant transition-colors font-label-md shadow-sm">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js?v=6"></script>
+</body>
+
+</html>
