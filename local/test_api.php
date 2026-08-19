@@ -1,17 +1,14 @@
-<?php 
-include_once 'api/helpers/JWT.php';
-$payload = array("id" => 1, "username" => "admin", "role" => "admin", "exp" => time() + 3600);
-$token = JWT::encode($payload);
+<?php
+include_once 'api/config/database.php';
+include_once 'api/models/Kapasitas.php';
 
-$opts = [
-    "http" => [
-        "method" => "POST",
-        "header" => "Content-Type: application/json\r\nAuthorization: Bearer " . $token . "\r\n",
-        "content" => json_encode(["no_erm"=>"ERM001", "id_paket"=>12]),
-        "ignore_errors" => true
-    ]
-];
-$context = stream_context_create($opts);
-$res = file_get_contents("http://localhost:8002/api/index.php/kasir?action=beli_paket", false, $context);
-echo "8002 POST response: " . $res . "\n"; 
+$database = new Database();
+$db = $database->getConnection();
+$kapasitas = new Kapasitas($db);
+
+$stmt = $kapasitas->readByVisitDate('2026-08-16');
+echo "Records found: " . $stmt->rowCount() . "\n";
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    print_r($row);
+}
 ?>

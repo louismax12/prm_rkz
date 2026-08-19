@@ -151,7 +151,17 @@ class PasienController {
 
     // Endpoint GET: Mendapatkan seluruh kapasitas (master) untuk Menu Pasien
     public function getAllKapasitas() {
-        $stmt = $this->kapasitas->getAll();
+        $date = isset($_GET['date']) ? $_GET['date'] : null;
+        
+        if ($date) {
+            $stmt = $this->kapasitas->readByVisitDate($date);
+        } else {
+            // Return empty if no date is selected
+            http_response_code(200);
+            echo json_encode(array("records" => array(), "message" => "Silakan pilih tanggal kunjungan terlebih dahulu."));
+            return;
+        }
+
         $num = $stmt->rowCount();
 
         if($num > 0){
@@ -164,13 +174,13 @@ class PasienController {
                     "id" => $id,
                     "no_erm" => $no_erm,
                     "nama_pasien" => isset($nama_pasien) ? $nama_pasien : 'Tidak diketahui',
-                    "nomor_register" => $nomor_register,
+                    "nomor_register" => isset($nomor_register) ? $nomor_register : '',
                     "id_paket" => $id_paket,
                     "nama_paket" => isset($nama_paket) ? $nama_paket : '',
                     "total_sesi" => isset($total_sesi) ? $total_sesi : 0,
                     "sisa" => $sisa,
                     "tanggal_beli" => $tanggal_beli,
-                    "tanggal_expired" => $tanggal_expired,
+                    "tanggal_expired" => isset($tanggal_expired) ? $tanggal_expired : '',
                     "status" => $status
                 );
                 array_push($kapasitas_arr["records"], $kapasitas_item);
@@ -180,7 +190,7 @@ class PasienController {
             echo json_encode($kapasitas_arr);
         } else {
             http_response_code(200);
-            echo json_encode(array("records" => []));
+            echo json_encode(array("records" => array(), "message" => "Tidak ada data paket untuk tanggal kunjungan ini."));
         }
     }
 

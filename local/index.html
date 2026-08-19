@@ -65,7 +65,8 @@
             position: sticky;
             top: 0;
             z-index: 10;
-            background-color: #ffffff; /* Warna putih solid agar tidak transparan */
+            background-color: #ffffff;
+            /* Warna putih solid agar tidak transparan */
         }
     </style>
 </head>
@@ -200,13 +201,7 @@
                 </div>
                 <!-- Navigation Links -->
                 <ul class="flex flex-col gap-1">
-                    <li>
-                        <a href="#" id="menu-erm" data-target="view-erm"
-                            class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors">
-                            <span class="material-symbols-outlined">medical_services</span>
-                            <span class="font-label-md">Pelayanan (ERM)</span>
-                        </a>
-                    </li>
+                    <!-- Menu Pelayanan ERM Dihapus -->
                     <li>
                         <a href="#" id="menu-kasir" data-target="view-kasir"
                             class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors">
@@ -218,7 +213,7 @@
                         <a href="#" id="menu-pasien" data-target="view-pasien"
                             class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors">
                             <span class="material-symbols-outlined">patient_list</span>
-                            <span class="font-label-md">Data Pasien</span>
+                            <span class="font-label-md">Data Paket</span>
                         </a>
                     </li>
                     <li>
@@ -342,15 +337,15 @@
 
             <!-- SCROLLABLE VIEWS CONTAINER -->
             <div class="flex-1 overflow-y-auto bg-background flex flex-col">
-                <!-- VIEW: PASIEN -->
+                <!-- VIEW: PAKET -->
                 <main id="view-pasien"
                     class="view-section py-margin-page px-margin-page flex flex-col gap-6 max-w-[1600px] mx-auto w-full hidden flex-1 min-h-0">
 
                     <!-- Page Header Section -->
                     <section class="flex flex-col gap-stack-compact shrink-0">
-                        <h2 class="font-headline-md font-bold text-on-surface">Data Pasien & Riwayat</h2>
-                        <p class="font-body-md text-on-surface-variant">Daftar paket aktif pasien dan detail pemakaian
-                            sesinya.</p>
+                        <h2 class="font-headline-md font-bold text-on-surface">Data Paket & Riwayat</h2>
+                        <p class="font-body-md text-on-surface-variant">Daftar paket aktif pasien berdasarkan tanggal
+                            kunjungan dan detail pemakaian sesinya.</p>
                     </section>
 
                     <!-- Master-Detail Layout (Side-by-Side) -->
@@ -360,12 +355,16 @@
                             class="flex-[55] bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden flex flex-col min-h-0">
                             <div
                                 class="px-6 py-4 border-b border-outline-variant bg-surface-container-low flex justify-between items-center shrink-0">
-                                <h3 class="font-headline-sm font-semibold text-on-surface">Daftar Pasien (Kapasitas)
+                                <h3 class="font-headline-sm font-semibold text-on-surface">Daftar Paket (Kapasitas)
                                 </h3>
-                                <button onclick="loadPasienMaster()"
-                                    class="text-primary hover:text-on-primary-fixed-variant font-label-sm flex items-center gap-1 transition">
-                                    <span class="material-symbols-outlined text-[18px]">refresh</span> Refresh
-                                </button>
+                                <div class="flex items-center gap-3">
+                                    <input type="date" id="filterTanggalKunjungan"
+                                        class="px-3 py-1.5 border border-outline-variant rounded bg-surface font-body-sm text-on-surface focus:ring-1 focus:ring-primary focus:border-primary">
+                                    <button onclick="loadPasienMaster()"
+                                        class="text-primary hover:text-on-primary-fixed-variant font-label-sm flex items-center gap-1 transition">
+                                        <span class="material-symbols-outlined text-[18px]">refresh</span> Refresh
+                                    </button>
+                                </div>
                             </div>
                             <div class="table-scroll-container">
                                 <table class="w-full text-left font-body-md text-on-surface relative bg-white">
@@ -373,13 +372,13 @@
                                         class="bg-surface-container-lowest font-label-sm uppercase text-on-surface-variant shadow-sm bg-white">
                                         <tr>
                                             <th class="px-6 py-4 border-b border-outline-variant">Tgl Beli</th>
-                                            <th class="px-6 py-4 border-b border-outline-variant">ERM / Pasien</th>
+                                            <th class="px-6 py-4 border-b border-outline-variant">Pasien</th>
                                             <th class="px-6 py-4 border-b border-outline-variant">Paket</th>
                                             <th class="px-6 py-4 border-b border-outline-variant">Sisa Sesi</th>
                                             <th class="px-6 py-4 border-b border-outline-variant">Status</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="tablePasienMaster" class="divide-y divide-outline-variant">
+                                    <tbody id="tablePasienList" class="divide-y divide-outline-variant">
                                         <!-- Rows diisi via JS -->
                                     </tbody>
                                 </table>
@@ -392,6 +391,10 @@
                             <div
                                 class="px-6 py-4 border-b border-outline-variant bg-surface-container-low flex justify-between items-center shrink-0 bg-surface-container-lowest">
                                 <h3 class="font-headline-sm font-semibold text-on-surface">Detail Pemakaian Sesi</h3>
+                                <button id="btnGunakanSesi" disabled
+                                    class="bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-label-sm px-4 py-1.5 rounded shadow-sm flex items-center gap-2 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <span class="material-symbols-outlined text-[18px]">cut</span> Gunakan Sesi
+                                </button>
                             </div>
                             <div class="table-scroll-container">
                                 <table class="w-full text-left font-body-md text-on-surface relative">
@@ -399,13 +402,14 @@
                                         class="bg-surface-container-lowest font-label-sm uppercase text-on-surface-variant shadow-sm">
                                         <tr>
                                             <th class="px-6 py-4 border-b border-outline-variant">Sesi Ke</th>
+                                            <th class="px-6 py-4 border-b border-outline-variant">No. REG</th>
                                             <th class="px-6 py-4 border-b border-outline-variant">Tanggal Pemakaian</th>
                                             <th class="px-6 py-4 border-b border-outline-variant">Tindakan</th>
                                         </tr>
                                     </thead>
                                     <tbody id="tablePasienDetail" class="divide-y divide-outline-variant">
                                         <tr>
-                                            <td colspan="3" class="text-center py-8 text-on-surface-variant italic">
+                                            <td colspan="4" class="text-center py-8 text-on-surface-variant italic">
                                                 Pilih salah satu pasien di tabel sebelah kiri untuk melihat detail
                                                 pemakaian.
                                             </td>
@@ -571,13 +575,25 @@
                                 </div> -->
 
                                 <!-- Filter Nama Bebas (Text Input) -->
-                                <div class="relative w-full max-w-[250px]">
-                                    <span
-                                        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[18px] pointer-events-none">search</span>
-                                    <input type="text" id="filterNamaText"
-                                        onkeyup="if(event.key === 'Enter') loadKasirHistory()"
-                                        placeholder="Cari paket.."
-                                        class="w-full pl-10 pr-4 py-2.5 bg-white border border-outline-variant/50 rounded-xl font-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm">
+                                <div class="flex items-center gap-2">
+                                    <div class="relative">
+                                        <span
+                                            class="material-symbols-outlined absolute left-3 top-2.5 text-on-surface-variant text-[18px]">search</span>
+                                        <input type="text" id="filterNamaText" placeholder="Cari nama paket..."
+                                            class="pl-9 pr-3 py-2 bg-surface border border-outline-variant rounded-lg text-sm w-[200px] focus:ring-primary focus:border-primary">
+                                    </div>
+
+                                    <!-- Date Filter -->
+                                    <input type="date" id="filterTanggalKasir"
+                                        class="px-3 py-2 bg-surface border border-outline-variant rounded-lg text-sm focus:ring-primary focus:border-primary">
+
+                                    <!-- Status Filter -->
+                                    <!-- <select id="filterStatusDropdown"
+                                        class="px-3 py-2 bg-surface border border-outline-variant rounded-lg text-sm focus:ring-primary focus:border-primary">
+                                        <option value="">Semua Status</option>
+                                        <option value="0">Belum Disimpan</option>
+                                        <option value="1">Sudah Disimpan</option>
+                                    </select> -->
                                 </div>
 
                                 <!-- Save Button -->
@@ -612,9 +628,6 @@
                                             No Register</th>
                                         <th
                                             class="p-5 font-semibold whitespace-nowrap text-xs tracking-wider uppercase">
-                                            No ERM</th>
-                                        <th
-                                            class="p-5 font-semibold whitespace-nowrap text-xs tracking-wider uppercase">
                                             Nama Pasien</th>
                                         <th
                                             class="p-5 font-semibold whitespace-nowrap text-xs tracking-wider uppercase">
@@ -638,7 +651,8 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div id="kasirPagination" class="flex justify-center items-center py-4 gap-2 border-t border-outline-variant bg-surface-container-lowest">
+                        <div id="kasirPagination"
+                            class="flex justify-center items-center py-4 gap-2 border-t border-outline-variant bg-surface-container-lowest">
                             <!-- Pagination buttons will be injected here -->
                         </div>
                     </div>
@@ -742,7 +756,6 @@
                                     class="bg-surface-container-lowest font-label-sm uppercase text-on-surface-variant border-b border-outline-variant">
                                     <tr>
                                         <th class="px-6 py-4">Waktu</th>
-                                        <th class="px-6 py-4">ERM</th>
                                         <th class="px-6 py-4">No. Register</th>
                                         <th class="px-6 py-4">Paket (Sesi Ke)</th>
                                         <th class="px-6 py-4">Tindakan</th>
@@ -786,7 +799,8 @@
             <div class="flex flex-col gap-2 mt-2">
                 <label class="font-label-md text-on-surface">Pilih Tindakan (Wajib)</label>
                 <select id="modalTindakanDropdown"
-                    class="w-full px-3 py-2 border border-outline-variant rounded-lg bg-surface font-body-md focus:ring-2 focus:ring-primary focus:border-primary" required>
+                    class="w-full px-3 py-2 border border-outline-variant rounded-lg bg-surface font-body-md focus:ring-2 focus:ring-primary focus:border-primary"
+                    required>
                     <option value="" disabled selected>Memuat tindakan...</option>
                 </select>
             </div>
@@ -825,9 +839,12 @@
                     <select id="paketTipe"
                         class="w-full px-3 py-2 border border-outline-variant rounded-lg bg-surface font-body-md focus:ring-2 focus:ring-primary focus:border-primary"
                         required>
-                        <option value="Rawat Jalan">Rawat Jalan</option>
-                        <option value="Rawat Inap">Rawat Inap</option>
-                        <option value="Homecare">Homecare</option>
+                        <option value="Paket Fisioterapi">Paket Fisioterapi</option>
+                        <option value="Paket Hidroterapi">Paket Hidroterapi</option>
+                        <option value="Paket Terapi Wicara">Paket Terapi Wicara</option>
+                        <option value="Paket Terapi Okupasi">Paket Terapi Okupasi</option>
+                        <option value="Paket Rehabilitasi (Multi Service)">Paket Rehabilitasi (Multi Service)</option>
+                        <option value="Lain-lain / Otomatis">Lain-lain / Otomatis</option>
                     </select>
                 </div>
                 <div class="grid grid-cols-2 gap-4">

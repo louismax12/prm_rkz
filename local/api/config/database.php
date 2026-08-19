@@ -12,7 +12,7 @@ $dbConfigs = array(
     'default' => array(
         'host' => DB_HOST,
         'port' => DB_PORT,
-        'name' => 'askes',
+        'name' => 'dbold',
         'user' => DB_USER,
         'pass' => DB_PASS
     ),
@@ -45,7 +45,7 @@ class Database {
         'default' => array(
             'host' => DB_HOST,
             'port' => DB_PORT,
-            'name' => 'askes',
+            'name' => 'dbold',
             'user' => DB_USER,
             'pass' => DB_PASS
         ),

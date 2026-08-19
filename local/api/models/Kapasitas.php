@@ -16,6 +16,26 @@ class Kapasitas {
         $this->conn = $db;
     }
 
+    // read active kapasitas by visit date
+    function readByVisitDate($date){
+        $query = "SELECT k.id, k.no_erm, v.FCRNAMA as nama_pasien, k.id_paket, k.tanggal_beli, k.sisa, k.status, p.nama as nama_paket, p.total_sesi 
+                  FROM " . $this->table_name . " k 
+                  LEFT JOIN prm_master_paket p ON k.id_paket = p.id
+                  JOIN (
+                      SELECT FCRCUST as RM, FCRNAMA FROM fisiosfjual WHERE FCRTANGGAL = :vdate
+                      UNION
+                      SELECT FCRCUST as RM, FCRNAMA FROM kasir_jual_h WHERE FCRTANGGAL = :vdate
+                      UNION
+                      SELECT frmno as RM, fname as FCRNAMA FROM poliumumupcust WHERE fdate_in = :vdate
+                  ) v ON k.no_erm = v.RM
+                  WHERE k.status = 'aktif'
+                  ORDER BY k.tanggal_beli DESC";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':vdate', $date);
+        $stmt->execute();
+        return $stmt;
+    }
+
     // Beli paket baru (create kapasitas)
     function create(){
         $query = "INSERT INTO " . $this->table_name . " 
