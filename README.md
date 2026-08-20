@@ -37,11 +37,41 @@ One of the most critical aspects of this system is its ability to seamlessly joi
 ## 🔄 Key Workflows
 
 ### 1. The Billing-to-Package Data Pipeline
+
+```mermaid
+sequenceDiagram
+    participant K as Kasir (Billing)
+    participant API as PRM Gateway API
+    participant M as Mapping Engine
+    participant DB as Package Ledger
+
+    K->>API: Transmit legacy FCRID & ERM
+    API->>M: Analyze SKU Codes
+    alt Is "Paket"
+        M->>DB: Generate Session Capacity (e.g. 10x)
+        DB-->>API: Confirm Initialization
+    else Standard SKU
+        M-->>API: Ignore / Bypass
+    end
+    API-->>K: 200 OK Sync Complete
+```
+
 When a transaction occurs in the legacy Billing/Kasir module, the data is pushed to `fisiosfjual` and `kasir_jual_h`. 
 - **The Engine:** The Kasir Controller dynamically joins these legacy tables, parsing the `FCRID` (Receipt Register) and `FCRRMUNIT` (ERM).
 - **The Action:** An automated script identifies SKUs designated as "Paket", maps them using `prm_kasir_paket_mapping`, and seamlessly generates session capacity ledgers for patients without manual double-entry.
 
 ### 2. Session Deduction Protocol
+
+```mermaid
+stateDiagram-v2
+    [*] --> Verification
+    Verification --> Active: Valid ERM & Not Expired
+    Verification --> Rejected: Expired or 0 Sessions
+    Active --> DeductSession: Therapist Action
+    DeductSession --> AuditLog: Write to prm_catatan
+    AuditLog --> [*]: Session Locked
+```
+
 When a medical professional uses a session:
 1. **Pre-flight Validation:** Verifies active session count and package expiration date.
 2. **Transaction:** Deducts the session (`sisa_sesi`) and creates an immutable audit trail in `prm_catatan`.
@@ -50,6 +80,8 @@ When a medical professional uses a session:
 ---
 
 ## 🎨 Design System & UI/UX
+
+![System Dashboard Prototype](assets/prm_dashboard.png)
 
 This project implements a custom-built Design System heavily inspired by **Material Design 3 (MD3)** specifications, translated into utility classes using **TailwindCSS**.
 
