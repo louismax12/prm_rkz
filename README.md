@@ -167,3 +167,5 @@ The backend exposes a highly optimized routing endpoint via `index.php` (if conf
 
 ---
 *Built for scale. Engineered for reliability. Designed for the end-user.*
+
+ 👨‍💻 _made by Louis Maximillian_
