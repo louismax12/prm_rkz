@@ -13,12 +13,29 @@ class PaketController {
     }
 
     public function readAll() {
-        $stmt = $this->paket->read();
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $limit = 5;
+        $offset = ($page - 1) * $limit;
+
+        // Jika request via app.js ingin membaca semua tanpa batas (misal untuk dropdown)
+        // Kita tangkap lewat parameter ?all=true
+        if(isset($_GET['all']) && $_GET['all'] == 'true') {
+            $stmt = $this->paket->read();
+        } else {
+            $stmt = $this->paket->readPaged($offset, $limit);
+        }
+        
         $num = $stmt->rowCount();
+
+        $total_records = $this->paket->countAll();
+        $total_pages = ceil($total_records / $limit);
 
         if($num > 0){
             $paket_arr = array();
             $paket_arr["records"] = array();
+            $paket_arr["total_records"] = $total_records;
+            $paket_arr["total_pages"] = $total_pages;
+            $paket_arr["current_page"] = $page;
 
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
                 extract($row);

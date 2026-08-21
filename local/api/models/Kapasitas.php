@@ -16,19 +16,18 @@ class Kapasitas {
         $this->conn = $db;
     }
 
-    // read active kapasitas by visit date
+    // read active kapasitas by date (sebelumnya by visit date, diubah menjadi by tanggal_beli sesuai request)
     function readByVisitDate($date){
-        $query = "SELECT k.id, k.no_erm, v.FCRNAMA as nama_pasien, k.id_paket, k.tanggal_beli, k.sisa, k.status, p.nama as nama_paket, p.total_sesi 
+        $query = "SELECT k.id, k.no_erm, 
+                         COALESCE(
+                             (SELECT FCRNAMA FROM dbold.fisiosfjual WHERE FCRCUST = k.no_erm ORDER BY FCRDATE DESC LIMIT 1),
+                             (SELECT fname FROM dbold.poliumumupcust WHERE idcust = k.no_erm ORDER BY fdate_in DESC LIMIT 1),
+                             'Tidak Diketahui'
+                         ) as nama_pasien, 
+                         k.id_paket, k.tanggal_beli, k.sisa, k.status, p.nama as nama_paket, p.total_sesi 
                   FROM " . $this->table_name . " k 
                   LEFT JOIN prm_master_paket p ON k.id_paket = p.id
-                  JOIN (
-                      SELECT FCRCUST as RM, FCRNAMA FROM fisiosfjual WHERE FCRTANGGAL = :vdate
-                      UNION
-                      SELECT FCRCUST as RM, FCRNAMA FROM kasir_jual_h WHERE FCRTANGGAL = :vdate
-                      UNION
-                      SELECT frmno as RM, fname as FCRNAMA FROM poliumumupcust WHERE fdate_in = :vdate
-                  ) v ON k.no_erm = v.RM
-                  WHERE k.status = 'aktif'
+                  WHERE k.status IN ('aktif', 'AKTIF', 'habis', 'HABIS') AND DATE(k.tanggal_beli) = :vdate
                   ORDER BY k.tanggal_beli DESC";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':vdate', $date);

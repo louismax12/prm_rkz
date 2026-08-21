@@ -374,19 +374,6 @@ window.openModal = function (record) {
 }
 
 confirmUseBtn.addEventListener('click', () => {
-    const modalNoKunjungan = document.getElementById('modalNoKunjungan');
-    const modalTindakanDropdown = document.getElementById('modalTindakanDropdown');
-
-    if (!modalNoKunjungan.value.trim()) {
-        alert("No. Register Kunjungan wajib diisi!");
-        return;
-    }
-
-    if (!modalTindakanDropdown.value) {
-        alert("Pilih tindakan wajib diisi!");
-        return;
-    }
-
     if (!activeKapasitasData) return;
 
     confirmUseBtn.disabled = true;
@@ -399,9 +386,7 @@ confirmUseBtn.addEventListener('click', () => {
     const payload = {
         id_kapasitas: activeKapasitasData.id,
         sisa_saat_ini: activeKapasitasData.sisa,
-        id_tindakan: document.getElementById('modalTindakanDropdown').value,
         no_erm: activeKapasitasData.no_erm,
-        no_register_kunjungan: modalNoKunjungan.value.trim() || 'REG-AUTO',
         tanggal_paket: localISOTime,
         sesi_ke: (activeKapasitasData.total_sesi - activeKapasitasData.sisa) + 1
     };
@@ -435,17 +420,18 @@ function loadKasirHistory(page = 1) {
     if (!tableKasirHistory) return;
 
     // Set default tanggal to today if empty
-    const filterTanggal = document.getElementById('filterTanggalKasir');
-    if (filterTanggal && !filterTanggal.value) {
-        filterTanggal.value = new Date().toISOString().split('T')[0];
+    const filterTanggalKasir = document.getElementById('filterTanggalKasir');
+    
+    if (filterTanggalKasir && !filterTanggalKasir.value) {
+        filterTanggalKasir.value = new Date().toISOString().split('T')[0];
     }
 
-    tableKasirHistory.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-on-surface-variant"><span class="material-symbols-outlined spin">progress_activity</span> Memuat data...</td></tr>';
+    tableKasirHistory.innerHTML = '<tr><td colspan="8" class="p-6 text-center text-on-surface-variant"><span class="material-symbols-outlined spin">progress_activity</span> Memuat data...</td></tr>';
 
     const fNamaDrop = document.getElementById('filterNamaDropdown') ? document.getElementById('filterNamaDropdown').value : '';
     const fNamaText = document.getElementById('filterNamaText') ? document.getElementById('filterNamaText').value : '';
     const fStatus = document.getElementById('filterStatusDropdown') ? document.getElementById('filterStatusDropdown').value : '';
-    const fTanggal = document.getElementById('filterTanggalKasir') ? document.getElementById('filterTanggalKasir').value : '';
+    const fTanggal = filterTanggalKasir ? filterTanggalKasir.value : '';
 
     apiFetch(`${API_BASE}/kasir?action=history&page=${page}&nama_drop=${encodeURIComponent(fNamaDrop)}&nama_text=${encodeURIComponent(fNamaText)}&status=${encodeURIComponent(fStatus)}&tanggal=${encodeURIComponent(fTanggal)}`)
         .then(res => res.json())
@@ -471,7 +457,10 @@ function loadKasirHistory(page = 1) {
                             <td class="py-5 px-6 text-[14px] whitespace-nowrap text-on-surface-variant group-hover:text-primary transition-colors">${tgl}</td>
                             <td class="py-5 px-6 text-[14px] whitespace-nowrap font-bold text-primary">${r.no_register}</td>
                             <td class="py-5 px-6 text-[14px] font-semibold text-on-surface">${r.nama_pasien}</td>
-                            <td class="py-5 px-6 text-[14px] text-on-surface-variant group-hover:text-on-surface transition-colors">${r.nama_paket}</td>
+                            <td class="py-5 px-6 text-[14px] text-on-surface-variant group-hover:text-on-surface transition-colors">
+                                <span class="font-mono-data text-primary mr-1">${r.kode_paket || '-'}</span> 
+                                ${r.nama_paket}
+                            </td>
                             <td class="py-5 px-6 text-right whitespace-nowrap">
                                 <div class="text-[14px] font-bold text-green-600">Rp ${biaya}</div>
                                 <div class="text-[10px] text-on-surface-variant mt-0.5">
@@ -484,7 +473,15 @@ function loadKasirHistory(page = 1) {
 
                 // Render Pagination
                 if (data.total_pages > 1 && paginationContainer) {
-                    let pagHtml = `<span class="text-sm text-on-surface-variant mr-4">Total: ${data.total_records} data (Hal ${data.current_page} / ${data.total_pages})</span>`;
+                    let startPage = Math.max(1, data.current_page - 2);
+                    let endPage = Math.min(data.total_pages, startPage + 4);
+                    
+                    if (endPage - startPage < 4) {
+                        startPage = Math.max(1, endPage - 4);
+                    }
+
+                    let pagHtml = `<div class="flex items-center gap-1">`;
+                    pagHtml += `<span class="text-sm text-on-surface-variant mr-4">Total: ${data.total_records} data (Hal ${data.current_page} / ${data.total_pages})</span>`;
 
                     // Prev Button
                     if (data.current_page > 1) {
@@ -493,25 +490,36 @@ function loadKasirHistory(page = 1) {
                         pagHtml += `<button disabled class="px-3 py-1 rounded border border-outline-variant/50 text-outline-variant cursor-not-allowed text-sm">Prev</button>`;
                     }
 
+                    // Page Numbers
+                    for(let i = startPage; i <= endPage; i++) {
+                        if(i === data.current_page) {
+                            pagHtml += `<button class="px-3 py-1 rounded border border-primary bg-primary text-on-primary font-bold text-sm">${i}</button>`;
+                        } else {
+                            pagHtml += `<button onclick="loadKasirHistory(${i})" class="px-3 py-1 rounded border border-outline-variant hover:bg-surface-container-high transition text-sm">${i}</button>`;
+                        }
+                    }
+
                     // Next Button
                     if (data.current_page < data.total_pages) {
                         pagHtml += `<button onclick="loadKasirHistory(${data.current_page + 1})" class="px-3 py-1 rounded border border-outline-variant hover:bg-surface-container-high transition text-sm">Next</button>`;
                     } else {
                         pagHtml += `<button disabled class="px-3 py-1 rounded border border-outline-variant/50 text-outline-variant cursor-not-allowed text-sm">Next</button>`;
                     }
+                    
+                    pagHtml += `</div>`;
 
                     paginationContainer.innerHTML = pagHtml;
                 }
 
             } else if (data.message) {
-                tableKasirHistory.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-error"><strong>Pesan Server:</strong> ${data.message}</td></tr>`;
+                tableKasirHistory.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-error"><strong>Pesan Server:</strong> ${data.message}</td></tr>`;
             } else {
-                tableKasirHistory.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-on-surface-variant">Belum ada riwayat transaksi penjualan paket.</td></tr>';
+                tableKasirHistory.innerHTML = '<tr><td colspan="8" class="p-6 text-center text-on-surface-variant italic">Belum ada transaksi kasir.</td></tr>';
             }
         })
         .catch(err => {
             console.error("Kasir error:", err);
-            tableKasirHistory.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-error">Gagal terhubung ke server Kasir.</td></tr>`;
+            tableKasirHistory.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-error">Gagal terhubung ke server Kasir.</td></tr>`;
         });
 }
 
@@ -622,8 +630,8 @@ if (formMasterPaket) {
     });
 }
 
-function loadMasterData() {
-    apiFetch(`${API_BASE}/paket`)
+function loadMasterData(page = 1) {
+    apiFetch(`${API_BASE}/paket?page=${page}`)
         .then(res => res.json())
         .then(data => {
             tableMasterPaket.innerHTML = '';
@@ -642,6 +650,50 @@ function loadMasterData() {
                         </tr>
                     `;
                 });
+
+                // Render Pagination
+                const paginationContainer = document.getElementById('masterPagination');
+                if (data.total_pages > 1 && paginationContainer) {
+                    let startPage = Math.max(1, data.current_page - 2);
+                    let endPage = Math.min(data.total_pages, startPage + 4);
+                    
+                    if (endPage - startPage < 4) {
+                        startPage = Math.max(1, endPage - 4);
+                    }
+
+                    let pagHtml = `<div class="flex items-center gap-1">`;
+                    pagHtml += `<span class="text-sm text-on-surface-variant mr-4">Total: ${data.total_records} data (Hal ${data.current_page} / ${data.total_pages})</span>`;
+
+                    // Prev Button
+                    if (data.current_page > 1) {
+                        pagHtml += `<button onclick="loadMasterData(${data.current_page - 1})" class="px-3 py-1 rounded border border-outline-variant hover:bg-surface-container-high transition text-sm">Prev</button>`;
+                    } else {
+                        pagHtml += `<button disabled class="px-3 py-1 rounded border border-outline-variant/50 text-outline-variant cursor-not-allowed text-sm">Prev</button>`;
+                    }
+
+                    // Page Numbers
+                    for(let i = startPage; i <= endPage; i++) {
+                        if(i === data.current_page) {
+                            pagHtml += `<button class="px-3 py-1 rounded border border-primary bg-primary text-on-primary font-bold text-sm">${i}</button>`;
+                        } else {
+                            pagHtml += `<button onclick="loadMasterData(${i})" class="px-3 py-1 rounded border border-outline-variant hover:bg-surface-container-high transition text-sm">${i}</button>`;
+                        }
+                    }
+
+                    // Next Button
+                    if (data.current_page < data.total_pages) {
+                        pagHtml += `<button onclick="loadMasterData(${data.current_page + 1})" class="px-3 py-1 rounded border border-outline-variant hover:bg-surface-container-high transition text-sm">Next</button>`;
+                    } else {
+                        pagHtml += `<button disabled class="px-3 py-1 rounded border border-outline-variant/50 text-outline-variant cursor-not-allowed text-sm">Next</button>`;
+                    }
+                    
+                    pagHtml += `</div>`;
+
+                    paginationContainer.innerHTML = pagHtml;
+                } else if (paginationContainer) {
+                    paginationContainer.innerHTML = '';
+                }
+
             } else {
                 tableMasterPaket.innerHTML = '<tr><td colspan="5" class="text-center py-4">Belum ada data paket.</td></tr>';
             }
@@ -682,7 +734,7 @@ const auditSesiHariIni = document.getElementById('auditSesiHariIni');
 const auditSisaSesiGlobal = document.getElementById('auditSisaSesiGlobal');
 const tableAuditLogs = document.getElementById('tableAuditLogs');
 
-function loadAuditData() {
+function loadAuditData(page = 1) {
     // Load Summary
     apiFetch(`${API_BASE}/audit?action=summary`)
         .then(res => res.json())
@@ -693,13 +745,13 @@ function loadAuditData() {
         });
 
     // Load Logs
-    apiFetch(`${API_BASE}/audit?action=logs`)
+    apiFetch(`${API_BASE}/audit?action=logs&page=${page}`)
         .then(res => res.json())
         .then(data => {
             if (tableAuditLogs) {
                 tableAuditLogs.innerHTML = '';
-                if (data && data.length > 0) {
-                    data.forEach(log => {
+                if (data.records && data.records.length > 0) {
+                    data.records.forEach(log => {
                         const dateObj = new Date(log.tanggal_paket);
                         const formattedDate = dateObj.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
                         tableAuditLogs.innerHTML += `
@@ -711,6 +763,49 @@ function loadAuditData() {
                             </tr>
                         `;
                     });
+
+                    // Render Pagination
+                    const paginationContainer = document.getElementById('auditPagination');
+                    if (data.total_pages > 1 && paginationContainer) {
+                        let startPage = Math.max(1, data.current_page - 2);
+                        let endPage = Math.min(data.total_pages, startPage + 4);
+                        
+                        if (endPage - startPage < 4) {
+                            startPage = Math.max(1, endPage - 4);
+                        }
+
+                        let pagHtml = `<div class="flex items-center gap-1">`;
+                        pagHtml += `<span class="text-sm text-on-surface-variant mr-4">Total: ${data.total_records} data (Hal ${data.current_page} / ${data.total_pages})</span>`;
+
+                        // Prev Button
+                        if (data.current_page > 1) {
+                            pagHtml += `<button onclick="loadAuditData(${data.current_page - 1})" class="px-3 py-1 rounded border border-outline-variant hover:bg-surface-container-high transition text-sm">Prev</button>`;
+                        } else {
+                            pagHtml += `<button disabled class="px-3 py-1 rounded border border-outline-variant/50 text-outline-variant cursor-not-allowed text-sm">Prev</button>`;
+                        }
+
+                        // Page Numbers
+                        for(let i = startPage; i <= endPage; i++) {
+                            if(i === data.current_page) {
+                                pagHtml += `<button class="px-3 py-1 rounded border border-primary bg-primary text-on-primary font-bold text-sm">${i}</button>`;
+                            } else {
+                                pagHtml += `<button onclick="loadAuditData(${i})" class="px-3 py-1 rounded border border-outline-variant hover:bg-surface-container-high transition text-sm">${i}</button>`;
+                            }
+                        }
+
+                        // Next Button
+                        if (data.current_page < data.total_pages) {
+                            pagHtml += `<button onclick="loadAuditData(${data.current_page + 1})" class="px-3 py-1 rounded border border-outline-variant hover:bg-surface-container-high transition text-sm">Next</button>`;
+                        } else {
+                            pagHtml += `<button disabled class="px-3 py-1 rounded border border-outline-variant/50 text-outline-variant cursor-not-allowed text-sm">Next</button>`;
+                        }
+                        
+                        pagHtml += `</div>`;
+
+                        paginationContainer.innerHTML = pagHtml;
+                    } else if (paginationContainer) {
+                        paginationContainer.innerHTML = '';
+                    }
                 } else {
                     tableAuditLogs.innerHTML = '<tr><td colspan="4" class="text-center py-4">Belum ada log aktifitas.</td></tr>';
                 }
@@ -779,10 +874,12 @@ window.loadPasienMaster = function () {
             }
 
             if (data && data.records && data.records.length > 0) {
+                let rowToClick = null;
                 data.records.forEach(kap => {
-                    const statusClass = kap.status === 'Aktif' || kap.status === 'AKTIF' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
+                    const isHabis = kap.status.toUpperCase() === 'HABIS';
+                    const statusClass = isHabis ? 'bg-surface-variant text-on-surface-variant font-bold' : 'bg-green-100 text-green-800 font-bold';
                     const row = document.createElement('tr');
-                    row.className = 'hover:bg-surface-container-lowest transition-colors cursor-pointer';
+                    row.className = isHabis ? 'bg-surface-container-lowest opacity-60 transition-colors cursor-pointer' : 'hover:bg-surface-container-lowest transition-colors cursor-pointer';
                     row.onclick = () => {
                         // Highlight selected row
                         Array.from(tableBody.children).forEach(c => c.classList.remove('bg-surface-container-highest'));
@@ -815,7 +912,17 @@ window.loadPasienMaster = function () {
                         </td>
                     `;
                     tableBody.appendChild(row);
+
+                    if (window.activeKapasitasData && window.activeKapasitasData.id === kap.id) {
+                        rowToClick = row;
+                    }
                 });
+
+                if (rowToClick) {
+                    rowToClick.click();
+                } else {
+                    window.activeKapasitasData = null;
+                }
             } else {
                 tableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-on-surface-variant italic">Tidak ada data paket untuk tanggal kunjungan ini.</td></tr>';
             }
@@ -848,12 +955,13 @@ window.loadPasienDetail = function (id_kapasitas) {
         .then(data => {
             tablePasienDetail.innerHTML = '';
             if (data && data.records && data.records.length > 0) {
-                data.records.forEach(log => {
+                data.records.forEach(row => {
+                    const tgl = new Date(row.tanggal_paket).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
                     tablePasienDetail.innerHTML += `
                         <tr class="hover:bg-surface-container-lowest transition-colors">
-                            <td class="px-6 py-4 font-bold text-primary">Sesi ${log.sesi_ke}</td>
-                            <td class="px-6 py-4 font-mono-data">${log.no_register_kunjungan}</td>
-                            <td class="px-6 py-4 font-mono-data text-xs">${new Date(log.tanggal_paket).toLocaleString('id-ID')}</td>
+                            <td class="px-6 py-4">${row.sesi_ke || '-'}</td>
+                            <td class="px-6 py-4 font-mono-data text-[13px] text-on-surface-variant">${row.no_register_kunjungan || '-'}</td>
+                            <td class="px-6 py-4">${tgl}</td>
                         </tr>
                     `;
                 });
@@ -869,7 +977,7 @@ window.loadPasienDetail = function (id_kapasitas) {
 
 
 function exportAuditCSV() {
-    apiFetch(`${API_BASE}/audit?action=logs`)
+    apiFetch(`${API_BASE}/audit?action=logs&all=true`)
         .then(res => res.json())
         .then(data => {
             if (!data || data.length === 0) {
@@ -920,7 +1028,7 @@ function loadNotifications() {
 
     Promise.all([
         apiFetch(`${API_BASE}/kasir?action=history`).then(res => res.json()).catch(() => ({ records: [] })),
-        apiFetch(`${API_BASE}/audit?action=logs`).then(res => res.json()).catch(() => [])
+        apiFetch(`${API_BASE}/audit?action=logs&all=true`).then(res => res.json()).catch(() => [])
     ]).then(([kasirData, auditData]) => {
         let notifications = [];
 
@@ -1093,9 +1201,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Set default tanggal Kasir to today
     const filterTanggalKasir = document.getElementById('filterTanggalKasir');
-    if(filterTanggalKasir) {
-        filterTanggalKasir.value = new Date().toISOString().split('T')[0];
-    }
+    if(filterTanggalKasir) filterTanggalKasir.value = new Date().toISOString().split('T')[0];
 
     document.getElementById('filterTanggalKunjungan').addEventListener('change', loadPasienMaster);
 });

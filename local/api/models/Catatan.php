@@ -94,6 +94,30 @@ class Catatan {
         return $stmt;
     }
 
+    function getAllHistoryPaged($offset, $limit){
+        $query = "SELECT c.*, t.nama_tindakan, p.nama as nama_paket
+                  FROM " . $this->table_name . " c
+                  LEFT JOIN prm_master_tindakan t ON c.id_tindakan = t.id
+                  LEFT JOIN prm_kapasitas k ON c.id_kapasitas = k.id
+                  LEFT JOIN prm_master_paket p ON k.id_paket = p.id
+                  ORDER BY c.tanggal_paket DESC LIMIT ?, ?";
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(1, $offset, PDO::PARAM_INT);
+        $stmt->bindParam(2, $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        return $stmt;
+    }
+
+    function countAllHistory(){
+        $query = "SELECT COUNT(*) as total_rows FROM " . $this->table_name;
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row['total_rows'];
+    }
+
     // Ambil statistik ringkasan
     function getSummaryStats(){
         $stats = array(

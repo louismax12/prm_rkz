@@ -100,17 +100,53 @@ class PasienController {
         if(
             !empty($data->id_kapasitas) &&
             !empty($data->no_erm) &&
-            !empty($data->no_register_kunjungan) &&
             !empty($data->tanggal_paket) &&
             !empty($data->sesi_ke)
         ) {
+            $no_register_kunjungan = 'REG-AUTO';
+            try {
+                // Cari frmno dari dbold.poliumumupcust berdasarkan no_erm (bisa berupa idcust, fnoreg, frmno, atau furut)
+                $sqlReg = "SELECT frmno FROM dbold.poliumumupcust 
+                           WHERE idcust = :no_erm 
+                              OR fnoreg = :no_erm 
+                              OR frmno = :no_erm 
+                              OR TRIM(furut) = TRIM(:no_erm)
+                           ORDER BY fdate_in DESC, ftime_in DESC LIMIT 1";
+                $stmtReg = $this->db->prepare($sqlReg);
+                $stmtReg->bindParam(':no_erm', $data->no_erm);
+                $stmtReg->execute();
+                if($rowReg = $stmtReg->fetch(PDO::FETCH_ASSOC)) {
+                    $no_register_kunjungan = $rowReg['frmno'];
+                } else {
+                    // Fallback ke fisiosfjual jika tidak ditemukan (misal: data test)
+                    $sqlFallback = "SELECT FCRID FROM dbold.fisiosfjual WHERE FCRCUST = :no_erm ORDER BY FCRDATE DESC LIMIT 1";
+                    $stmtFallback = $this->db->prepare($sqlFallback);
+                    $stmtFallback->bindParam(':no_erm', $data->no_erm);
+                    $stmtFallback->execute();
+                    if($rowFallback = $stmtFallback->fetch(PDO::FETCH_ASSOC)) {
+                        $no_register_kunjungan = $rowFallback['FCRID'];
+                    }
+                }
+            } catch (Exception $e) {}
+
+            // Hitung sesi ke-berapa (total_sesi - sisa_sesi_terbaru + 1)
+            $stmtCek = $this->db->prepare("SELECT total_sesi, sisa FROM dbold.prm_kapasitas k JOIN dbold.prm_master_paket p ON k.id_paket = p.id WHERE k.id = :id");
+            $stmtCek->bindParam(':id', $data->id_kapasitas);
+            $stmtCek->execute();
+            $rowCek = $stmtCek->fetch(PDO::FETCH_ASSOC);
+            $sesi_ke_sebenarnya = 1;
+            if ($rowCek) {
+                // Sesi ke = Total Sesi - Sisa saat ini + 1 (sebelum sisa dikurangi)
+                $sesi_ke_sebenarnya = ($rowCek['total_sesi'] - $rowCek['sisa']) + 1;
+            }
+
             // Set data catatan
             $this->catatan->id_kapasitas = $data->id_kapasitas;
-            $this->catatan->id_tindakan = isset($data->id_tindakan) ? $data->id_tindakan : null;
+            $this->catatan->id_tindakan = null; // Dihapus sesuai permintaan
             $this->catatan->no_erm = $data->no_erm;
-            $this->catatan->no_register_kunjungan = $data->no_register_kunjungan;
+            $this->catatan->no_register_kunjungan = $no_register_kunjungan;
             $this->catatan->tanggal_paket = $data->tanggal_paket;
-            $this->catatan->sesi_ke = $data->sesi_ke;
+            $this->catatan->sesi_ke = $sesi_ke_sebenarnya;
 
             // Mulai transaksi untuk memastikan konsistensi
             try {
@@ -120,9 +156,11 @@ class PasienController {
                 if($this->catatan->create()) {
                     // 2. Update sisa di kapasitas
                     $this->kapasitas->id = $data->id_kapasitas;
-                    // Ambil sisa saat ini (harus diquery ulang di real case, untuk saat ini asumsikan sisa yg dikirim dikurangi 1)
-                    $this->kapasitas->sisa = $data->sisa_saat_ini - 1;
-                    $this->kapasitas->status = ($this->kapasitas->sisa <= 0) ? 'HABIS' : 'AKTIF';
+                    
+                    // Gunakan nilai asli dari database yang baru dicek, bukan dari frontend
+                    $sisa_terbaru = $rowCek['sisa'] - 1;
+                    $this->kapasitas->sisa = $sisa_terbaru;
+                    $this->kapasitas->status = ($sisa_terbaru <= 0) ? 'HABIS' : 'AKTIF';
                     
                     if($this->kapasitas->updateSisa()){
                         $this->db->commit();

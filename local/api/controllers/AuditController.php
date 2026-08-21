@@ -38,11 +38,49 @@ class AuditController {
     }
 
     private function getLogs() {
-        $stmt = $this->catatan->getAllHistory();
+        if(isset($_GET['all']) && $_GET['all'] == 'true') {
+            $stmt = $this->catatan->getAllHistory();
+            $num = $stmt->rowCount();
+            if ($num > 0) {
+                $logs_arr = array();
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    extract($row);
+                    $log_item = array(
+                        "id" => $id,
+                        "no_erm" => $no_erm,
+                        "no_register_kunjungan" => $no_register_kunjungan,
+                        "tanggal_paket" => $tanggal_paket,
+                        "sesi_ke" => $sesi_ke,
+                        "nama_tindakan" => $nama_tindakan ? $nama_tindakan : "-",
+                        "nama_paket" => $nama_paket ? $nama_paket : "-"
+                    );
+                    array_push($logs_arr, $log_item);
+                }
+                http_response_code(200);
+                echo json_encode($logs_arr);
+            } else {
+                http_response_code(200);
+                echo json_encode([]);
+            }
+            return;
+        }
+
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $limit = 5;
+        $offset = ($page - 1) * $limit;
+        
+        $stmt = $this->catatan->getAllHistoryPaged($offset, $limit);
         $num = $stmt->rowCount();
 
+        $total_records = $this->catatan->countAllHistory();
+        $total_pages = ceil($total_records / $limit);
+
         if ($num > 0) {
-            $logs_arr = array();
+            $result = array();
+            $result["records"] = array();
+            $result["total_records"] = $total_records;
+            $result["total_pages"] = $total_pages;
+            $result["current_page"] = $page;
             
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 extract($row);
@@ -55,14 +93,14 @@ class AuditController {
                     "nama_tindakan" => $nama_tindakan ? $nama_tindakan : "-",
                     "nama_paket" => $nama_paket ? $nama_paket : "-"
                 );
-                array_push($logs_arr, $log_item);
+                array_push($result["records"], $log_item);
             }
             
             http_response_code(200);
-            echo json_encode($logs_arr);
+            echo json_encode($result);
         } else {
             http_response_code(200);
-            echo json_encode([]);
+            echo json_encode(array("records" => array(), "total_pages" => 0));
         }
     }
 }

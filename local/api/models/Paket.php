@@ -23,6 +23,25 @@ class Paket {
         return $stmt;
     }
 
+    // read all paket with pagination
+    function readPaged($offset, $limit){
+        $query = "SELECT id, nama, tipe_paket, total_sesi, masa_berlaku_hari FROM " . $this->table_name . " ORDER BY id DESC LIMIT ?, ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(1, $offset, PDO::PARAM_INT);
+        $stmt->bindParam(2, $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt;
+    }
+
+    // count all records
+    function countAll(){
+        $query = "SELECT COUNT(*) as total_rows FROM " . $this->table_name;
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row['total_rows'];
+    }
+
     // read one paket by id
     function readOne(){
         $query = "SELECT id, nama, tipe_paket, total_sesi, masa_berlaku_hari FROM " . $this->table_name . " WHERE id = ? LIMIT 0,1";

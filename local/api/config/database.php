@@ -16,24 +16,10 @@ $dbConfigs = array(
         'user' => DB_USER,
         'pass' => DB_PASS
     ),
-    'keuangan' => array(
-        'host' => DB_HOST,
-        'port' => DB_PORT,
-        'name' => 'keuangan',
-        'user' => DB_USER,
-        'pass' => DB_PASS
-    ),
     'hrd' => array(
         'host' => DB_HOST,
         'port' => DB_PORT,
         'name' => 'hrd',
-        'user' => DB_USER,
-        'pass' => DB_PASS
-    ),
-    'askes' => array(
-        'host' => DB_HOST,
-        'port' => DB_PORT,
-        'name' => 'askes',
         'user' => DB_USER,
         'pass' => DB_PASS
     )
@@ -49,24 +35,10 @@ class Database {
             'user' => DB_USER,
             'pass' => DB_PASS
         ),
-        'keuangan' => array(
-            'host' => DB_HOST,
-            'port' => DB_PORT,
-            'name' => 'keuangan',
-            'user' => DB_USER,
-            'pass' => DB_PASS
-        ),
         'hrd' => array(
             'host' => DB_HOST,
             'port' => DB_PORT,
             'name' => 'hrd',
-            'user' => DB_USER,
-            'pass' => DB_PASS
-        ),
-        'askes' => array(
-            'host' => DB_HOST,
-            'port' => DB_PORT,
-            'name' => 'askes',
             'user' => DB_USER,
             'pass' => DB_PASS
         )

@@ -16,7 +16,7 @@ class KasirController {
         $namaText = isset($_GET['nama_text']) ? $_GET['nama_text'] : '';
 
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-        $limit = 10;
+        $limit = 5;
         $offset = ($page - 1) * $limit;
 
         $baseSelect = "SELECT 
@@ -61,6 +61,7 @@ class KasirController {
         }
 
         $tanggal = isset($_GET['tanggal']) ? $_GET['tanggal'] : '';
+
         if ($tanggal !== '') {
             $baseFromWhere .= " AND DATE(f.FCRDATE) = :tanggal";
             $params[':tanggal'] = $tanggal;
@@ -125,7 +126,7 @@ class KasirController {
                         t.nama as nama_paket_kasir
                       FROM dbold.fisiosfjual f
                       JOIN dbold.m_tindakan2026 t ON f.FCRBARANG = t.kode
-                      WHERE f.ID IN ($inQuery)
+                      WHERE f.ID IN ($inQuery) AND t.asaltabel = 'SFMASBIA'
                       GROUP BY f.ID";
             $stmtInfo = $this->db->prepare($qInfo);
             $stmtInfo->execute($ids);
