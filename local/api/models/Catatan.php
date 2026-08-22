@@ -49,7 +49,7 @@ class Catatan {
 
     // Ambil histori catatan berdasarkan no_erm
     function getHistoryByErm($no_erm){
-        $query = "SELECT c.*, t.nama_tindakan, p.nama as nama_paket 
+        $query = "SELECT c.*, t.nama_tindakan, CONCAT_WS(' ', NULLIF(p.kode_paket, ''), p.nama) as nama_paket 
                   FROM " . $this->table_name . " c
                   LEFT JOIN prm_master_tindakan t ON c.id_tindakan = t.id
                   LEFT JOIN prm_kapasitas k ON c.id_kapasitas = k.id
@@ -65,7 +65,7 @@ class Catatan {
 
     // Ambil histori catatan berdasarkan id_kapasitas
     function getByKapasitas($id_kapasitas){
-        $query = "SELECT c.*, t.nama_tindakan, p.nama as nama_paket 
+        $query = "SELECT c.*, t.nama_tindakan, CONCAT_WS(' ', NULLIF(p.kode_paket, ''), p.nama) as nama_paket 
                   FROM " . $this->table_name . " c
                   LEFT JOIN prm_master_tindakan t ON c.id_tindakan = t.id
                   LEFT JOIN prm_kapasitas k ON c.id_kapasitas = k.id
@@ -79,9 +79,35 @@ class Catatan {
         return $stmt;
     }
 
+    function getByKapasitasPaged($id_kapasitas, $offset, $limit){
+        $query = "SELECT c.*, t.nama_tindakan, CONCAT_WS(' ', NULLIF(p.kode_paket, ''), p.nama) as nama_paket 
+                  FROM " . $this->table_name . " c
+                  LEFT JOIN prm_master_tindakan t ON c.id_tindakan = t.id
+                  LEFT JOIN prm_kapasitas k ON c.id_kapasitas = k.id
+                  LEFT JOIN prm_master_paket p ON k.id_paket = p.id
+                  WHERE c.id_kapasitas = ? ORDER BY c.tanggal_paket DESC LIMIT ?, ?";
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(1, $id_kapasitas);
+        $stmt->bindParam(2, $offset, PDO::PARAM_INT);
+        $stmt->bindParam(3, $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        return $stmt;
+    }
+
+    function countByKapasitas($id_kapasitas){
+        $query = "SELECT COUNT(*) as total_rows FROM " . $this->table_name . " WHERE id_kapasitas = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(1, $id_kapasitas);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row['total_rows'];
+    }
+
     // Ambil semua histori untuk Laporan & Audit
     function getAllHistory(){
-        $query = "SELECT c.*, t.nama_tindakan, p.nama as nama_paket
+        $query = "SELECT c.*, t.nama_tindakan, CONCAT_WS(' ', NULLIF(p.kode_paket, ''), p.nama) as nama_paket
                   FROM " . $this->table_name . " c
                   LEFT JOIN prm_master_tindakan t ON c.id_tindakan = t.id
                   LEFT JOIN prm_kapasitas k ON c.id_kapasitas = k.id
@@ -95,7 +121,7 @@ class Catatan {
     }
 
     function getAllHistoryPaged($offset, $limit){
-        $query = "SELECT c.*, t.nama_tindakan, p.nama as nama_paket
+        $query = "SELECT c.*, t.nama_tindakan, CONCAT_WS(' ', NULLIF(p.kode_paket, ''), p.nama) as nama_paket
                   FROM " . $this->table_name . " c
                   LEFT JOIN prm_master_tindakan t ON c.id_tindakan = t.id
                   LEFT JOIN prm_kapasitas k ON c.id_kapasitas = k.id
@@ -127,7 +153,7 @@ class Catatan {
         );
 
         // Pasien Aktif (Distinct ERM yang punya kapasitas sisa_sesi > 0)
-        $q1 = "SELECT COUNT(DISTINCT no_erm) as count FROM prm_kapasitas WHERE sisa_sesi > 0 AND status = 'Aktif'";
+        $q1 = "SELECT COUNT(DISTINCT no_erm) as count FROM prm_kapasitas WHERE sisa > 0 AND status = 'AKTIF'";
         $stmt1 = $this->conn->prepare($q1);
         $stmt1->execute();
         if($row = $stmt1->fetch(PDO::FETCH_ASSOC)) {
@@ -143,7 +169,7 @@ class Catatan {
         }
 
         // Total Sisa Sesi Keseluruhan
-        $q3 = "SELECT SUM(sisa_sesi) as sum_sesi FROM prm_kapasitas WHERE status = 'Aktif'";
+        $q3 = "SELECT SUM(sisa) as sum_sesi FROM prm_kapasitas WHERE status = 'AKTIF'";
         $stmt3 = $this->conn->prepare($q3);
         $stmt3->execute();
         if($row = $stmt3->fetch(PDO::FETCH_ASSOC)) {

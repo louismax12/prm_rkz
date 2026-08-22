@@ -24,7 +24,7 @@ class Kapasitas {
                              (SELECT fname FROM dbold.poliumumupcust WHERE idcust = k.no_erm ORDER BY fdate_in DESC LIMIT 1),
                              'Tidak Diketahui'
                          ) as nama_pasien, 
-                         k.id_paket, k.tanggal_beli, k.sisa, k.status, p.nama as nama_paket, p.total_sesi 
+                         k.id_paket, k.tanggal_beli, k.sisa, k.status, CONCAT_WS(' ', NULLIF(p.kode_paket, ''), p.nama) as nama_paket, p.total_sesi 
                   FROM " . $this->table_name . " k 
                   LEFT JOIN prm_master_paket p ON k.id_paket = p.id
                   WHERE k.status IN ('aktif', 'AKTIF', 'habis', 'HABIS') AND DATE(k.tanggal_beli) = :vdate
@@ -33,6 +33,37 @@ class Kapasitas {
         $stmt->bindParam(':vdate', $date);
         $stmt->execute();
         return $stmt;
+    }
+
+    function readByVisitDatePaged($date, $offset, $limit){
+        $query = "SELECT k.id, k.no_erm, 
+                         COALESCE(
+                             (SELECT FCRNAMA FROM dbold.fisiosfjual WHERE FCRCUST = k.no_erm ORDER BY FCRDATE DESC LIMIT 1),
+                             (SELECT fname FROM dbold.poliumumupcust WHERE idcust = k.no_erm ORDER BY fdate_in DESC LIMIT 1),
+                             'Tidak Diketahui'
+                         ) as nama_pasien, 
+                         k.id_paket, k.tanggal_beli, k.sisa, k.status, CONCAT_WS(' ', NULLIF(p.kode_paket, ''), p.nama) as nama_paket, p.total_sesi 
+                  FROM " . $this->table_name . " k 
+                  LEFT JOIN prm_master_paket p ON k.id_paket = p.id
+                  WHERE k.status IN ('aktif', 'AKTIF', 'habis', 'HABIS') AND DATE(k.tanggal_beli) = :vdate
+                  ORDER BY k.tanggal_beli DESC LIMIT :offset, :limit";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':vdate', $date);
+        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt;
+    }
+
+    function countByVisitDate($date){
+        $query = "SELECT COUNT(*) as total_rows 
+                  FROM " . $this->table_name . " k 
+                  WHERE k.status IN ('aktif', 'AKTIF', 'habis', 'HABIS') AND DATE(k.tanggal_beli) = :vdate";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':vdate', $date);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row['total_rows'];
     }
 
     // Beli paket baru (create kapasitas)
@@ -67,7 +98,7 @@ class Kapasitas {
 
     // Ambil kapasitas aktif pasien berdasarkan no_erm
     function getActiveByErm($no_erm){
-        $query = "SELECT k.*, p.nama as nama_paket, p.total_sesi 
+        $query = "SELECT k.*, CONCAT_WS(' ', NULLIF(p.kode_paket, ''), p.nama) as nama_paket, p.total_sesi 
                   FROM " . $this->table_name . " k
                   LEFT JOIN prm_master_paket p ON k.id_paket = p.id
                   WHERE k.no_erm = ? AND k.status = 'AKTIF' AND k.sisa > 0";
@@ -81,7 +112,7 @@ class Kapasitas {
 
     // Ambil seluruh kapasitas (untuk Menu Pasien)
     function getAll(){
-        $query = "SELECT k.*, p.nama as nama_paket, p.total_sesi,
+        $query = "SELECT k.*, CONCAT_WS(' ', NULLIF(p.kode_paket, ''), p.nama) as nama_paket, p.total_sesi,
                          (SELECT FCRNAMA FROM dbold.fisiosfjual WHERE FCRDOKTER = k.no_erm LIMIT 1) as nama_pasien
                   FROM " . $this->table_name . " k
                   LEFT JOIN prm_master_paket p ON k.id_paket = p.id

@@ -17,7 +17,7 @@ class Paket {
 
     // read all paket
     function read(){
-        $query = "SELECT id, nama, tipe_paket, total_sesi, masa_berlaku_hari FROM " . $this->table_name;
+        $query = "SELECT id, CONCAT_WS(' ', NULLIF(kode_paket, ''), nama) as nama, tipe_paket, total_sesi, masa_berlaku_hari FROM " . $this->table_name;
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         return $stmt;
@@ -25,7 +25,7 @@ class Paket {
 
     // read all paket with pagination
     function readPaged($offset, $limit){
-        $query = "SELECT id, nama, tipe_paket, total_sesi, masa_berlaku_hari FROM " . $this->table_name . " ORDER BY id DESC LIMIT ?, ?";
+        $query = "SELECT id, CONCAT_WS(' ', NULLIF(kode_paket, ''), nama) as nama, tipe_paket, total_sesi, masa_berlaku_hari FROM " . $this->table_name . " ORDER BY id DESC LIMIT ?, ?";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1, $offset, PDO::PARAM_INT);
         $stmt->bindParam(2, $limit, PDO::PARAM_INT);
@@ -44,7 +44,7 @@ class Paket {
 
     // read one paket by id
     function readOne(){
-        $query = "SELECT id, nama, tipe_paket, total_sesi, masa_berlaku_hari FROM " . $this->table_name . " WHERE id = ? LIMIT 0,1";
+        $query = "SELECT id, CONCAT_WS(' ', NULLIF(kode_paket, ''), nama) as nama, tipe_paket, total_sesi, masa_berlaku_hari FROM " . $this->table_name . " WHERE id = ? LIMIT 0,1";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1, $this->id);
         $stmt->execute();

@@ -191,20 +191,60 @@ class PasienController {
     public function getAllKapasitas() {
         $date = isset($_GET['date']) ? $_GET['date'] : null;
         
-        if ($date) {
-            $stmt = $this->kapasitas->readByVisitDate($date);
-        } else {
-            // Return empty if no date is selected
+        if (!$date) {
             http_response_code(200);
             echo json_encode(array("records" => array(), "message" => "Silakan pilih tanggal kunjungan terlebih dahulu."));
             return;
         }
 
+        if(isset($_GET['all']) && $_GET['all'] == 'true') {
+            $stmt = $this->kapasitas->readByVisitDate($date);
+            $num = $stmt->rowCount();
+            if($num > 0){
+                $kapasitas_arr = array();
+                $kapasitas_arr["records"] = array();
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                    extract($row);
+                    $kapasitas_item = array(
+                        "id" => $id,
+                        "no_erm" => $no_erm,
+                        "nama_pasien" => isset($nama_pasien) ? $nama_pasien : 'Tidak diketahui',
+                        "nomor_register" => isset($nomor_register) ? $nomor_register : '',
+                        "id_paket" => $id_paket,
+                        "nama_paket" => isset($nama_paket) ? $nama_paket : '',
+                        "total_sesi" => isset($total_sesi) ? $total_sesi : 0,
+                        "sisa" => $sisa,
+                        "tanggal_beli" => $tanggal_beli,
+                        "tanggal_expired" => isset($tanggal_expired) ? $tanggal_expired : '',
+                        "status" => $status
+                    );
+                    array_push($kapasitas_arr["records"], $kapasitas_item);
+                }
+                http_response_code(200);
+                echo json_encode($kapasitas_arr);
+            } else {
+                http_response_code(200);
+                echo json_encode(array("records" => array(), "message" => "Tidak ada data paket untuk tanggal kunjungan ini."));
+            }
+            return;
+        }
+
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $limit = 5;
+        $offset = ($page - 1) * $limit;
+
+        $stmt = $this->kapasitas->readByVisitDatePaged($date, $offset, $limit);
         $num = $stmt->rowCount();
+
+        $total_records = $this->kapasitas->countByVisitDate($date);
+        $total_pages = ceil($total_records / $limit);
 
         if($num > 0){
             $kapasitas_arr = array();
             $kapasitas_arr["records"] = array();
+            $kapasitas_arr["total_records"] = $total_records;
+            $kapasitas_arr["total_pages"] = $total_pages;
+            $kapasitas_arr["current_page"] = $page;
 
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
                 extract($row);
@@ -228,7 +268,7 @@ class PasienController {
             echo json_encode($kapasitas_arr);
         } else {
             http_response_code(200);
-            echo json_encode(array("records" => array(), "message" => "Tidak ada data paket untuk tanggal kunjungan ini."));
+            echo json_encode(array("records" => array(), "total_pages" => 0, "message" => "Tidak ada data paket untuk tanggal kunjungan ini."));
         }
     }
 
@@ -241,12 +281,51 @@ class PasienController {
         }
 
         $id_kapasitas = $_GET['id_kapasitas'];
-        $stmt = $this->catatan->getByKapasitas($id_kapasitas);
+
+        if(isset($_GET['all']) && $_GET['all'] == 'true') {
+            $stmt = $this->catatan->getByKapasitas($id_kapasitas);
+            $num = $stmt->rowCount();
+            if($num > 0){
+                $riwayat_arr = array();
+                $riwayat_arr["records"] = array();
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                    extract($row);
+                    $riwayat_item = array(
+                        "id" => $id,
+                        "id_kapasitas" => $id_kapasitas,
+                        "nama_tindakan" => isset($nama_tindakan) ? $nama_tindakan : (isset($nama_paket) ? $nama_paket : 'Terapi'),
+                        "no_register_kunjungan" => $no_register_kunjungan,
+                        "no_erm" => $no_erm,
+                        "tanggal_paket" => $tanggal_paket,
+                        "sesi_ke" => $sesi_ke
+                    );
+                    array_push($riwayat_arr["records"], $riwayat_item);
+                }
+                http_response_code(200);
+                echo json_encode($riwayat_arr);
+            } else {
+                http_response_code(200);
+                echo json_encode(array("records" => []));
+            }
+            return;
+        }
+
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $limit = 5;
+        $offset = ($page - 1) * $limit;
+
+        $stmt = $this->catatan->getByKapasitasPaged($id_kapasitas, $offset, $limit);
         $num = $stmt->rowCount();
+
+        $total_records = $this->catatan->countByKapasitas($id_kapasitas);
+        $total_pages = ceil($total_records / $limit);
 
         if($num > 0){
             $riwayat_arr = array();
             $riwayat_arr["records"] = array();
+            $riwayat_arr["total_records"] = $total_records;
+            $riwayat_arr["total_pages"] = $total_pages;
+            $riwayat_arr["current_page"] = $page;
 
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
                 extract($row);
@@ -255,6 +334,7 @@ class PasienController {
                     "id_kapasitas" => $id_kapasitas,
                     "nama_tindakan" => isset($nama_tindakan) ? $nama_tindakan : (isset($nama_paket) ? $nama_paket : 'Terapi'),
                     "no_register_kunjungan" => $no_register_kunjungan,
+                    "no_erm" => $no_erm,
                     "tanggal_paket" => $tanggal_paket,
                     "sesi_ke" => $sesi_ke
                 );
@@ -265,7 +345,7 @@ class PasienController {
             echo json_encode($riwayat_arr);
         } else {
             http_response_code(200);
-            echo json_encode(array("records" => []));
+            echo json_encode(array("records" => [], "total_pages" => 0));
         }
     }
 }

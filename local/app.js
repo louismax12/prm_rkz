@@ -421,7 +421,7 @@ function loadKasirHistory(page = 1) {
 
     // Set default tanggal to today if empty
     const filterTanggalKasir = document.getElementById('filterTanggalKasir');
-    
+
     if (filterTanggalKasir && !filterTanggalKasir.value) {
         filterTanggalKasir.value = new Date().toISOString().split('T')[0];
     }
@@ -455,7 +455,7 @@ function loadKasirHistory(page = 1) {
                                 <input type="checkbox" value="${r.id_transaksi}" ${checkboxAttrs}>
                             </td>
                             <td class="py-5 px-6 text-[14px] whitespace-nowrap text-on-surface-variant group-hover:text-primary transition-colors">${tgl}</td>
-                            <td class="py-5 px-6 text-[14px] whitespace-nowrap font-bold text-primary">${r.no_register}</td>
+                            <td class="py-5 px-6 text-[14px] whitespace-nowrap font-bold text-primary">${r.no_erm}</td>
                             <td class="py-5 px-6 text-[14px] font-semibold text-on-surface">${r.nama_pasien}</td>
                             <td class="py-5 px-6 text-[14px] text-on-surface-variant group-hover:text-on-surface transition-colors">
                                 <span class="font-mono-data text-primary mr-1">${r.kode_paket || '-'}</span> 
@@ -475,7 +475,7 @@ function loadKasirHistory(page = 1) {
                 if (data.total_pages > 1 && paginationContainer) {
                     let startPage = Math.max(1, data.current_page - 2);
                     let endPage = Math.min(data.total_pages, startPage + 4);
-                    
+
                     if (endPage - startPage < 4) {
                         startPage = Math.max(1, endPage - 4);
                     }
@@ -491,8 +491,8 @@ function loadKasirHistory(page = 1) {
                     }
 
                     // Page Numbers
-                    for(let i = startPage; i <= endPage; i++) {
-                        if(i === data.current_page) {
+                    for (let i = startPage; i <= endPage; i++) {
+                        if (i === data.current_page) {
                             pagHtml += `<button class="px-3 py-1 rounded border border-primary bg-primary text-on-primary font-bold text-sm">${i}</button>`;
                         } else {
                             pagHtml += `<button onclick="loadKasirHistory(${i})" class="px-3 py-1 rounded border border-outline-variant hover:bg-surface-container-high transition text-sm">${i}</button>`;
@@ -505,7 +505,7 @@ function loadKasirHistory(page = 1) {
                     } else {
                         pagHtml += `<button disabled class="px-3 py-1 rounded border border-outline-variant/50 text-outline-variant cursor-not-allowed text-sm">Next</button>`;
                     }
-                    
+
                     pagHtml += `</div>`;
 
                     paginationContainer.innerHTML = pagHtml;
@@ -656,7 +656,7 @@ function loadMasterData(page = 1) {
                 if (data.total_pages > 1 && paginationContainer) {
                     let startPage = Math.max(1, data.current_page - 2);
                     let endPage = Math.min(data.total_pages, startPage + 4);
-                    
+
                     if (endPage - startPage < 4) {
                         startPage = Math.max(1, endPage - 4);
                     }
@@ -672,8 +672,8 @@ function loadMasterData(page = 1) {
                     }
 
                     // Page Numbers
-                    for(let i = startPage; i <= endPage; i++) {
-                        if(i === data.current_page) {
+                    for (let i = startPage; i <= endPage; i++) {
+                        if (i === data.current_page) {
                             pagHtml += `<button class="px-3 py-1 rounded border border-primary bg-primary text-on-primary font-bold text-sm">${i}</button>`;
                         } else {
                             pagHtml += `<button onclick="loadMasterData(${i})" class="px-3 py-1 rounded border border-outline-variant hover:bg-surface-container-high transition text-sm">${i}</button>`;
@@ -686,7 +686,7 @@ function loadMasterData(page = 1) {
                     } else {
                         pagHtml += `<button disabled class="px-3 py-1 rounded border border-outline-variant/50 text-outline-variant cursor-not-allowed text-sm">Next</button>`;
                     }
-                    
+
                     pagHtml += `</div>`;
 
                     paginationContainer.innerHTML = pagHtml;
@@ -757,7 +757,7 @@ function loadAuditData(page = 1) {
                         tableAuditLogs.innerHTML += `
                             <tr class="hover:bg-surface-container-lowest transition-colors">
                                 <td class="px-6 py-4 font-mono-data text-xs">${formattedDate}</td>
-                                <td class="px-6 py-4"><span class="bg-surface-variant px-2 py-1 rounded text-xs">${log.no_register_kunjungan}</span></td>
+                                <td class="px-6 py-4"><span class="bg-surface-variant px-2 py-1 rounded text-xs">${log.no_erm}</span></td>
                                 <td class="px-6 py-4">${log.nama_paket} <span class="font-bold">(${log.sesi_ke})</span></td>
                                 <td class="px-6 py-4">${log.nama_tindakan}</td>
                             </tr>
@@ -769,7 +769,7 @@ function loadAuditData(page = 1) {
                     if (data.total_pages > 1 && paginationContainer) {
                         let startPage = Math.max(1, data.current_page - 2);
                         let endPage = Math.min(data.total_pages, startPage + 4);
-                        
+
                         if (endPage - startPage < 4) {
                             startPage = Math.max(1, endPage - 4);
                         }
@@ -785,8 +785,8 @@ function loadAuditData(page = 1) {
                         }
 
                         // Page Numbers
-                        for(let i = startPage; i <= endPage; i++) {
-                            if(i === data.current_page) {
+                        for (let i = startPage; i <= endPage; i++) {
+                            if (i === data.current_page) {
                                 pagHtml += `<button class="px-3 py-1 rounded border border-primary bg-primary text-on-primary font-bold text-sm">${i}</button>`;
                             } else {
                                 pagHtml += `<button onclick="loadAuditData(${i})" class="px-3 py-1 rounded border border-outline-variant hover:bg-surface-container-high transition text-sm">${i}</button>`;
@@ -799,7 +799,7 @@ function loadAuditData(page = 1) {
                         } else {
                             pagHtml += `<button disabled class="px-3 py-1 rounded border border-outline-variant/50 text-outline-variant cursor-not-allowed text-sm">Next</button>`;
                         }
-                        
+
                         pagHtml += `</div>`;
 
                         paginationContainer.innerHTML = pagHtml;
@@ -853,7 +853,7 @@ window.loadTindakanDropdown = function () {
 const tablePasienMaster = document.getElementById('tablePasienMaster');
 const tablePasienDetail = document.getElementById('tablePasienDetail');
 
-window.loadPasienMaster = function () {
+window.loadPasienMaster = function (page = 1) {
     const tableBody = document.getElementById('tablePasienList');
     const dateFilter = document.getElementById('filterTanggalKunjungan').value;
 
@@ -864,7 +864,7 @@ window.loadPasienMaster = function () {
 
     tableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-on-surface-variant flex items-center justify-center gap-2"><span class="material-symbols-outlined animate-spin">sync</span> Memuat data...</td></tr>`;
 
-    apiFetch(`${API_BASE}/pasien?action=all_kapasitas&date=${dateFilter}`)
+    apiFetch(`${API_BASE}/pasien?action=all_kapasitas&date=${dateFilter}&page=${page}`)
         .then(res => res.json())
         .then(data => {
             tableBody.innerHTML = '';
@@ -918,6 +918,49 @@ window.loadPasienMaster = function () {
                     }
                 });
 
+                // Render Pagination
+                const paginationContainer = document.getElementById('kapasitasPagination');
+                if (data.total_pages > 1 && paginationContainer) {
+                    let startPage = Math.max(1, data.current_page - 2);
+                    let endPage = Math.min(data.total_pages, startPage + 4);
+
+                    if (endPage - startPage < 4) {
+                        startPage = Math.max(1, endPage - 4);
+                    }
+
+                    let pagHtml = `<div class="flex items-center gap-1">`;
+                    pagHtml += `<span class="text-xs text-on-surface-variant mr-2">Total: ${data.total_records} data</span>`;
+
+                    // Prev Button
+                    if (data.current_page > 1) {
+                        pagHtml += `<button onclick="loadPasienMaster(${data.current_page - 1})" class="px-2 py-1 rounded border border-outline-variant hover:bg-surface-container-high transition text-xs">Prev</button>`;
+                    } else {
+                        pagHtml += `<button disabled class="px-2 py-1 rounded border border-outline-variant/50 text-outline-variant cursor-not-allowed text-xs">Prev</button>`;
+                    }
+
+                    // Page Numbers
+                    for (let i = startPage; i <= endPage; i++) {
+                        if (i === data.current_page) {
+                            pagHtml += `<button class="px-2 py-1 rounded border border-primary bg-primary text-on-primary font-bold text-xs">${i}</button>`;
+                        } else {
+                            pagHtml += `<button onclick="loadPasienMaster(${i})" class="px-2 py-1 rounded border border-outline-variant hover:bg-surface-container-high transition text-xs">${i}</button>`;
+                        }
+                    }
+
+                    // Next Button
+                    if (data.current_page < data.total_pages) {
+                        pagHtml += `<button onclick="loadPasienMaster(${data.current_page + 1})" class="px-2 py-1 rounded border border-outline-variant hover:bg-surface-container-high transition text-xs">Next</button>`;
+                    } else {
+                        pagHtml += `<button disabled class="px-2 py-1 rounded border border-outline-variant/50 text-outline-variant cursor-not-allowed text-xs">Next</button>`;
+                    }
+
+                    pagHtml += `</div>`;
+
+                    paginationContainer.innerHTML = pagHtml;
+                } else if (paginationContainer) {
+                    paginationContainer.innerHTML = '';
+                }
+
                 if (rowToClick) {
                     rowToClick.click();
                 } else {
@@ -925,6 +968,8 @@ window.loadPasienMaster = function () {
                 }
             } else {
                 tableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-on-surface-variant italic">Tidak ada data paket untuk tanggal kunjungan ini.</td></tr>';
+                const paginationContainer = document.getElementById('kapasitasPagination');
+                if (paginationContainer) paginationContainer.innerHTML = '';
             }
         })
         .catch(err => {
@@ -945,12 +990,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-window.loadPasienDetail = function (id_kapasitas) {
+window.loadPasienDetail = function (id_kapasitas, page = 1) {
     if (!tablePasienDetail) return;
 
     tablePasienDetail.innerHTML = '<tr><td colspan="3" class="text-center py-4">Memuat data...</td></tr>';
 
-    apiFetch(`${API_BASE}/pasien?action=riwayat_by_kapasitas&id_kapasitas=${id_kapasitas}`)
+    apiFetch(`${API_BASE}/pasien?action=riwayat_by_kapasitas&id_kapasitas=${id_kapasitas}&page=${page}`)
         .then(res => res.json())
         .then(data => {
             tablePasienDetail.innerHTML = '';
@@ -960,13 +1005,59 @@ window.loadPasienDetail = function (id_kapasitas) {
                     tablePasienDetail.innerHTML += `
                         <tr class="hover:bg-surface-container-lowest transition-colors">
                             <td class="px-6 py-4">${row.sesi_ke || '-'}</td>
-                            <td class="px-6 py-4 font-mono-data text-[13px] text-on-surface-variant">${row.no_register_kunjungan || '-'}</td>
+                            <td class="px-6 py-4 font-mono-data text-[13px] text-on-surface-variant">${row.no_erm || '-'}</td>
                             <td class="px-6 py-4">${tgl}</td>
                         </tr>
                     `;
                 });
+
+                // Render Pagination for Detail
+                const paginationContainer = document.getElementById('detailPagination');
+                if (data.total_pages > 1 && paginationContainer) {
+                    let startPage = Math.max(1, data.current_page - 2);
+                    let endPage = Math.min(data.total_pages, startPage + 4);
+
+                    if (endPage - startPage < 4) {
+                        startPage = Math.max(1, endPage - 4);
+                    }
+
+                    let pagHtml = `<div class="flex items-center gap-1">`;
+                    pagHtml += `<span class="text-xs text-on-surface-variant mr-2">Total: ${data.total_records}</span>`;
+
+                    // Prev Button
+                    if (data.current_page > 1) {
+                        pagHtml += `<button onclick="loadPasienDetail(${id_kapasitas}, ${data.current_page - 1})" class="px-2 py-1 rounded border border-outline-variant hover:bg-surface-container-high transition text-xs">Prev</button>`;
+                    } else {
+                        pagHtml += `<button disabled class="px-2 py-1 rounded border border-outline-variant/50 text-outline-variant cursor-not-allowed text-xs">Prev</button>`;
+                    }
+
+                    // Page Numbers
+                    for (let i = startPage; i <= endPage; i++) {
+                        if (i === data.current_page) {
+                            pagHtml += `<button class="px-2 py-1 rounded border border-primary bg-primary text-on-primary font-bold text-xs">${i}</button>`;
+                        } else {
+                            pagHtml += `<button onclick="loadPasienDetail(${id_kapasitas}, ${i})" class="px-2 py-1 rounded border border-outline-variant hover:bg-surface-container-high transition text-xs">${i}</button>`;
+                        }
+                    }
+
+                    // Next Button
+                    if (data.current_page < data.total_pages) {
+                        pagHtml += `<button onclick="loadPasienDetail(${id_kapasitas}, ${data.current_page + 1})" class="px-2 py-1 rounded border border-outline-variant hover:bg-surface-container-high transition text-xs">Next</button>`;
+                    } else {
+                        pagHtml += `<button disabled class="px-2 py-1 rounded border border-outline-variant/50 text-outline-variant cursor-not-allowed text-xs">Next</button>`;
+                    }
+
+                    pagHtml += `</div>`;
+
+                    paginationContainer.innerHTML = pagHtml;
+                } else if (paginationContainer) {
+                    paginationContainer.innerHTML = '';
+                }
+
             } else {
                 tablePasienDetail.innerHTML = '<tr><td colspan="3" class="text-center py-4 text-on-surface-variant italic">Belum ada pemakaian sesi untuk paket ini.</td></tr>';
+                const paginationContainer = document.getElementById('detailPagination');
+                if (paginationContainer) paginationContainer.innerHTML = '';
             }
         })
         .catch(err => {
@@ -1201,7 +1292,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Set default tanggal Kasir to today
     const filterTanggalKasir = document.getElementById('filterTanggalKasir');
-    if(filterTanggalKasir) filterTanggalKasir.value = new Date().toISOString().split('T')[0];
+    if (filterTanggalKasir) filterTanggalKasir.value = new Date().toISOString().split('T')[0];
 
-    document.getElementById('filterTanggalKunjungan').addEventListener('change', loadPasienMaster);
+    document.getElementById('filterTanggalKunjungan').addEventListener('change', () => loadPasienMaster(1));
 });

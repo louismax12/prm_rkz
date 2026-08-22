@@ -154,8 +154,8 @@ if ($endpoint === 'auth') {
     }
 } elseif ($endpoint === 'master') {
     if(in_array($userPayload['role'], ['admin'])) {
-        include_once 'controllers/MasterController.php';
-        $controller = new MasterController();
+        include_once 'controllers/PaketController.php';
+        $controller = new PaketController();
         $controller->handleRequest();
     } else {
         http_response_code(403);
