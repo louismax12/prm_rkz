@@ -348,34 +348,49 @@
                             kunjungan dan detail pemakaian sesinya.</p>
                     </section>
 
-                    <!-- Master-Detail Layout (Side-by-Side) -->
-                    <section class="flex flex-row gap-6 flex-1 min-h-0 w-full overflow-hidden">
-                        <!-- Master: Daftar Kapasitas -->
-                        <div style="flex: 5;"
-                            class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden flex flex-col min-h-0">
-                            <div
-                                class="px-6 py-4 border-b border-outline-variant bg-surface-container-low flex justify-between items-center shrink-0">
-                                <h3 class="font-headline-sm font-semibold text-on-surface">Daftar Paket (Kapasitas)
-                                </h3>
-                                <div class="flex items-center gap-3">
-                                    <input type="date" id="filterTanggalKunjungan"
-                                        class="px-3 py-1.5 border border-outline-variant rounded bg-surface font-body-sm text-on-surface focus:ring-1 focus:ring-primary focus:border-primary">
-                                    <button onclick="loadPasienMaster()"
-                                        class="text-primary hover:text-on-primary-fixed-variant font-label-sm flex items-center gap-1 transition">
+                    <!-- Single Table Layout (Full Width) -->
+                    <section class="flex flex-col gap-6 flex-1 min-h-0 w-full overflow-hidden">
+                        <div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden flex flex-col min-h-0">
+                            <!-- Header & Filter Bar -->
+                            <div class="px-6 py-4 border-b border-outline-variant bg-surface-container-low flex flex-wrap justify-between items-center gap-4 shrink-0">
+                                <div class="flex items-center gap-3 w-full md:w-auto">
+                                    <div class="relative flex-1 md:w-64">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-on-surface-variant">
+                                            <span class="material-symbols-outlined text-[18px]">search</span>
+                                        </div>
+                                        <input type="text" id="pasienSearchInput" oninput="filterPasienTable()" class="block w-full pl-10 pr-3 py-2 border border-outline-variant rounded bg-surface text-on-surface font-body-sm focus:ring-1 focus:ring-primary focus:border-primary placeholder-on-surface-variant/50" placeholder="Cari nama / No. Register / Paket">
+                                    </div>
+                                    <select id="pasienStatusFilter" onchange="filterPasienTable()" class="px-3 py-2 border border-outline-variant rounded bg-surface text-on-surface font-body-sm focus:ring-1 focus:ring-primary focus:border-primary">
+                                        <option value="">Semua status</option>
+                                        <option value="AKTIF">Aktif</option>
+                                        <option value="HAMPIR HABIS">Hampir Habis</option>
+                                        <option value="BELUM DIGUNAKAN">Belum Digunakan</option>
+                                        <option value="EXPIRED">Expired</option>
+                                    </select>
+                                    <input type="date" id="filterTanggalKunjungan" class="px-3 py-2 border border-outline-variant rounded bg-surface text-on-surface font-body-sm focus:ring-1 focus:ring-primary focus:border-primary">
+                                </div>
+                                <div class="flex items-center gap-3 w-full md:w-auto">
+                                    <button onclick="loadPasienMaster()" class="text-primary hover:text-on-primary-fixed-variant font-label-sm flex items-center gap-1 transition">
                                         <span class="material-symbols-outlined text-[18px]">refresh</span> Refresh
+                                    </button>
+                                    <button class="bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-label-sm px-4 py-2 rounded shadow-sm flex items-center gap-2 transition" onclick="openForm()">
+                                        <span class="material-symbols-outlined text-[18px]">add</span> Paket Baru
                                     </button>
                                 </div>
                             </div>
+                            <!-- Main Table -->
                             <div class="table-scroll-container">
                                 <table class="w-full text-left font-body-md text-on-surface relative bg-white">
-                                    <thead
-                                        class="bg-surface-container-lowest font-label-sm uppercase text-on-surface-variant shadow-sm bg-white">
+                                    <thead class="bg-surface-container-lowest font-label-sm uppercase text-on-surface-variant shadow-sm bg-white">
                                         <tr>
-                                            <th class="px-6 py-4 border-b border-outline-variant">Tgl Beli</th>
+                                            <th class="px-6 py-4 border-b border-outline-variant">No Register</th>
                                             <th class="px-6 py-4 border-b border-outline-variant">Pasien</th>
                                             <th class="px-6 py-4 border-b border-outline-variant">Paket</th>
+                                            <th class="px-6 py-4 border-b border-outline-variant">Tgl Beli</th>
+                                            <th class="px-6 py-4 border-b border-outline-variant">Terpakai</th>
                                             <th class="px-6 py-4 border-b border-outline-variant">Sisa Sesi</th>
                                             <th class="px-6 py-4 border-b border-outline-variant">Status</th>
+                                            <th class="px-6 py-4 border-b border-outline-variant text-right">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody id="tablePasienList" class="divide-y divide-outline-variant">
@@ -383,45 +398,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div id="kapasitasPagination"
-                                class="flex justify-center items-center py-4 gap-2 border-t border-outline-variant bg-surface-container-lowest shrink-0">
-                                <!-- Pagination buttons will be injected here -->
-                            </div>
-                        </div>
-
-                        <!-- Detail: Riwayat Sesi -->
-                        <div style="flex: 5;"
-                            class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden flex flex-col min-h-0">
-                            <div
-                                class="px-6 py-4 border-b border-outline-variant bg-surface-container-low flex justify-between items-center shrink-0 bg-surface-container-lowest">
-                                <h3 class="font-headline-sm font-semibold text-on-surface">Detail Pemakaian Sesi</h3>
-                                <button id="btnGunakanSesi" disabled
-                                    class="bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-label-sm px-4 py-1.5 rounded shadow-sm flex items-center gap-2 transition disabled:opacity-50 disabled:cursor-not-allowed">
-                                    <span class="material-symbols-outlined text-[18px]">cut</span> Gunakan Sesi
-                                </button>
-                            </div>
-                            <div class="table-scroll-container">
-                                <table class="w-full text-left font-body-md text-on-surface relative">
-                                    <thead
-                                        class="bg-surface-container-lowest font-label-sm uppercase text-on-surface-variant shadow-sm">
-                                        <tr>
-                                            <th class="px-6 py-4 border-b border-outline-variant">Sesi Ke</th>
-                                            <th class="px-6 py-4 border-b border-outline-variant">No Register</th>
-                                            <th class="px-6 py-4 border-b border-outline-variant">Tanggal Pemakaian</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tablePasienDetail" class="divide-y divide-outline-variant">
-                                        <tr>
-                                            <td colspan="3" class="text-center py-8 text-on-surface-variant italic">
-                                                Pilih salah satu pasien di tabel sebelah kiri untuk melihat detail
-                                                pemakaian.
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div id="detailPagination"
-                                class="flex justify-center items-center py-4 gap-2 border-t border-outline-variant bg-surface-container-lowest shrink-0">
+                            <div id="kapasitasPagination" class="flex justify-center items-center py-4 gap-2 border-t border-outline-variant bg-surface-container-lowest shrink-0">
                                 <!-- Pagination buttons will be injected here -->
                             </div>
                         </div>
@@ -798,22 +775,90 @@
         class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-on-surface/50 backdrop-blur-sm p-4">
         <div
             class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-xl w-full max-w-md flex flex-col gap-4">
-            <h3 class="font-headline-sm flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary">play_circle</span> Konfirmasi Penggunaan Sesi
-            </h3>
-            <p class="font-body-md text-on-surface-variant">Anda akan memotong 1 sesi dari paket berikut:</p>
-            <div class="bg-surface-container-low p-4 rounded border border-outline-variant">
-                <strong id="modalPaketName" class="block font-headline-sm text-primary mb-2"></strong>
-                <p class="font-body-sm text-on-surface-variant">Sisa sesi saat ini: <strong id="modalSisaSesiBaru"
-                        class="text-on-surface font-mono-data"></strong></p>
+            <div class="flex justify-between items-center border-b border-outline-variant pb-4">
+                <h3 class="font-headline-sm font-semibold text-on-surface flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary text-[24px]">cut</span> Gunakan Sesi
+                </h3>
+                <button onclick="closeModal()"
+                    class="text-on-surface-variant hover:text-on-surface rounded-full p-1 transition-colors hover:bg-surface-container-high">
+                    <span class="material-symbols-outlined text-[20px]">close</span>
+                </button>
             </div>
+            <div class="flex flex-col gap-3 font-body-md text-on-surface">
+                <p>Anda akan memotong 1 sesi untuk pasien:</p>
+                <div class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1 border border-outline-variant">
+                    <div class="font-bold text-lg" id="modalNamaPasien">-</div>
+                    <div class="text-sm text-on-surface-variant flex justify-between">
+                        <span>Register: <span id="modalNoRegister" class="font-mono-data text-primary"></span></span>
+                        <span>ERM: <span id="modalNoErm" class="font-mono-data"></span></span>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center py-2 border-b border-outline-variant">
+                    <span class="text-on-surface-variant">Paket</span>
+                    <span class="font-semibold" id="modalNamaPaket">-</span>
+                </div>
+                <div class="flex justify-between items-center py-2">
+                    <span class="text-on-surface-variant">Sisa Sesi</span>
+                    <span class="font-bold text-primary text-lg" id="modalSisaSesi">-</span>
+                </div>
+            </div>
+            <div class="flex gap-3 justify-end pt-4 border-t border-outline-variant mt-2">
+                <button onclick="closeModal()"
+                    class="px-4 py-2 rounded font-label-md text-on-surface hover:bg-surface-container-high transition-colors">Batal</button>
+                <button onclick="confirmUseSession()" id="btnConfirmGunakanSesi"
+                    class="bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-label-md px-6 py-2 rounded shadow-sm transition-colors flex items-center gap-2">
+                    Konfirmasi
+                </button>
+            </div>
+        </div>
+    </div>
 
-            <div class="flex justify-end gap-3 mt-4">
-                <button type="button"
-                    class="modal-close px-4 py-2 border border-outline-variant text-on-surface-variant rounded-lg hover:bg-surface-container-high transition-colors font-label-md">Batal</button>
-                <button type="button" id="confirmUseBtn"
-                    class="px-4 py-2 bg-primary text-on-primary rounded-lg hover:bg-on-primary-fixed-variant transition-colors font-label-md shadow-sm">Gunakan
-                    Sesi</button>
+    <!-- ============================================== -->
+    <!-- MODAL: DETAIL RIWAYAT SESI                     -->
+    <!-- ============================================== -->
+    <div id="detailPasienModal"
+        class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-on-surface/50 backdrop-blur-sm p-4">
+        <div
+            class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-xl w-full max-w-3xl flex flex-col max-h-[80vh] overflow-hidden">
+            <div class="flex justify-between items-center border-b border-outline-variant p-6 shrink-0 bg-surface-container-low">
+                <div>
+                    <h3 class="font-headline-sm font-semibold text-on-surface" id="detailModalTitle">Detail Pemakaian Sesi</h3>
+                    <p class="font-body-sm text-on-surface-variant mt-1" id="detailModalSubtitle">Pasien</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button id="btnGunakanSesiModal" disabled
+                        class="bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-label-sm px-4 py-1.5 rounded shadow-sm flex items-center gap-2 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                        <span class="material-symbols-outlined text-[18px]">cut</span> Gunakan Sesi
+                    </button>
+                    <button onclick="closeDetailModal()"
+                        class="text-on-surface-variant hover:text-on-surface rounded-full p-1 transition-colors hover:bg-surface-container-high">
+                        <span class="material-symbols-outlined text-[24px]">close</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="table-scroll-container flex-1 overflow-auto">
+                <table class="w-full text-left font-body-md text-on-surface relative">
+                    <thead class="bg-surface-container-lowest font-label-sm uppercase text-on-surface-variant shadow-sm sticky top-0 z-10">
+                        <tr>
+                            <th class="px-6 py-4 border-b border-outline-variant">Sesi Ke</th>
+                            <th class="px-6 py-4 border-b border-outline-variant">No Register</th>
+                            <th class="px-6 py-4 border-b border-outline-variant">Tanggal Pemakaian</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablePasienDetail" class="divide-y divide-outline-variant bg-white">
+                        <tr>
+                            <td colspan="3" class="text-center py-8 text-on-surface-variant italic">
+                                Memuat data...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="detailPagination"
+                class="flex justify-center items-center py-4 gap-2 border-t border-outline-variant bg-surface-container-lowest shrink-0">
+                <!-- Pagination buttons will be injected here -->
             </div>
         </div>
     </div>
