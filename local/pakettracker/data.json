@@ -1,143 +1,191 @@
 {
-  "tms": [
-    {
-      "id": "PKT-TMS-260801-001",
-      "name": "Andi Setiawan",
-      "rm": "00123456",
-      "pkg": "TMS 10x",
-      "buy": "2026-08-01",
-      "exp": "2026-11-01",
-      "used": 8,
-      "total": 10,
-      "last": "2026-08-12",
-      "status": "Hampir Habis",
-      "log": []
-    },
-    {
-      "id": "PKT-TMS-260803-004",
-      "name": "Citra Wijaya",
-      "rm": "00123489",
-      "pkg": "TMS 5x",
-      "buy": "2026-08-03",
-      "exp": "2026-11-03",
-      "used": 5,
-      "total": 5,
-      "last": "2026-08-14",
-      "status": "Selesai",
-      "log": []
-    },
-    {
-      "id": "PKT-TMS-260805-007",
-      "name": "Deni Kurnia",
-      "rm": "00123567",
-      "pkg": "TMS 10x",
-      "buy": "2026-08-05",
-      "exp": "2026-11-05",
-      "used": 0,
-      "total": 10,
-      "last": "-",
-      "status": "Belum Digunakan",
-      "log": []
-    },
-    {
-      "id": "PKT-TMS-260808-010",
-      "name": "Eka Pratama",
-      "rm": "00123611",
-      "pkg": "TMS 5x",
-      "buy": "2026-08-08",
-      "exp": "2026-11-08",
-      "used": 3,
-      "total": 5,
-      "last": "2026-08-18",
-      "status": "Aktif",
-      "log": []
-    },
-    {
-      "id": "PKT-TMS-260810-012",
-      "name": "Fajar Nugroho",
-      "rm": "00123678",
-      "pkg": "TMS 10x",
-      "buy": "2026-08-10",
-      "exp": "2026-11-10",
-      "used": 9,
-      "total": 10,
-      "last": "2026-08-20",
-      "status": "Hampir Habis",
-      "log": []
-    }
-  ],
-  "fisio": [
-    {
-      "id": "PKT-FISIO-260802-003",
-      "name": "Budi Santoso",
-      "rm": "00123477",
-      "pkg": "Fisioterapi 5x",
-      "buy": "2026-08-02",
-      "exp": "2026-11-02",
-      "used": 2,
-      "total": 5,
-      "last": "2026-08-15",
-      "status": "Aktif",
-      "comp": [
-        ["Terapi Manual", 2, 1],
-        ["Exercise Therapy", 1, 1],
-        ["Electrotherapy", 2, 0]
-      ],
-      "log": []
-    },
-    {
-      "id": "PKT-FISIO-260804-005",
-      "name": "Maya Sari",
-      "rm": "00123502",
-      "pkg": "Fisioterapi 5x",
-      "buy": "2026-08-04",
-      "exp": "2026-11-04",
-      "used": 4,
-      "total": 5,
-      "last": "2026-08-18",
-      "status": "Hampir Habis",
-      "comp": [
-        ["Terapi Manual", 2, 2],
-        ["Exercise Therapy", 1, 1],
-        ["Electrotherapy", 2, 1]
-      ],
-      "log": []
-    },
-    {
-      "id": "PKT-FISIO-260806-009",
-      "name": "Rina Wulandari",
-      "rm": "00123588",
-      "pkg": "Fisioterapi 10x",
-      "buy": "2026-08-06",
-      "exp": "2026-11-06",
-      "used": 0,
-      "total": 10,
-      "last": "-",
-      "status": "Belum Digunakan",
-      "comp": [
-        ["Terapi Manual", 4, 0],
-        ["Exercise Therapy", 3, 0],
-        ["Electrotherapy", 3, 0]
-      ],
-      "log": []
-    },
-    {
-      "id": "PKT-FISIO-260809-011",
-      "name": "Yusuf Halim",
-      "rm": "00123632",
-      "pkg": "Fisioterapi 5x",
-      "buy": "2026-08-09",
-      "exp": "2026-11-09",
-      "used": 5,
-      "total": 5,
-      "last": "2026-08-19",
-      "status": "Selesai",
-      "comp": [
-        ["Terapi Manual", 2, 2],
-        ["Exercise Therapy", 1, 1],
-        ["Electrotherapy", 2, 2]
-      ],
-      "log": []
-    }
-  ]
+    "tms": [
+        {
+            "id": "PKT-TMS-260801-001",
+            "name": "Andi Setiawan",
+            "rm": "00123456",
+            "pkg": "TMS 10x",
+            "buy": "2026-08-01",
+            "exp": "2026-11-01",
+            "used": 8,
+            "total": 12,
+            "last": "2026-08-12",
+            "status": "Aktif",
+            "log": []
+        },
+        {
+            "id": "PKT-TMS-260803-004",
+            "name": "Citra Wijaya",
+            "rm": "00123489",
+            "pkg": "TMS 5x",
+            "buy": "2026-08-03",
+            "exp": "2026-11-03",
+            "used": 5,
+            "total": 5,
+            "last": "2026-08-14",
+            "status": "Selesai",
+            "log": []
+        },
+        {
+            "id": "PKT-TMS-260805-007",
+            "name": "Deni Kurnia",
+            "rm": "00123567",
+            "pkg": "TMS 10x",
+            "buy": "2026-08-05",
+            "exp": "2026-11-05",
+            "used": 0,
+            "total": 10,
+            "last": "-",
+            "status": "Belum Digunakan",
+            "log": []
+        },
+        {
+            "id": "PKT-TMS-260808-010",
+            "name": "Eka Pratama",
+            "rm": "00123611",
+            "pkg": "TMS 5x",
+            "buy": "2026-08-08",
+            "exp": "2026-11-08",
+            "used": 3,
+            "total": 5,
+            "last": "2026-08-18",
+            "status": "Aktif",
+            "log": []
+        },
+        {
+            "id": "PKT-TMS-260810-012",
+            "name": "Fajar Nugroho",
+            "rm": "00123678",
+            "pkg": "TMS 10x",
+            "buy": "2026-08-10",
+            "exp": "2026-11-10",
+            "used": 9,
+            "total": 10,
+            "last": "2026-08-20",
+            "status": "Hampir Habis",
+            "log": []
+        }
+    ],
+    "fisio": [
+        {
+            "id": "PKT-FISIO-260802-003",
+            "name": "Budi Santoso",
+            "rm": "00123477",
+            "pkg": "Fisioterapi 5x",
+            "buy": "2026-08-02",
+            "exp": "2026-11-02",
+            "used": 2,
+            "total": 5,
+            "last": "2026-08-15",
+            "status": "Aktif",
+            "comp": [
+                [
+                    "Terapi Manual",
+                    2,
+                    1
+                ],
+                [
+                    "Exercise Therapy",
+                    1,
+                    1
+                ],
+                [
+                    "Electrotherapy",
+                    2,
+                    0
+                ]
+            ],
+            "log": []
+        },
+        {
+            "id": "PKT-FISIO-260804-005",
+            "name": "Maya Sari",
+            "rm": "00123502",
+            "pkg": "Fisioterapi 5x",
+            "buy": "2026-08-04",
+            "exp": "2026-11-04",
+            "used": 4,
+            "total": 5,
+            "last": "2026-08-18",
+            "status": "Hampir Habis",
+            "comp": [
+                [
+                    "Terapi Manual",
+                    2,
+                    2
+                ],
+                [
+                    "Exercise Therapy",
+                    1,
+                    1
+                ],
+                [
+                    "Electrotherapy",
+                    2,
+                    1
+                ]
+            ],
+            "log": []
+        },
+        {
+            "id": "PKT-FISIO-260806-009",
+            "name": "Rina Wulandari",
+            "rm": "00123588",
+            "pkg": "Fisioterapi 10x",
+            "buy": "2026-08-06",
+            "exp": "2026-11-06",
+            "used": 0,
+            "total": 10,
+            "last": "-",
+            "status": "Belum Digunakan",
+            "comp": [
+                [
+                    "Terapi Manual",
+                    4,
+                    0
+                ],
+                [
+                    "Exercise Therapy",
+                    3,
+                    0
+                ],
+                [
+                    "Electrotherapy",
+                    3,
+                    0
+                ]
+            ],
+            "log": []
+        },
+        {
+            "id": "PKT-FISIO-260809-011",
+            "name": "Yusuf Halim",
+            "rm": "00123632",
+            "pkg": "Fisioterapi 5x",
+            "buy": "2026-08-09",
+            "exp": "2026-11-09",
+            "used": 5,
+            "total": 5,
+            "last": "2026-08-19",
+            "status": "Selesai",
+            "comp": [
+                [
+                    "Terapi Manual",
+                    2,
+                    2
+                ],
+                [
+                    "Exercise Therapy",
+                    1,
+                    1
+                ],
+                [
+                    "Electrotherapy",
+                    2,
+                    2
+                ]
+            ],
+            "log": []
+        }
+    ]
 }

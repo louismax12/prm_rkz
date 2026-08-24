@@ -406,7 +406,10 @@ confirmUseBtn.addEventListener('click', () => {
                 showMessage(res.body.message, 'success');
                 // Refresh data
                 if (window.loadPasienMaster) window.loadPasienMaster();
-                if (activeKapasitasData && window.loadPasienDetail) loadPasienDetail(activeKapasitasData.id);
+                // We don't have loadPasienDetail globally anymore, we openDetailModal instead
+                if (activeKapasitasData && window.openDetailModal) {
+                    window.openDetailModal(activeKapasitasData.id);
+                }
             } else {
                 alert(res.body.message || 'Gagal memotong sesi.');
             }
@@ -419,11 +422,14 @@ const tableKasirHistory = document.getElementById('tableKasirHistory');
 function loadKasirHistory(page = 1) {
     if (!tableKasirHistory) return;
 
-    // Set default tanggal to today if empty
+    // Set default tanggal to current month if empty
     const filterTanggalKasir = document.getElementById('filterTanggalKasir');
 
     if (filterTanggalKasir && !filterTanggalKasir.value) {
-        filterTanggalKasir.value = new Date().toISOString().split('T')[0];
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        filterTanggalKasir.value = `${yyyy}-${mm}`;
     }
 
     tableKasirHistory.innerHTML = '<tr><td colspan="8" class="p-6 text-center text-on-surface-variant"><span class="material-symbols-outlined spin">progress_activity</span> Memuat data...</td></tr>';
@@ -455,7 +461,7 @@ function loadKasirHistory(page = 1) {
                                 <input type="checkbox" value="${r.id_transaksi}" ${checkboxAttrs}>
                             </td>
                             <td class="py-5 px-6 text-[14px] whitespace-nowrap text-on-surface-variant group-hover:text-primary transition-colors">${tgl}</td>
-                            <td class="py-5 px-6 text-[14px] whitespace-nowrap font-bold text-primary">${r.no_erm}</td>
+                            <td class="py-5 px-6 text-[14px] whitespace-nowrap font-bold text-primary">${r.no_register}</td>
                             <td class="py-5 px-6 text-[14px] font-semibold text-on-surface">${r.nama_pasien}</td>
                             <td class="py-5 px-6 text-[14px] text-on-surface-variant group-hover:text-on-surface transition-colors">
                                 <span class="font-mono-data text-primary mr-1">${r.kode_paket || '-'}</span> 
@@ -570,7 +576,14 @@ function simpanProsesKasir() {
         });
 }
 
-
+// We override showApp to add loadKasirHistory instead of loadMasterPaket
+const originalShowApp = showApp;
+window.showApp = function () {
+    originalShowApp();
+    if (currentUser && (currentUser.role === 'admin' || currentUser.role === 'kasir')) {
+        loadKasirHistory();
+    }
+}
 
 // --- MASTER DATA MODULE LOGIC ---
 const btnTambahPaket = document.getElementById('btnTambahPaket');
@@ -750,7 +763,7 @@ function loadAuditData(page = 1) {
                         tableAuditLogs.innerHTML += `
                             <tr class="hover:bg-surface-container-lowest transition-colors">
                                 <td class="px-6 py-4 font-mono-data text-xs">${formattedDate}</td>
-                                <td class="px-6 py-4"><span class="bg-surface-variant px-2 py-1 rounded text-xs">${log.no_erm}</span></td>
+                                <td class="px-6 py-4"><span class="bg-surface-variant px-2 py-1 rounded text-xs">${log.no_register_kunjungan}</span></td>
                                 <td class="px-6 py-4">${log.nama_paket} <span class="font-bold">(${log.sesi_ke})</span></td>
                                 <td class="px-6 py-4">${log.nama_tindakan}</td>
                             </tr>
@@ -810,9 +823,6 @@ function loadAuditData(page = 1) {
 const originalSwitchView = switchView;
 window.switchView = function (viewKey) {
     originalSwitchView(viewKey);
-    if (viewKey === 'kasir' && currentUser && (currentUser.role === 'admin' || currentUser.role === 'kasir')) {
-        loadKasirHistory();
-    }
     if (viewKey === 'master' && currentUser && currentUser.role === 'admin') {
         loadMasterData();
     }
@@ -849,7 +859,7 @@ window.loadTindakanDropdown = function () {
 const tablePasienMaster = document.getElementById('tablePasienMaster');
 const tablePasienDetail = document.getElementById('tablePasienDetail');
 
-window.loadPasienMaster = function (page = 1) {
+window.loadPasienMaster = function () {
     const tableBody = document.getElementById('tablePasienList');
     const dateFilter = document.getElementById('filterTanggalKunjungan').value;
 
@@ -858,141 +868,81 @@ window.loadPasienMaster = function (page = 1) {
         return;
     }
 
-    tableBody.innerHTML = `<tr><td colspan="8" class="px-6 py-8 text-center text-on-surface-variant flex items-center justify-center gap-2"><span class="material-symbols-outlined animate-spin">sync</span> Memuat data...</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-on-surface-variant flex items-center justify-center gap-2"><span class="material-symbols-outlined animate-spin">sync</span> Memuat data...</td></tr>`;
 
-    apiFetch(`${API_BASE}/pasien?action=all_kapasitas&date=${dateFilter}&page=${page}`)
+    apiFetch(`${API_BASE}/pasien?action=all_kapasitas&date=${dateFilter}`)
         .then(res => res.json())
         .then(data => {
-            window.allKapasitasData = data; // Store for filtering
-            renderPasienTable();
+            tableBody.innerHTML = '';
+            // Reset detail
+            if (tablePasienDetail) {
+                tablePasienDetail.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-on-surface-variant italic">Pilih salah satu pasien di tabel sebelah kiri untuk melihat detail.</td></tr>`;
+            }
+
+            if (data && data.records && data.records.length > 0) {
+                window.allKapasitasData = data.records; // Save for modal lookup
+                let rowToClick = null;
+                data.records.forEach(kap => {
+                    const isHabis = kap.status.toUpperCase() === 'HABIS';
+                    const statusClass = isHabis ? 'bg-surface-variant text-on-surface-variant font-bold' : 'bg-green-100 text-green-800 font-bold';
+                    const row = document.createElement('tr');
+                    row.className = isHabis ? 'bg-surface-container-lowest opacity-60 transition-colors pasien-row' : 'hover:bg-surface-container-lowest transition-colors pasien-row';
+                    row.setAttribute('data-status', kap.status.toUpperCase());
+
+                    row.innerHTML = `
+                        <td class="px-6 py-4 text-xs font-mono-data">${new Date(kap.tanggal_beli).toLocaleDateString('id-ID')}</td>
+                        <td class="px-6 py-4">
+                            <div class="font-bold text-on-surface">${kap.nama_pasien}</div>
+                            <div class="text-xs text-on-surface-variant">${kap.no_erm}</div>
+                        </td>
+                        <td class="px-6 py-4">${kap.nama_paket}</td>
+                        <td class="px-6 py-4 font-bold ${kap.sisa > 0 ? 'text-primary' : 'text-error'}">${kap.sisa} / ${kap.total_sesi}</td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 rounded text-xs ${statusClass}">${kap.status}</span>
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <button onclick="openDetailModal('${kap.id}')" class="bg-surface hover:bg-surface-container-high text-primary border border-outline-variant rounded px-3 py-1 text-sm transition-colors shadow-sm font-medium">Detail</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+                // Re-apply filters to the newly loaded rows
+                if (window.filterPasienTable) window.filterPasienTable();
+            } else {
+                tableBody.innerHTML = '<tr><td colspan="6" class="text-center py-8 text-on-surface-variant italic">Tidak ada data paket untuk tanggal kunjungan ini.</td></tr>';
+            }
         })
         .catch(err => {
-            console.error(err);
-            const tableBody = document.getElementById('tablePasienList');
-            if (tableBody) tableBody.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-error">Gagal memuat data</td></tr>`;
+            console.error('Fetch error:', err);
+            tableBody.innerHTML = '<tr><td colspan="6" class="text-center py-8 text-error">Terjadi kesalahan saat memuat data.</td></tr>';
         });
-}
+};
 
-function renderPasienTable(page = 1) {
-    const tableBody = document.getElementById('tablePasienList');
-    if (!tableBody) return;
-    
-    if (!window.allKapasitasData) return;
-    const data = window.allKapasitasData;
-    
-    tableBody.innerHTML = '';
+window.filterPasienTable = function () {
+    const searchInput = document.getElementById('pasienSearchInput');
+    const statusFilter = document.getElementById('pasienStatusFilter');
+    if (!searchInput || !statusFilter) return;
 
-    // Filter logic
-    let records = data.records || [];
-    const searchVal = (document.getElementById('pasienSearchInput')?.value || '').toLowerCase();
-    const statusVal = document.getElementById('pasienStatusFilter')?.value || '';
-    
-    if (searchVal) {
-        records = records.filter(r => 
-            (r.nama_pasien || '').toLowerCase().includes(searchVal) || 
-            (r.no_erm || '').toLowerCase().includes(searchVal) ||
-            (r.nomor_register || '').toLowerCase().includes(searchVal) ||
-            (r.nama_paket || '').toLowerCase().includes(searchVal)
-        );
-    }
-    if (statusVal) {
-        records = records.filter(r => (r.status || '').toUpperCase() === statusVal);
-    }
-    
-    // Pagination (Client-side)
-    const limit = 10;
-    const total_records = records.length;
-    const total_pages = Math.ceil(total_records / limit) || 1;
-    if (page < 1) page = 1;
-    if (page > total_pages) page = total_pages;
-    const offset = (page - 1) * limit;
-    
-    const pagedRecords = records.slice(offset, offset + limit);
+    const searchTerm = searchInput.value.toLowerCase();
+    const statusTerm = statusFilter.value.toUpperCase();
 
-    if (pagedRecords.length > 0) {
-        pagedRecords.forEach(kap => {
-            const isHabis = kap.status.toUpperCase() === 'HABIS' || kap.status.toUpperCase() === 'EXPIRED';
-            const statusClass = isHabis ? 'bg-surface-variant text-on-surface-variant font-bold' : 'bg-green-100 text-green-800 font-bold';
-            const row = document.createElement('tr');
-            row.className = isHabis ? 'bg-surface-container-lowest opacity-60 transition-colors' : 'hover:bg-surface-container-lowest transition-colors';
-            
-            const terpakai = (kap.total_sesi || 0) - (kap.sisa || 0);
+    const rows = document.querySelectorAll('#tablePasienList .pasien-row');
 
-            row.innerHTML = `
-                <td class="px-6 py-4 font-mono-data">${kap.no_erm || '-'}</td>
-                <td class="px-6 py-4">
-                    <div class="font-bold text-on-surface">${kap.nama_pasien || 'PASIEN'}</div>
-                    <div class="text-xs text-on-surface-variant">${kap.nomor_register || '-'}</div>
-                </td>
-                <td class="px-6 py-4">${kap.nama_paket || '-'}</td>
-                <td class="px-6 py-4 text-xs font-mono-data">${new Date(kap.tanggal_beli).toLocaleDateString('id-ID')}</td>
-                <td class="px-6 py-4">${terpakai}x</td>
-                <td class="px-6 py-4 font-bold ${kap.sisa > 0 ? 'text-primary' : 'text-error'}">${kap.sisa}x</td>
-                <td class="px-6 py-4">
-                    <span class="px-2 py-1 rounded text-xs ${statusClass}">${kap.status}</span>
-                </td>
-                <td class="px-6 py-4 text-right whitespace-nowrap">
-                    <button class="bg-surface-container-low hover:bg-surface-container-high border border-outline-variant px-3 py-1.5 rounded text-sm transition-colors font-semibold" onclick="openDetailModal(${kap.id}, '${(kap.nama_pasien || '').replace(/'/g, "\\'")}', '${kap.no_erm || ''}', '${(kap.nama_paket || '').replace(/'/g, "\\'")}', ${kap.sisa}, '${kap.nomor_register || ''}')">Detail</button>
-                    <button class="bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20 px-3 py-1.5 rounded text-sm transition-colors mx-1" onclick="openForm()">Ubah</button>
-                    <button class="bg-error/10 text-error hover:bg-error/20 border border-error/20 px-3 py-1.5 rounded text-sm transition-colors" onclick="delItem()">Hapus</button>
-                </td>
-            `;
-            tableBody.appendChild(row);
-        });
+    rows.forEach(row => {
+        const textContent = row.innerText.toLowerCase();
+        const rowStatus = row.getAttribute('data-status') || '';
 
-        // Render Pagination
-        const paginationContainer = document.getElementById('kapasitasPagination');
-        if (total_pages > 1 && paginationContainer) {
-            let startPage = Math.max(1, page - 2);
-            let endPage = Math.min(total_pages, startPage + 4);
+        const matchesSearch = textContent.includes(searchTerm);
+        const matchesStatus = statusTerm === '' || rowStatus === statusTerm;
 
-            if (endPage - startPage < 4) {
-                startPage = Math.max(1, endPage - 4);
-            }
-
-            let pagHtml = `<div class="flex items-center gap-1">`;
-            pagHtml += `<span class="text-sm text-on-surface-variant mr-4">Total: ${total_records} (Hal ${page} / ${total_pages})</span>`;
-
-            // Prev Button
-            if (page > 1) {
-                pagHtml += `<button onclick="renderPasienTable(${page - 1})" class="px-3 py-1 rounded border border-outline-variant hover:bg-surface-container-high transition text-sm">Prev</button>`;
-            } else {
-                pagHtml += `<button disabled class="px-3 py-1 rounded border border-outline-variant/50 text-outline-variant cursor-not-allowed text-sm">Prev</button>`;
-            }
-
-            // Page Numbers
-            for (let i = startPage; i <= endPage; i++) {
-                if (i === page) {
-                    pagHtml += `<button class="px-3 py-1 rounded border border-primary bg-primary text-on-primary font-bold text-sm">${i}</button>`;
-                } else {
-                    pagHtml += `<button onclick="renderPasienTable(${i})" class="px-3 py-1 rounded border border-outline-variant hover:bg-surface-container-high transition text-sm">${i}</button>`;
-                }
-            }
-
-            // Next Button
-            if (page < total_pages) {
-                pagHtml += `<button onclick="renderPasienTable(${page + 1})" class="px-3 py-1 rounded border border-outline-variant hover:bg-surface-container-high transition text-sm">Next</button>`;
-            } else {
-                pagHtml += `<button disabled class="px-3 py-1 rounded border border-outline-variant/50 text-outline-variant cursor-not-allowed text-sm">Next</button>`;
-            }
-
-            pagHtml += `</div>`;
-            paginationContainer.innerHTML = pagHtml;
-        } else if (paginationContainer) {
-            paginationContainer.innerHTML = `<span class="text-sm text-on-surface-variant">Total: ${total_records} data</span>`;
+        if (matchesSearch && matchesStatus) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
         }
-    } else {
-        tableBody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-on-surface-variant italic">Belum ada paket pasien untuk tanggal kunjungan ini atau filter tidak cocok.</td></tr>`;
-        const paginationContainer = document.getElementById('kapasitasPagination');
-        if (paginationContainer) paginationContainer.innerHTML = '';
-    }
-}
+    });
+};
 
-function filterPasienTable() {
-    renderPasienTable(1);
-}
-
-// Attach event listener to btnGunakanSesi once
 document.addEventListener('DOMContentLoaded', () => {
     const btnGunakanSesi = document.getElementById('btnGunakanSesi');
     if (btnGunakanSesi) {
@@ -1003,13 +953,67 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+window.openDetailModal = function (id_kapasitas) {
+    if (!window.allKapasitasData) return;
+    const kap = window.allKapasitasData.find(k => k.id == id_kapasitas);
+    if (!kap) return;
 
-window.loadPasienDetail = function (id_kapasitas, page = 1) {
+    const tablePasienDetail = document.getElementById('tablePasienDetail');
     if (!tablePasienDetail) return;
 
-    tablePasienDetail.innerHTML = '<tr><td colspan="3" class="text-center py-4">Memuat data...</td></tr>';
+    tablePasienDetail.innerHTML = '<tr><td colspan="3" class="text-center py-8">Memuat data...</td></tr>';
 
-    apiFetch(`${API_BASE}/pasien?action=riwayat_by_kapasitas&id_kapasitas=${id_kapasitas}&page=${page}`)
+    // Show modal
+    const modal = document.getElementById('detailPasienModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+
+        // Populate Top Cards
+        document.getElementById('dm_nama').innerText = kap.nama_pasien;
+        document.getElementById('dm_rm').innerText = `No. RM ${kap.no_erm || '-'}`;
+        document.getElementById('dm_paket').innerText = kap.nama_paket;
+        document.getElementById('dm_id_paket').innerText = kap.id;
+        document.getElementById('dm_beli').innerText = new Date(kap.tanggal_beli).toLocaleDateString('id-ID');
+        document.getElementById('dm_exp').innerText = kap.tanggal_expired ? new Date(kap.tanggal_expired).toLocaleDateString('id-ID') : '-';
+
+        const isHabis = kap.status.toUpperCase() === 'HABIS';
+        const badge = document.getElementById('dm_badge');
+        badge.innerText = kap.status;
+        badge.className = isHabis ? 'px-2 py-1 rounded text-xs bg-surface-variant text-on-surface-variant font-bold' : 'px-2 py-1 rounded text-xs bg-green-100 text-green-800 font-bold';
+
+        const used = kap.total_sesi - kap.sisa;
+        document.getElementById('dm_used_total').innerText = `${used} / ${kap.total_sesi}`;
+        document.getElementById('dm_sisa').innerText = `${kap.sisa} sesi`;
+        const pct = kap.total_sesi > 0 ? (used / kap.total_sesi * 100) : 0;
+        document.getElementById('dm_progress_bar').style.width = `${pct}%`;
+
+        document.getElementById('dm_komponen_text').innerHTML = `<b>${kap.nama_paket}</b> &mdash; hak ${kap.total_sesi} sesi; terpakai ${used}: sisa ${kap.sisa}.`;
+    }
+
+    // Set "Gunakan Sesi" button in modal
+    const btnModal = document.getElementById('btnGunakanSesiModal');
+    if (btnModal) {
+        if (kap.sisa > 0) {
+            btnModal.disabled = false;
+            btnModal.onclick = () => {
+                window.activeKapasitasData = {
+                    id: kap.id,
+                    nama_pasien: kap.nama_pasien,
+                    no_erm: kap.no_erm,
+                    nomor_register: kap.nomor_register,
+                    nama_paket: kap.nama_paket,
+                    sisa: kap.sisa,
+                    total_sesi: kap.total_sesi
+                };
+                window.openModal(window.activeKapasitasData);
+            };
+        } else {
+            btnModal.disabled = true;
+            btnModal.onclick = null;
+        }
+    }
+
+    apiFetch(`${API_BASE}/pasien?action=riwayat_by_kapasitas&id_kapasitas=${id_kapasitas}`)
         .then(res => res.json())
         .then(data => {
             tablePasienDetail.innerHTML = '';
@@ -1018,68 +1022,26 @@ window.loadPasienDetail = function (id_kapasitas, page = 1) {
                     const tgl = new Date(row.tanggal_paket).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
                     tablePasienDetail.innerHTML += `
                         <tr class="hover:bg-surface-container-lowest transition-colors">
-                            <td class="px-6 py-4">${row.sesi_ke || '-'}</td>
-                            <td class="px-6 py-4 font-mono-data text-[13px] text-on-surface-variant">${row.no_erm || '-'}</td>
-                            <td class="px-6 py-4">${tgl}</td>
+                            <td class="py-2 pr-2">${tgl}</td>
+                            <td class="py-2 px-2">Sesi ${row.sesi_ke || '-'}</td>
+                            <td class="py-2 pl-2 text-on-surface-variant font-mono-data text-[13px]">No. RM ${row.no_erm || '-'}</td>
                         </tr>
                     `;
                 });
-
-                // Render Pagination for Detail
-                const paginationContainer = document.getElementById('detailPagination');
-                if (data.total_pages > 1 && paginationContainer) {
-                    let startPage = Math.max(1, data.current_page - 2);
-                    let endPage = Math.min(data.total_pages, startPage + 4);
-
-                    if (endPage - startPage < 4) {
-                        startPage = Math.max(1, endPage - 4);
-                    }
-
-                    let pagHtml = `<div class="flex items-center gap-1">`;
-                    pagHtml += `<span class="text-xs text-on-surface-variant mr-2">Total: ${data.total_records}</span>`;
-
-                    // Prev Button
-                    if (data.current_page > 1) {
-                        pagHtml += `<button onclick="loadPasienDetail(${id_kapasitas}, ${data.current_page - 1})" class="px-2 py-1 rounded border border-outline-variant hover:bg-surface-container-high transition text-xs">Prev</button>`;
-                    } else {
-                        pagHtml += `<button disabled class="px-2 py-1 rounded border border-outline-variant/50 text-outline-variant cursor-not-allowed text-xs">Prev</button>`;
-                    }
-
-                    // Page Numbers
-                    for (let i = startPage; i <= endPage; i++) {
-                        if (i === data.current_page) {
-                            pagHtml += `<button class="px-2 py-1 rounded border border-primary bg-primary text-on-primary font-bold text-xs">${i}</button>`;
-                        } else {
-                            pagHtml += `<button onclick="loadPasienDetail(${id_kapasitas}, ${i})" class="px-2 py-1 rounded border border-outline-variant hover:bg-surface-container-high transition text-xs">${i}</button>`;
-                        }
-                    }
-
-                    // Next Button
-                    if (data.current_page < data.total_pages) {
-                        pagHtml += `<button onclick="loadPasienDetail(${id_kapasitas}, ${data.current_page + 1})" class="px-2 py-1 rounded border border-outline-variant hover:bg-surface-container-high transition text-xs">Next</button>`;
-                    } else {
-                        pagHtml += `<button disabled class="px-2 py-1 rounded border border-outline-variant/50 text-outline-variant cursor-not-allowed text-xs">Next</button>`;
-                    }
-
-                    pagHtml += `</div>`;
-
-                    paginationContainer.innerHTML = pagHtml;
-                } else if (paginationContainer) {
-                    paginationContainer.innerHTML = '';
-                }
-
             } else {
-                tablePasienDetail.innerHTML = '<tr><td colspan="3" class="text-center py-4 text-on-surface-variant italic">Belum ada pemakaian sesi untuk paket ini.</td></tr>';
-                const paginationContainer = document.getElementById('detailPagination');
-                if (paginationContainer) paginationContainer.innerHTML = '';
+                tablePasienDetail.innerHTML = '<tr><td colspan="3" class="text-center py-6 text-on-surface-variant italic">Belum ada penggunaan</td></tr>';
             }
         })
         .catch(err => {
             console.error(err);
-            tablePasienDetail.innerHTML = '<tr><td colspan="3" class="text-center py-4 text-error">Gagal memuat riwayat pemakaian.</td></tr>';
+            tablePasienDetail.innerHTML = '<tr><td colspan="3" class="text-center py-6 text-error">Gagal memuat riwayat pemakaian.</td></tr>';
         });
 };
 
+window.closeDetailModal = function () {
+    const modal = document.getElementById('detailPasienModal');
+    if (modal) modal.classList.add('hidden');
+};
 
 function exportAuditCSV() {
     apiFetch(`${API_BASE}/audit?action=logs&all=true`)
@@ -1304,53 +1266,14 @@ document.addEventListener('DOMContentLoaded', () => {
     setupDarkMode();
     loadNotifications();
 
-    // Set default tanggal Kasir to today
+    // Set default tanggal Kasir to current month
     const filterTanggalKasir = document.getElementById('filterTanggalKasir');
-    if (filterTanggalKasir) filterTanggalKasir.value = new Date().toISOString().split('T')[0];
-
-    document.getElementById('filterTanggalKunjungan').addEventListener('change', () => loadPasienMaster(1));
-});
-
-window.openDetailModal = function(id_kapasitas, nama_pasien, no_erm, nama_paket, sisa_sesi, no_register) {
-    const modal = document.getElementById('detailPasienModal');
-    if (!modal) return;
-    
-    document.getElementById('detailModalSubtitle').innerText = `${nama_pasien} | ERM: ${no_erm || '-'} | Register: ${no_register || '-'}`;
-    
-    const btn = document.getElementById('btnGunakanSesiModal');
-    if (btn) {
-        if (sisa_sesi > 0) {
-            btn.disabled = false;
-            btn.onclick = () => {
-                window.activeKapasitasData = {
-                    id: id_kapasitas,
-                    nama_pasien: nama_pasien,
-                    no_erm: no_erm,
-                    nomor_register: no_register,
-                    nama_paket: nama_paket,
-                    sisa: sisa_sesi
-                };
-                window.openModal(window.activeKapasitasData);
-            };
-        } else {
-            btn.disabled = true;
-            btn.onclick = null;
-        }
+    if (filterTanggalKasir) {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        filterTanggalKasir.value = `${yyyy}-${mm}`;
     }
-    
-    modal.classList.remove('hidden');
-    loadPasienDetail(id_kapasitas);
-};
 
-window.closeDetailModal = function() {
-    const modal = document.getElementById('detailPasienModal');
-    if (modal) modal.classList.add('hidden');
-};
-
-window.openForm = function(id = null) {
-    alert(id ? 'Fitur Ubah belum diimplementasikan.' : 'Fitur Tambah Paket Baru belum diimplementasikan.');
-};
-
-window.delItem = function(id = null) {
-    alert('Fitur Hapus belum diimplementasikan.');
-};
+    document.getElementById('filterTanggalKunjungan').addEventListener('change', loadPasienMaster);
+});

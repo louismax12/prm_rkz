@@ -63,7 +63,11 @@ class KasirController {
         $tanggal = isset($_GET['tanggal']) ? $_GET['tanggal'] : '';
 
         if ($tanggal !== '') {
-            $baseFromWhere .= " AND DATE(f.FCRDATE) = :tanggal";
+            if (strlen($tanggal) === 7) { // YYYY-MM format
+                $baseFromWhere .= " AND DATE_FORMAT(f.FCRDATE, '%Y-%m') = :tanggal";
+            } else {
+                $baseFromWhere .= " AND DATE(f.FCRDATE) = :tanggal";
+            }
             $params[':tanggal'] = $tanggal;
         }
 
@@ -176,7 +180,7 @@ class KasirController {
                     ':sisa' => $mapResult['total_sesi'],
                     ':tanggal_beli' => $tanggalBeli,
                     ':tanggal_expired' => $tanggalExpired,
-                    ':status' => 'Aktif'
+                    ':status' => 'AKTIF'
                 ]);
 
                 // Insert into processed

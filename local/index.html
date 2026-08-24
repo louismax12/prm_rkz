@@ -339,7 +339,7 @@
             <div class="flex-1 overflow-y-auto bg-background flex flex-col">
                 <!-- VIEW: PAKET -->
                 <main id="view-pasien"
-                    class="view-section py-margin-page px-margin-page flex flex-col gap-6 w-full hidden flex-1 min-h-0 max-w-[1600px] mx-auto">
+                    class="view-section py-6 px-margin-page flex flex-col gap-6 w-full hidden flex-1 min-h-0 max-w-[1600px] mx-auto">
 
                     <!-- Page Header Section -->
                     <section class="flex flex-col gap-stack-compact shrink-0">
@@ -350,44 +350,47 @@
 
                     <!-- Single Table Layout (Full Width) -->
                     <section class="flex flex-col gap-6 flex-1 min-h-0 w-full overflow-hidden">
-                        <div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden flex flex-col min-h-0">
+                        <div
+                            class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden flex flex-col min-h-0">
                             <!-- Header & Filter Bar -->
-                            <div class="px-6 py-4 border-b border-outline-variant bg-surface-container-low flex flex-wrap justify-between items-center gap-4 shrink-0">
+                            <div
+                                class="px-6 py-4 border-b border-outline-variant bg-surface-container-low flex flex-wrap justify-between items-center gap-4 shrink-0">
                                 <div class="flex items-center gap-3 w-full md:w-auto">
                                     <div class="relative flex-1 md:w-64">
-                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-on-surface-variant">
+                                        <div
+                                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-on-surface-variant">
                                             <span class="material-symbols-outlined text-[18px]">search</span>
                                         </div>
-                                        <input type="text" id="pasienSearchInput" oninput="filterPasienTable()" class="block w-full pl-10 pr-3 py-2 border border-outline-variant rounded bg-surface text-on-surface font-body-sm focus:ring-1 focus:ring-primary focus:border-primary placeholder-on-surface-variant/50" placeholder="Cari nama / No. Register / Paket">
+                                        <input type="text" id="pasienSearchInput" oninput="filterPasienTable()"
+                                            class="block w-full pl-10 pr-3 py-2 border border-outline-variant rounded bg-surface text-on-surface font-body-sm focus:ring-1 focus:ring-primary focus:border-primary placeholder-on-surface-variant/50"
+                                            placeholder="Cari nama / No. Register / Paket">
                                     </div>
-                                    <select id="pasienStatusFilter" onchange="filterPasienTable()" class="px-3 py-2 border border-outline-variant rounded bg-surface text-on-surface font-body-sm focus:ring-1 focus:ring-primary focus:border-primary">
+                                    <select id="pasienStatusFilter" onchange="filterPasienTable()"
+                                        class="px-3 py-2 border border-outline-variant rounded bg-surface text-on-surface font-body-sm focus:ring-1 focus:ring-primary focus:border-primary">
                                         <option value="">Semua status</option>
                                         <option value="AKTIF">Aktif</option>
-                                        <option value="HAMPIR HABIS">Hampir Habis</option>
-                                        <option value="BELUM DIGUNAKAN">Belum Digunakan</option>
-                                        <option value="EXPIRED">Expired</option>
+                                        <option value="HABIS">Expired</option>
                                     </select>
-                                    <input type="date" id="filterTanggalKunjungan" class="px-3 py-2 border border-outline-variant rounded bg-surface text-on-surface font-body-sm focus:ring-1 focus:ring-primary focus:border-primary">
+                                    <input type="date" id="filterTanggalKunjungan"
+                                        class="px-3 py-2 border border-outline-variant rounded bg-surface text-on-surface font-body-sm focus:ring-1 focus:ring-primary focus:border-primary">
                                 </div>
                                 <div class="flex items-center gap-3 w-full md:w-auto">
-                                    <button onclick="loadPasienMaster()" class="text-primary hover:text-on-primary-fixed-variant font-label-sm flex items-center gap-1 transition">
+                                    <button
+                                        class="bg-surface-container-low hover:bg-surface-container-high border border-outline-variant text-on-surface font-label-sm px-4 py-2 rounded shadow-sm flex items-center gap-2 transition"
+                                        onclick="loadPasienMaster(1)">
                                         <span class="material-symbols-outlined text-[18px]">refresh</span> Refresh
-                                    </button>
-                                    <button class="bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-label-sm px-4 py-2 rounded shadow-sm flex items-center gap-2 transition" onclick="openForm()">
-                                        <span class="material-symbols-outlined text-[18px]">add</span> Paket Baru
                                     </button>
                                 </div>
                             </div>
                             <!-- Main Table -->
                             <div class="table-scroll-container">
                                 <table class="w-full text-left font-body-md text-on-surface relative bg-white">
-                                    <thead class="bg-surface-container-lowest font-label-sm uppercase text-on-surface-variant shadow-sm bg-white">
+                                    <thead
+                                        class="bg-surface-container-lowest font-label-sm uppercase text-on-surface-variant shadow-sm bg-white">
                                         <tr>
-                                            <th class="px-6 py-4 border-b border-outline-variant">No Register</th>
+                                            <th class="px-6 py-4 border-b border-outline-variant">Tgl Beli</th>
                                             <th class="px-6 py-4 border-b border-outline-variant">Pasien</th>
                                             <th class="px-6 py-4 border-b border-outline-variant">Paket</th>
-                                            <th class="px-6 py-4 border-b border-outline-variant">Tgl Beli</th>
-                                            <th class="px-6 py-4 border-b border-outline-variant">Terpakai</th>
                                             <th class="px-6 py-4 border-b border-outline-variant">Sisa Sesi</th>
                                             <th class="px-6 py-4 border-b border-outline-variant">Status</th>
                                             <th class="px-6 py-4 border-b border-outline-variant text-right">Aksi</th>
@@ -398,7 +401,8 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div id="kapasitasPagination" class="flex justify-center items-center py-4 gap-2 border-t border-outline-variant bg-surface-container-lowest shrink-0">
+                            <div id="kapasitasPagination"
+                                class="flex justify-center items-center py-4 gap-2 border-t border-outline-variant bg-surface-container-lowest shrink-0">
                                 <!-- Pagination buttons will be injected here -->
                             </div>
                         </div>
@@ -507,7 +511,7 @@
 
                 <!-- VIEW: KASIR -->
                 <main id="view-kasir"
-                    class="view-section hidden py-margin-page px-margin-page flex flex-col gap-8 w-full max-w-[1600px] mx-auto">
+                    class="view-section hidden py-6 px-margin-page flex flex-col gap-6 w-full max-w-[1600px] mx-auto flex-1 min-h-0">
 
                     <section class="flex flex-col gap-stack-compact">
                         <h2 class="font-headline-md font-bold text-on-surface">Riwayat Pembelian Paket</h2>
@@ -748,7 +752,7 @@
                                     class="bg-surface-container-lowest font-label-sm uppercase text-on-surface-variant border-b border-outline-variant">
                                     <tr>
                                         <th class="px-6 py-4">Waktu</th>
-                                        <th class="px-6 py-4">No Register</th>
+                                        <th class="px-6 py-4">No. Register</th>
                                         <th class="px-6 py-4">Paket (Sesi Ke)</th>
                                         <th class="px-6 py-4">Tindakan</th>
                                     </tr>
@@ -772,43 +776,26 @@
     <!-- MODAL: GUNAKAN SESI                            -->
     <!-- ============================================== -->
     <div id="useSessionModal"
-        class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-on-surface/50 backdrop-blur-sm p-4">
+        class="hidden fixed inset-0 flex items-center justify-center bg-on-surface/50 backdrop-blur-sm p-4"
+        style="z-index: 1000;">
         <div
             class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-xl w-full max-w-md flex flex-col gap-4">
-            <div class="flex justify-between items-center border-b border-outline-variant pb-4">
-                <h3 class="font-headline-sm font-semibold text-on-surface flex items-center gap-2">
-                    <span class="material-symbols-outlined text-primary text-[24px]">cut</span> Gunakan Sesi
-                </h3>
-                <button onclick="closeModal()"
-                    class="text-on-surface-variant hover:text-on-surface rounded-full p-1 transition-colors hover:bg-surface-container-high">
-                    <span class="material-symbols-outlined text-[20px]">close</span>
-                </button>
+            <h3 class="font-headline-sm flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">play_circle</span> Konfirmasi Penggunaan Sesi
+            </h3>
+            <p class="font-body-md text-on-surface-variant">Anda akan memotong 1 sesi dari paket berikut:</p>
+            <div class="bg-surface-container-low p-4 rounded border border-outline-variant">
+                <strong id="modalPaketName" class="block font-headline-sm text-primary mb-2"></strong>
+                <p class="font-body-sm text-on-surface-variant">Sisa sesi saat ini: <strong id="modalSisaSesiBaru"
+                        class="text-on-surface font-mono-data"></strong></p>
             </div>
-            <div class="flex flex-col gap-3 font-body-md text-on-surface">
-                <p>Anda akan memotong 1 sesi untuk pasien:</p>
-                <div class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1 border border-outline-variant">
-                    <div class="font-bold text-lg" id="modalNamaPasien">-</div>
-                    <div class="text-sm text-on-surface-variant flex justify-between">
-                        <span>Register: <span id="modalNoRegister" class="font-mono-data text-primary"></span></span>
-                        <span>ERM: <span id="modalNoErm" class="font-mono-data"></span></span>
-                    </div>
-                </div>
-                <div class="flex justify-between items-center py-2 border-b border-outline-variant">
-                    <span class="text-on-surface-variant">Paket</span>
-                    <span class="font-semibold" id="modalNamaPaket">-</span>
-                </div>
-                <div class="flex justify-between items-center py-2">
-                    <span class="text-on-surface-variant">Sisa Sesi</span>
-                    <span class="font-bold text-primary text-lg" id="modalSisaSesi">-</span>
-                </div>
-            </div>
-            <div class="flex gap-3 justify-end pt-4 border-t border-outline-variant mt-2">
-                <button onclick="closeModal()"
-                    class="px-4 py-2 rounded font-label-md text-on-surface hover:bg-surface-container-high transition-colors">Batal</button>
-                <button onclick="confirmUseSession()" id="btnConfirmGunakanSesi"
-                    class="bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-label-md px-6 py-2 rounded shadow-sm transition-colors flex items-center gap-2">
-                    Konfirmasi
-                </button>
+
+            <div class="flex justify-end gap-3 mt-4">
+                <button type="button"
+                    class="modal-close px-4 py-2 border border-outline-variant text-on-surface-variant rounded-lg hover:bg-surface-container-high transition-colors font-label-md">Batal</button>
+                <button type="button" id="confirmUseBtn"
+                    class="px-4 py-2 bg-primary text-on-primary rounded-lg hover:bg-on-primary-fixed-variant transition-colors font-label-md shadow-sm">Gunakan
+                    Sesi</button>
             </div>
         </div>
     </div>
@@ -817,13 +804,15 @@
     <!-- MODAL: DETAIL RIWAYAT SESI                     -->
     <!-- ============================================== -->
     <div id="detailPasienModal"
-        class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-on-surface/50 backdrop-blur-sm p-4">
-        <div
-            class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-xl w-full max-w-3xl flex flex-col max-h-[80vh] overflow-hidden">
-            <div class="flex justify-between items-center border-b border-outline-variant p-6 shrink-0 bg-surface-container-low">
+        class="hidden fixed inset-0 flex items-center justify-center bg-on-surface/50 backdrop-blur-sm p-4"
+        style="z-index: 900;">
+        <div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-xl flex flex-col max-h-[80vh] overflow-hidden"
+            style="width: 35vw; min-width: 760px; max-width: 95vw;">
+            <div
+                class="flex justify-between items-center border-b border-outline-variant p-6 shrink-0 bg-surface-container-low">
                 <div>
-                    <h3 class="font-headline-sm font-semibold text-on-surface" id="detailModalTitle">Detail Pemakaian Sesi</h3>
-                    <p class="font-body-sm text-on-surface-variant mt-1" id="detailModalSubtitle">Pasien</p>
+                    <h3 class="font-headline-sm font-semibold text-on-surface" id="detailModalTitle">Detail Pemakaian
+                        Sesi</h3>
                 </div>
                 <div class="flex items-center gap-3">
                     <button id="btnGunakanSesiModal" disabled
@@ -836,28 +825,90 @@
                     </button>
                 </div>
             </div>
-            
-            <div class="table-scroll-container flex-1 overflow-auto">
-                <table class="w-full text-left font-body-md text-on-surface relative">
-                    <thead class="bg-surface-container-lowest font-label-sm uppercase text-on-surface-variant shadow-sm sticky top-0 z-10">
-                        <tr>
-                            <th class="px-6 py-4 border-b border-outline-variant">Sesi Ke</th>
-                            <th class="px-6 py-4 border-b border-outline-variant">No Register</th>
-                            <th class="px-6 py-4 border-b border-outline-variant">Tanggal Pemakaian</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tablePasienDetail" class="divide-y divide-outline-variant bg-white">
-                        <tr>
-                            <td colspan="3" class="text-center py-8 text-on-surface-variant italic">
-                                Memuat data...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+
+            <div class="flex-1 overflow-auto bg-surface-container-lowest p-6 flex flex-col gap-4">
+                <!-- Top Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Card Info -->
+                    <div
+                        class="md:col-span-2 bg-surface border border-outline-variant rounded-xl p-6 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <h2 class="text-[22px] font-bold text-on-surface leading-tight" id="dm_nama">-</h2>
+                            <div class="text-on-surface-variant font-mono-data text-[13px] mt-1" id="dm_rm">No. Register
+                                -
+                            </div>
+                            <p class="mt-4 text-on-surface text-[14px]">
+                                <b id="dm_paket">-</b><br>
+                                <span class="text-on-surface-variant">No. Paket <span
+                                        id="dm_id_paket">-</span></span><br>
+                                <span class="text-on-surface-variant">Beli <span id="dm_beli">-</span> • Berlaku s/d
+                                    <span id="dm_exp">-</span></span>
+                            </p>
+                        </div>
+                        <div class="mt-4">
+                            <span id="dm_badge"
+                                class="px-3 py-1 rounded-full text-xs font-bold inline-block bg-surface-variant text-on-surface-variant">-</span>
+                        </div>
+                    </div>
+
+                    <!-- Card Pemakaian -->
+                    <div
+                        class="md:col-span-1 bg-surface border border-outline-variant rounded-xl p-6 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="text-on-surface-variant text-[11px] font-bold tracking-wider mb-2">TERPAKAI
+                            </div>
+                            <div class="text-[36px] font-extrabold text-primary leading-none" id="dm_used_total">- / -
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                            <div
+                                class="w-full bg-surface-container-highest rounded-full h-2.5 mb-2 overflow-hidden border border-outline-variant/30">
+                                <div class="bg-primary h-2.5 rounded-full transition-all duration-500"
+                                    id="dm_progress_bar" style="width: 0%"></div>
+                            </div>
+                            <p class="text-[14px] text-on-surface-variant">Sisa <b class="text-on-surface"
+                                    id="dm_sisa">- sesi</b></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                    <!-- Komponen Paket -->
+                    <div class="bg-surface border border-outline-variant rounded-xl p-6 shadow-sm">
+                        <h4 class="font-bold text-on-surface mb-4">Komponen Paket</h4>
+                        <p class="text-on-surface text-[14px]" id="dm_komponen_text">
+                            Memuat komponen...
+                        </p>
+                    </div>
+
+                    <!-- Riwayat Penggunaan -->
+                    <div class="bg-surface border border-outline-variant rounded-xl p-6 shadow-sm flex flex-col">
+                        <h4 class="font-bold text-on-surface mb-4">Riwayat Penggunaan</h4>
+                        <div class="overflow-auto flex-1">
+                            <table class="w-full text-left font-body-sm text-on-surface">
+                                <thead class="text-on-surface-variant border-b border-outline-variant font-label-sm">
+                                    <tr>
+                                        <th class="py-2 font-medium">Tanggal</th>
+                                        <th class="py-2 font-medium">Tindakan</th>
+                                        <th class="py-2 font-medium">Keterangan</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablePasienDetail" class="divide-y divide-outline-variant/50">
+                                    <tr>
+                                        <td colspan="3" class="text-center py-6 text-on-surface-variant italic">
+                                            Belum ada penggunaan
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
-            
+
             <div id="detailPagination"
-                class="flex justify-center items-center py-4 gap-2 border-t border-outline-variant bg-surface-container-lowest shrink-0">
+                class="hidden flex justify-center items-center py-4 gap-2 border-t border-outline-variant bg-surface-container-lowest shrink-0">
                 <!-- Pagination buttons will be injected here -->
             </div>
         </div>
@@ -920,7 +971,10 @@
         </div>
     </div>
 
-    <script src="app.js?v=7"></script>
+    <script src="app.js?v=35"></script>
+    <div
+        style="position: fixed; bottom: 10px; right: 10px; font-size: 14px; font-weight: bold; background: #007bff; color: white; padding: 4px 8px; z-index: 9999; border-radius: 4px;">
+        v35 (Pakettracker UI) Active</div>
 </body>
 
 </html>
