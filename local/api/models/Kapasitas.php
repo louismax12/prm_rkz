@@ -20,6 +20,7 @@ class Kapasitas {
     function readByVisitDate($date){
         $query = "SELECT k.id, k.no_erm, 
                          COALESCE(
+                             (SELECT NAME FROM dbold.admpacust WHERE RMNO = k.no_erm LIMIT 1),
                              (SELECT FCRNAMA FROM dbold.fisiosfjual WHERE FCRCUST = k.no_erm LIMIT 1),
                              (SELECT fname FROM dbold.poliumumupcust WHERE idcust = k.no_erm LIMIT 1),
                              'Tidak Diketahui'
@@ -38,6 +39,7 @@ class Kapasitas {
     function readByVisitDatePaged($date, $offset, $limit){
         $query = "SELECT k.id, k.no_erm, 
                          COALESCE(
+                             (SELECT NAME FROM dbold.admpacust WHERE RMNO = k.no_erm LIMIT 1),
                              (SELECT FCRNAMA FROM dbold.fisiosfjual WHERE FCRCUST = k.no_erm LIMIT 1),
                              (SELECT fname FROM dbold.poliumumupcust WHERE idcust = k.no_erm LIMIT 1),
                              'Tidak Diketahui'
