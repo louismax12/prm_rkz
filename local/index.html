@@ -828,46 +828,52 @@
 
             <div class="flex-1 overflow-auto bg-surface-container-lowest p-6 flex flex-col gap-4">
                 <!-- Top Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <!-- Card Info -->
-                    <div
-                        class="md:col-span-2 bg-surface border border-outline-variant rounded-xl p-6 shadow-sm flex flex-col justify-between">
-                        <div>
-                            <h2 class="text-[22px] font-bold text-on-surface leading-tight" id="dm_nama">-</h2>
-                            <div class="text-on-surface-variant font-mono-data text-[13px] mt-1" id="dm_rm">No. Register
-                                -
-                            </div>
-                            <p class="mt-4 text-on-surface text-[14px]">
-                                <b id="dm_paket">-</b><br>
-                                <span class="text-on-surface-variant">No. Paket <span
-                                        id="dm_id_paket">-</span></span><br>
-                                <span class="text-on-surface-variant">Beli <span id="dm_beli">-</span> • Berlaku s/d
-                                    <span id="dm_exp">-</span></span>
-                            </p>
-                        </div>
-                        <div class="mt-4">
-                            <span id="dm_badge"
-                                class="px-3 py-1 rounded-full text-xs font-bold inline-block bg-surface-variant text-on-surface-variant">-</span>
-                        </div>
+                <div class="bg-surface border border-outline-variant rounded-xl shadow-sm flex flex-col overflow-hidden">
+                    <!-- Row 1 & 2: Name and RM -->
+                    <div class="flex flex-col border-b border-outline-variant p-6 bg-surface-container-lowest">
+                        <h2 class="text-[22px] font-bold text-on-surface leading-tight" id="dm_nama">-</h2>
+                        <div class="text-on-surface-variant font-mono-data text-[13px] mt-1" id="dm_rm">No. Register -</div>
                     </div>
 
-                    <!-- Card Pemakaian -->
-                    <div
-                        class="md:col-span-1 bg-surface border border-outline-variant rounded-xl p-6 shadow-sm flex flex-col justify-between">
+                    <!-- Row 3, 4, 5: Details Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-y-5 gap-x-8 p-6 bg-surface">
+                        <!-- Paket Info -->
                         <div>
-                            <div class="text-on-surface-variant text-[11px] font-bold tracking-wider mb-2">TERPAKAI
-                            </div>
-                            <div class="text-[36px] font-extrabold text-primary leading-none" id="dm_used_total">- / -
+                            <div class="text-on-surface-variant text-[11px] font-bold tracking-wider mb-1 uppercase">Nama Paket</div>
+                            <div class="text-on-surface font-medium text-[14px]" id="dm_paket">-</div>
+                        </div>
+                        <div>
+                            <div class="text-on-surface-variant text-[11px] font-bold tracking-wider mb-1 uppercase">Nomor Paket</div>
+                            <div class="text-on-surface font-medium text-[14px]">No. Paket <span id="dm_id_paket">-</span></div>
+                        </div>
+
+                        <!-- Tanggal & Status -->
+                        <div>
+                            <div class="text-on-surface-variant text-[11px] font-bold tracking-wider mb-1 uppercase">Tanggal Paket</div>
+                            <div class="text-on-surface font-medium text-[14px]">Beli <span id="dm_beli">-</span> • Berlaku s/d <span id="dm_exp">-</span></div>
+                        </div>
+                        <div>
+                            <div class="text-on-surface-variant text-[11px] font-bold tracking-wider mb-1 uppercase">Status Paket</div>
+                            <div class="mt-1">
+                                <span id="dm_badge" class="px-3 py-1 rounded-full text-xs font-bold inline-block bg-surface-variant text-on-surface-variant">-</span>
                             </div>
                         </div>
-                        <div class="mt-6">
-                            <div
-                                class="w-full bg-surface-container-highest rounded-full h-2.5 mb-2 overflow-hidden border border-outline-variant/30">
-                                <div class="bg-primary h-2.5 rounded-full transition-all duration-500"
-                                    id="dm_progress_bar" style="width: 0%"></div>
+
+                        <!-- Sesi Usage -->
+                        <div>
+                            <div class="text-on-surface-variant text-[11px] font-bold tracking-wider mb-1 uppercase">Sesi Yang Sudah Digunakan</div>
+                            <div class="text-primary font-extrabold text-[24px] leading-none mt-1" id="dm_used_total">- / -</div>
+                        </div>
+                        <div>
+                            <div class="text-on-surface-variant text-[11px] font-bold tracking-wider mb-1 uppercase">Sisa / Kuota Sesi</div>
+                            <div class="mt-1">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-[14px] text-on-surface-variant">Sisa <b class="text-on-surface" id="dm_sisa">- sesi</b></span>
+                                </div>
+                                <div class="w-full bg-surface-container-highest rounded-full h-2.5 overflow-hidden border border-outline-variant/30">
+                                    <div class="bg-primary h-2.5 rounded-full transition-all duration-500" id="dm_progress_bar" style="width: 0%"></div>
+                                </div>
                             </div>
-                            <p class="text-[14px] text-on-surface-variant">Sisa <b class="text-on-surface"
-                                    id="dm_sisa">- sesi</b></p>
                         </div>
                     </div>
                 </div>
@@ -963,10 +969,10 @@
         </div>
     </div>
 
-    <script src="app.js?v=40"></script>
+    <script src="app.js?v=41"></script>
     <div
         style="position: fixed; bottom: 10px; right: 10px; font-size: 14px; font-weight: bold; background: #007bff; color: white; padding: 4px 8px; z-index: 9999; border-radius: 4px;">
-        v40 (Pakettracker UI) Active</div>
+        v41 (Pakettracker UI) Active</div>
 </body>
 
 </html>
