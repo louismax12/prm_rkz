@@ -406,9 +406,9 @@ confirmUseBtn.addEventListener('click', () => {
                 showMessage(res.body.message, 'success');
                 // Refresh data
                 if (window.loadPasienMaster) window.loadPasienMaster();
-                // We don't have loadPasienDetail globally anymore, we openDetailModal instead
-                if (activeKapasitasData && window.openDetailModal) {
-                    window.openDetailModal(activeKapasitasData.id);
+                // Close the detail modal after success
+                if (window.closeDetailModal) {
+                    window.closeDetailModal();
                 }
             } else {
                 alert(res.body.message || 'Gagal memotong sesi.');
@@ -986,8 +986,6 @@ window.openDetailModal = function (id_kapasitas) {
         document.getElementById('dm_sisa').innerText = `${kap.sisa} sesi`;
         const pct = kap.total_sesi > 0 ? (used / kap.total_sesi * 100) : 0;
         document.getElementById('dm_progress_bar').style.width = `${pct}%`;
-
-        document.getElementById('dm_komponen_text').innerHTML = `<b>${kap.nama_paket}</b> &mdash; hak ${kap.total_sesi} sesi; terpakai ${used}: sisa ${kap.sisa}.`;
     }
 
     // Set "Gunakan Sesi" button in modal
@@ -1020,11 +1018,25 @@ window.openDetailModal = function (id_kapasitas) {
             if (data && data.records && data.records.length > 0) {
                 data.records.forEach(row => {
                     const tgl = new Date(row.tanggal_paket).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+                    
+                    const d = new Date();
+                    const todayStr = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+                    const rowDateStr = row.tanggal_paket ? row.tanggal_paket.substring(0, 10) : '';
+                    let deleteBtnHTML = '';
+                    if (rowDateStr === todayStr) {
+                        deleteBtnHTML = `<button onclick="batalSesi('${row.id}')" class="text-error hover:bg-error-container p-1 rounded transition-colors ml-2" title="Batal Sesi"><span class="material-symbols-outlined text-[18px] align-middle">delete</span></button>`;
+                    }
+                    
                     tablePasienDetail.innerHTML += `
                         <tr class="hover:bg-surface-container-lowest transition-colors">
                             <td class="py-2 pr-2">${tgl}</td>
                             <td class="py-2 px-2">Sesi ${row.sesi_ke || '-'}</td>
-                            <td class="py-2 pl-2 text-on-surface-variant font-mono-data text-[13px]">No. RM ${row.no_erm || '-'}</td>
+                            <td class="py-2 pl-2 text-on-surface-variant font-mono-data text-[13px] flex justify-between items-center">
+                                <span>No. RM ${row.no_erm || '-'}</span>
+                                <div>
+                                    ${deleteBtnHTML}
+                                </div>
+                            </td>
                         </tr>
                     `;
                 });
@@ -1041,6 +1053,30 @@ window.openDetailModal = function (id_kapasitas) {
 window.closeDetailModal = function () {
     const modal = document.getElementById('detailPasienModal');
     if (modal) modal.classList.add('hidden');
+};
+
+window.batalSesi = function(id) {
+    if(!confirm('Apakah Anda yakin ingin membatalkan penggunaan sesi ini? Sisa sesi akan dikembalikan.')) return;
+    
+    apiFetch(`${API_BASE}/pasien?action=batal_sesi`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: id })
+    })
+    .then(res => res.json().then(data => ({status: res.status, body: data})))
+    .then(res => {
+        if(res.status === 200) {
+            showMessage(res.body.message, 'success');
+            if(window.loadPasienMaster) window.loadPasienMaster();
+            if(window.closeDetailModal) window.closeDetailModal();
+        } else {
+            alert(res.body.message || 'Gagal membatalkan sesi.');
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert('Terjadi kesalahan saat membatalkan sesi.');
+    });
 };
 
 function exportAuditCSV() {

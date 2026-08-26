@@ -102,6 +102,13 @@ if ($endpoint === 'auth') {
             http_response_code(403);
             echo json_encode(array("message" => "Anda tidak memiliki hak akses untuk memotong sesi."));
         }
+    } elseif ($requestMethod == 'POST' && $action == 'batal_sesi') {
+        if(in_array($userPayload['role'], ['admin', 'erm', 'kasir'])) {
+            $controller->batalSesi();
+        } else {
+            http_response_code(403);
+            echo json_encode(array("message" => "Anda tidak memiliki hak akses untuk membatalkan sesi."));
+        }
     } else {
         http_response_code(400);
         echo json_encode(array("message" => "Bad Request or Action Not Found"));

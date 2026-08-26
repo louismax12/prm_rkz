@@ -187,6 +187,77 @@ class PasienController {
         }
     }
 
+    // Endpoint POST: Membatalkan sesi yang digunakan hari ini
+    public function batalSesi() {
+        $data = json_decode(file_get_contents("php://input"));
+
+        if(!empty($data->id)) {
+            $this->catatan->id = $data->id;
+            $rowCatatan = $this->catatan->getById();
+
+            if($rowCatatan) {
+                // Pastikan hanya bisa membatalkan sesi yang ditambahkan hari ini
+                $tanggalSesi = date('Y-m-d', strtotime($rowCatatan['tanggal_paket']));
+                $hariIni = date('Y-m-d');
+                
+                if($tanggalSesi !== $hariIni) {
+                    http_response_code(403);
+                    echo json_encode(array("message" => "Hanya sesi yang digunakan pada hari ini yang dapat dibatalkan."));
+                    return;
+                }
+
+                $id_kapasitas = $rowCatatan['id_kapasitas'];
+
+                try {
+                    $this->db->beginTransaction();
+
+                    // Hapus dari catatan
+                    if($this->catatan->delete()) {
+                        // Tambah kembali sisa sesi di kapasitas
+                        $stmtCek = $this->db->prepare("SELECT k.sisa, p.total_sesi FROM dbold.prm_kapasitas k JOIN dbold.prm_master_paket p ON k.id_paket = p.id WHERE k.id = :id");
+                        $stmtCek->bindParam(':id', $id_kapasitas);
+                        $stmtCek->execute();
+                        $rowCek = $stmtCek->fetch(PDO::FETCH_ASSOC);
+
+                        if($rowCek) {
+                            $sisa_terbaru = $rowCek['sisa'] + 1;
+                            // Jangan sampai sisa melebihi total sesi
+                            if($sisa_terbaru > $rowCek['total_sesi']) {
+                                $sisa_terbaru = $rowCek['total_sesi'];
+                            }
+
+                            $this->kapasitas->id = $id_kapasitas;
+                            $this->kapasitas->sisa = $sisa_terbaru;
+                            $this->kapasitas->status = ($sisa_terbaru <= 0) ? 'HABIS' : 'AKTIF';
+                            
+                            if($this->kapasitas->updateSisa()) {
+                                $this->db->commit();
+                                http_response_code(200);
+                                echo json_encode(array("message" => "Sesi berhasil dibatalkan. Sisa sesi telah dikembalikan."));
+                                return;
+                            }
+                        }
+                    }
+
+                    $this->db->rollBack();
+                    http_response_code(503);
+                    echo json_encode(array("message" => "Gagal membatalkan sesi."));
+
+                } catch (Exception $e) {
+                    $this->db->rollBack();
+                    http_response_code(500);
+                    echo json_encode(array("message" => "Error Server: " . $e->getMessage()));
+                }
+            } else {
+                http_response_code(404);
+                echo json_encode(array("message" => "Catatan sesi tidak ditemukan."));
+            }
+        } else {
+            http_response_code(400);
+            echo json_encode(array("message" => "ID sesi tidak valid."));
+        }
+    }
+
     // Endpoint GET: Mendapatkan seluruh kapasitas (master) untuk Menu Pasien
     public function getAllKapasitas() {
         $date = isset($_GET['date']) ? $_GET['date'] : null;

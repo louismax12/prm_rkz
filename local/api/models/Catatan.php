@@ -47,6 +47,27 @@ class Catatan {
         return false;
     }
 
+    // Ambil catatan berdasarkan ID
+    function getById(){
+        $query = "SELECT * FROM " . $this->table_name . " WHERE id = ? LIMIT 1";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(1, $this->id);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    // Hapus catatan (Batal Sesi)
+    function delete(){
+        $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
+        $stmt = $this->conn->prepare($query);
+        $this->id = htmlspecialchars(strip_tags($this->id));
+        $stmt->bindParam(1, $this->id);
+        if($stmt->execute()){
+            return true;
+        }
+        return false;
+    }
+
     // Ambil histori catatan berdasarkan no_erm
     function getHistoryByErm($no_erm){
         $query = "SELECT c.*, t.nama_tindakan, p.nama as nama_paket 
