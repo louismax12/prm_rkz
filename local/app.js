@@ -970,7 +970,7 @@ window.openDetailModal = function (id_kapasitas) {
 
         // Populate Top Cards
         document.getElementById('dm_nama').innerText = kap.nama_pasien;
-        document.getElementById('dm_rm').innerText = `No. RM ${kap.no_erm || '-'}`;
+        document.getElementById('dm_rm').innerText = `No. Register ${kap.no_erm || '-'}`;
         document.getElementById('dm_paket').innerText = kap.nama_paket;
         document.getElementById('dm_id_paket').innerText = kap.id;
         document.getElementById('dm_beli').innerText = new Date(kap.tanggal_beli).toLocaleDateString('id-ID');
@@ -1014,34 +1014,12 @@ window.openDetailModal = function (id_kapasitas) {
     apiFetch(`${API_BASE}/pasien?action=riwayat_by_kapasitas&id_kapasitas=${id_kapasitas}&all=true`)
         .then(res => res.json())
         .then(data => {
-            tablePasienDetail.innerHTML = '';
-            if (data && data.records && data.records.length > 0) {
-                data.records.forEach(row => {
-                    const tgl = new Date(row.tanggal_paket).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
-                    
-                    const d = new Date();
-                    const todayStr = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-                    const rowDateStr = row.tanggal_paket ? row.tanggal_paket.substring(0, 10) : '';
-                    let deleteBtnHTML = '';
-                    if (rowDateStr === todayStr) {
-                        deleteBtnHTML = `<button onclick="batalSesi('${row.id}')" class="text-error hover:bg-error-container p-1 rounded transition-colors ml-2" title="Batal Sesi"><span class="material-symbols-outlined text-[18px] align-middle">delete</span></button>`;
-                    }
-                    
-                    tablePasienDetail.innerHTML += `
-                        <tr class="hover:bg-surface-container-lowest transition-colors">
-                            <td class="py-2 pr-2">${tgl}</td>
-                            <td class="py-2 px-2">Sesi ${row.sesi_ke || '-'}</td>
-                            <td class="py-2 pl-2 text-on-surface-variant font-mono-data text-[13px] flex justify-between items-center">
-                                <span>No. RM ${row.no_erm || '-'}</span>
-                                <div>
-                                    ${deleteBtnHTML}
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                });
+            if (data && data.records) {
+                window.currentDetailRiwayat = data.records;
+                renderDetailRiwayatPage(1);
             } else {
                 tablePasienDetail.innerHTML = '<tr><td colspan="3" class="text-center py-6 text-on-surface-variant italic">Belum ada penggunaan</td></tr>';
+                document.getElementById('detailPagination').classList.add('hidden');
             }
         })
         .catch(err => {
@@ -1050,33 +1028,104 @@ window.openDetailModal = function (id_kapasitas) {
         });
 };
 
+window.renderDetailRiwayatPage = function (page) {
+    const tablePasienDetail = document.getElementById('tablePasienDetail');
+    const paginationContainer = document.getElementById('detailPagination');
+    if (!tablePasienDetail || !window.currentDetailRiwayat) return;
+
+    const limit = 5;
+    const totalRecords = window.currentDetailRiwayat.length;
+    const totalPages = Math.ceil(totalRecords / limit) || 1;
+    
+    if (page < 1) page = 1;
+    if (page > totalPages) page = totalPages;
+
+    const start = (page - 1) * limit;
+    const end = start + limit;
+    const pageData = window.currentDetailRiwayat.slice(start, end);
+
+    tablePasienDetail.innerHTML = '';
+    
+    if (pageData.length > 0) {
+        pageData.forEach(row => {
+            const tgl = new Date(row.tanggal_paket).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+
+            const d = new Date();
+            const todayStr = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+            const rowDateStr = row.tanggal_paket ? row.tanggal_paket.substring(0, 10) : '';
+            let deleteBtnHTML = '';
+            if (rowDateStr === todayStr) {
+                deleteBtnHTML = `<button onclick="batalSesi('${row.id}')" class="text-error hover:bg-error-container p-1 rounded transition-colors ml-2" title="Batal Sesi"><span class="material-symbols-outlined text-[18px] align-middle">delete</span></button>`;
+            }
+
+            tablePasienDetail.innerHTML += `
+                <tr class="hover:bg-surface-container-lowest transition-colors">
+                    <td class="py-2 pr-2">${tgl}</td>
+                    <td class="py-2 px-2">Sesi ${row.sesi_ke || '-'}</td>
+                    <td class="py-2 pl-2 text-on-surface-variant font-mono-data text-[13px] flex justify-between items-center">
+                        <span>No. Register ${row.no_erm || '-'}</span>
+                        <div>
+                            ${deleteBtnHTML}
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+
+        // Render Pagination
+        if (totalRecords > limit) {
+            if(paginationContainer) paginationContainer.classList.remove('hidden');
+            let paginationHTML = '';
+            
+            paginationHTML += `<button onclick="renderDetailRiwayatPage(${page - 1})" ${page === 1 ? 'disabled' : ''} class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-on-surface-variant hover:bg-surface-container-high transition disabled:opacity-50 disabled:cursor-not-allowed bg-surface"><span class="material-symbols-outlined text-[18px]">chevron_left</span></button>`;
+            
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === page) {
+                    paginationHTML += `<button class="w-8 h-8 flex items-center justify-center rounded bg-primary text-on-primary font-bold text-sm shadow-sm">${i}</button>`;
+                } else {
+                    paginationHTML += `<button onclick="renderDetailRiwayatPage(${i})" class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-on-surface hover:bg-surface-container-high transition bg-surface text-sm">${i}</button>`;
+                }
+            }
+            
+            paginationHTML += `<button onclick="renderDetailRiwayatPage(${page + 1})" ${page === totalPages ? 'disabled' : ''} class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-on-surface-variant hover:bg-surface-container-high transition disabled:opacity-50 disabled:cursor-not-allowed bg-surface"><span class="material-symbols-outlined text-[18px]">chevron_right</span></button>`;
+            
+            if(paginationContainer) paginationContainer.innerHTML = paginationHTML;
+        } else {
+            if(paginationContainer) paginationContainer.classList.add('hidden');
+        }
+    } else {
+        tablePasienDetail.innerHTML = '<tr><td colspan="3" class="text-center py-6 text-on-surface-variant italic">Belum ada penggunaan</td></tr>';
+        if(paginationContainer) paginationContainer.classList.add('hidden');
+    }
+};
+
 window.closeDetailModal = function () {
     const modal = document.getElementById('detailPasienModal');
     if (modal) modal.classList.add('hidden');
 };
 
-window.batalSesi = function(id) {
-    if(!confirm('Apakah Anda yakin ingin membatalkan penggunaan sesi ini? Sisa sesi akan dikembalikan.')) return;
-    
+window.batalSesi = function (id) {
+    if (!confirm('Apakah Anda yakin ingin membatalkan penggunaan sesi ini? Sisa sesi akan dikembalikan.')) return;
+
     apiFetch(`${API_BASE}/pasien?action=batal_sesi`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: id })
     })
-    .then(res => res.json().then(data => ({status: res.status, body: data})))
-    .then(res => {
-        if(res.status === 200) {
-            showMessage(res.body.message, 'success');
-            if(window.loadPasienMaster) window.loadPasienMaster();
-            if(window.closeDetailModal) window.closeDetailModal();
-        } else {
-            alert(res.body.message || 'Gagal membatalkan sesi.');
-        }
-    })
-    .catch(err => {
-        console.error(err);
-        alert('Terjadi kesalahan saat membatalkan sesi.');
-    });
+        .then(res => res.json().then(data => ({ status: res.status, body: data })))
+        .then(res => {
+            if (res.status === 200) {
+                showMessage(res.body.message, 'success');
+                if (window.loadPasienMaster) window.loadPasienMaster();
+                if (window.closeDetailModal) window.closeDetailModal();
+            } else {
+                alert(res.body.message || 'Gagal membatalkan sesi.');
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Terjadi kesalahan saat membatalkan sesi.');
+        });
 };
 
 function exportAuditCSV() {
