@@ -1013,7 +1013,7 @@ window.openDetailModal = function (id_kapasitas) {
         }
     }
 
-    apiFetch(`${API_BASE}/pasien?action=riwayat_by_kapasitas&id_kapasitas=${id_kapasitas}`)
+    apiFetch(`${API_BASE}/pasien?action=riwayat_by_kapasitas&id_kapasitas=${id_kapasitas}&all=true`)
         .then(res => res.json())
         .then(data => {
             tablePasienDetail.innerHTML = '';
