@@ -19,16 +19,15 @@ class Kapasitas {
     // read active kapasitas by date (sebelumnya by visit date, diubah menjadi by tanggal_beli sesuai request)
     function readByVisitDate($date){
         $query = "SELECT k.id, k.no_erm, 
-                         COALESCE(
-                             (SELECT NAME FROM dbold.admpacust WHERE RMNO = k.no_erm LIMIT 1),
-                             (SELECT FCRNAMA FROM dbold.fisiosfjual WHERE FCRCUST = k.no_erm LIMIT 1),
-                             (SELECT fname FROM dbold.poliumumupcust WHERE idcust = k.no_erm LIMIT 1),
-                             'Tidak Diketahui'
-                         ) as nama_pasien, 
+                         COALESCE(a.NAME, f.FCRNAMA, pu.fname, 'Tidak Diketahui') as nama_pasien, 
                          k.id_paket, k.tanggal_beli, k.sisa, k.status, CONCAT_WS(' ', NULLIF(p.kode_paket, ''), p.nama) as nama_paket, p.total_sesi 
                   FROM " . $this->table_name . " k 
                   LEFT JOIN prm_master_paket p ON k.id_paket = p.id
+                  LEFT JOIN dbold.admpacust a ON a.RMNO = k.no_erm
+                  LEFT JOIN dbold.fisiosfjual f ON f.FCRCUST = k.no_erm
+                  LEFT JOIN dbold.poliumumupcust pu ON pu.idcust = k.no_erm
                   WHERE k.status IN ('aktif', 'AKTIF', 'habis', 'HABIS') AND DATE(k.tanggal_beli) = :vdate
+                  GROUP BY k.id
                   ORDER BY k.tanggal_beli DESC";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':vdate', $date);
@@ -38,16 +37,15 @@ class Kapasitas {
 
     function readByVisitDatePaged($date, $offset, $limit){
         $query = "SELECT k.id, k.no_erm, 
-                         COALESCE(
-                             (SELECT NAME FROM dbold.admpacust WHERE RMNO = k.no_erm LIMIT 1),
-                             (SELECT FCRNAMA FROM dbold.fisiosfjual WHERE FCRCUST = k.no_erm LIMIT 1),
-                             (SELECT fname FROM dbold.poliumumupcust WHERE idcust = k.no_erm LIMIT 1),
-                             'Tidak Diketahui'
-                         ) as nama_pasien, 
+                         COALESCE(a.NAME, f.FCRNAMA, pu.fname, 'Tidak Diketahui') as nama_pasien, 
                          k.id_paket, k.tanggal_beli, k.sisa, k.status, CONCAT_WS(' ', NULLIF(p.kode_paket, ''), p.nama) as nama_paket, p.total_sesi 
                   FROM " . $this->table_name . " k 
                   LEFT JOIN prm_master_paket p ON k.id_paket = p.id
+                  LEFT JOIN dbold.admpacust a ON a.RMNO = k.no_erm
+                  LEFT JOIN dbold.fisiosfjual f ON f.FCRCUST = k.no_erm
+                  LEFT JOIN dbold.poliumumupcust pu ON pu.idcust = k.no_erm
                   WHERE k.status IN ('aktif', 'AKTIF', 'habis', 'HABIS') AND DATE(k.tanggal_beli) = :vdate
+                  GROUP BY k.id
                   ORDER BY k.tanggal_beli DESC LIMIT :offset, :limit";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':vdate', $date);
