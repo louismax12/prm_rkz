@@ -20,25 +20,22 @@ class KasirController {
         $offset = ($page - 1) * $limit;
 
         $baseSelect = "SELECT 
-                    f.ID as id_transaksi,
-                    f.FCRID as no_register, 
-                    f.FCRCUST as no_erm,
+                    f.FCRRSP as id_transaksi,
+                    f.FCRCUST as no_register, 
+                    kh.FCRRMV as no_erm,
                     f.FCRNAMA as nama_pasien,
                     f.FCRDATE as tanggal_transaksi,
                     f.FCRBARANG as kode_paket,
                     t.nama as nama_paket,
                     f.FCRJUMLAH as total_biaya,
-                    kh.FCRRMV as rmv,
-                    kh.FCRRMUNIT as rmunit,
-                    kh.FCRCUST as cust,
                     IF(p.id_transaksi IS NOT NULL, 1, 0) as is_processed ";
                     
         $countSelect = "SELECT COUNT(DISTINCT f.ID) as total ";
 
         $baseFromWhere = "FROM dbold.fisiosfjual f
                   JOIN dbold.m_tindakan2026 t ON f.FCRBARANG = t.kode
-                  LEFT JOIN dbold.kasir_jual_h kh ON f.FCRID = kh.FCRID
-                  LEFT JOIN prm_kasir_processed p ON p.id_transaksi = f.ID
+                  LEFT JOIN dbold.kasir_jual_h kh ON f.FCRRSP = kh.FCRRSP
+                  LEFT JOIN dbold.prm_kasir_processed p ON p.id_transaksi = f.FCRRSP
                   WHERE t.asaltabel = 'SFMASBIA' AND f.FCRTAMBAH = 'T'";
         
         $params = array();

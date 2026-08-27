@@ -1033,10 +1033,10 @@ window.renderDetailRiwayatPage = function (page) {
     const paginationContainer = document.getElementById('detailPagination');
     if (!tablePasienDetail || !window.currentDetailRiwayat) return;
 
-    const limit = 5;
+    const limit = 3;
     const totalRecords = window.currentDetailRiwayat.length;
     const totalPages = Math.ceil(totalRecords / limit) || 1;
-    
+
     if (page < 1) page = 1;
     if (page > totalPages) page = totalPages;
 
@@ -1045,7 +1045,7 @@ window.renderDetailRiwayatPage = function (page) {
     const pageData = window.currentDetailRiwayat.slice(start, end);
 
     tablePasienDetail.innerHTML = '';
-    
+
     if (pageData.length > 0) {
         pageData.forEach(row => {
             const tgl = new Date(row.tanggal_paket).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
@@ -1074,11 +1074,11 @@ window.renderDetailRiwayatPage = function (page) {
 
         // Render Pagination
         if (totalRecords > limit) {
-            if(paginationContainer) paginationContainer.classList.remove('hidden');
+            if (paginationContainer) paginationContainer.classList.remove('hidden');
             let paginationHTML = '';
-            
+
             paginationHTML += `<button onclick="renderDetailRiwayatPage(${page - 1})" ${page === 1 ? 'disabled' : ''} class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-on-surface-variant hover:bg-surface-container-high transition disabled:opacity-50 disabled:cursor-not-allowed bg-surface"><span class="material-symbols-outlined text-[18px]">chevron_left</span></button>`;
-            
+
             for (let i = 1; i <= totalPages; i++) {
                 if (i === page) {
                     paginationHTML += `<button class="w-8 h-8 flex items-center justify-center rounded bg-primary text-on-primary font-bold text-sm shadow-sm">${i}</button>`;
@@ -1086,16 +1086,16 @@ window.renderDetailRiwayatPage = function (page) {
                     paginationHTML += `<button onclick="renderDetailRiwayatPage(${i})" class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-on-surface hover:bg-surface-container-high transition bg-surface text-sm">${i}</button>`;
                 }
             }
-            
+
             paginationHTML += `<button onclick="renderDetailRiwayatPage(${page + 1})" ${page === totalPages ? 'disabled' : ''} class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-on-surface-variant hover:bg-surface-container-high transition disabled:opacity-50 disabled:cursor-not-allowed bg-surface"><span class="material-symbols-outlined text-[18px]">chevron_right</span></button>`;
-            
-            if(paginationContainer) paginationContainer.innerHTML = paginationHTML;
+
+            if (paginationContainer) paginationContainer.innerHTML = paginationHTML;
         } else {
-            if(paginationContainer) paginationContainer.classList.add('hidden');
+            if (paginationContainer) paginationContainer.classList.add('hidden');
         }
     } else {
         tablePasienDetail.innerHTML = '<tr><td colspan="3" class="text-center py-6 text-on-surface-variant italic">Belum ada penggunaan</td></tr>';
-        if(paginationContainer) paginationContainer.classList.add('hidden');
+        if (paginationContainer) paginationContainer.classList.add('hidden');
     }
 };
 
