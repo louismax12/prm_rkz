@@ -1215,7 +1215,8 @@ function loadNotifications() {
                     date: new Date(r.tanggal_paket),
                     title: 'Penggunaan Sesi Pelayanan',
                     desc: `Sesi ${r.sesi_ke} pasien ${r.no_erm} untuk tindakan ${r.nama_tindakan} telah dicatat.`,
-                    icon: 'assignment_turned_in'
+                    icon: 'assignment_turned_in',
+                    erm: r.no_erm
                 });
             });
         }
@@ -1238,7 +1239,7 @@ function loadNotifications() {
                 const bgIcon = n.type === 'kasir' ? 'bg-primary/10 text-primary' : 'bg-surface-container-high text-on-surface-variant';
 
                 notifContainer.innerHTML += `
-                    <div class="p-3 hover:bg-surface-container-lowest rounded-xl transition-colors cursor-pointer flex gap-3 notif-item" onclick="handleNotifClick('${n.type}')">
+                    <div class="p-3 hover:bg-surface-container-lowest rounded-xl transition-colors cursor-pointer flex gap-3 notif-item" onclick="handleNotifClick('${n.type}', '${n.erm || ''}')">
                         <div class="w-8 h-8 rounded-full ${bgIcon} flex items-center justify-center shrink-0">
                             <span class="material-symbols-outlined text-[18px]">${n.icon}</span>
                         </div>
@@ -1264,7 +1265,7 @@ function loadNotifications() {
     }
 }
 
-window.handleNotifClick = function(type) {
+window.handleNotifClick = function(type, erm = '') {
     const notifDropdown = document.getElementById('notifDropdown');
     if (notifDropdown) notifDropdown.classList.add('hidden'); // Close dropdown
 
@@ -1272,6 +1273,17 @@ window.handleNotifClick = function(type) {
         if (window.switchView) window.switchView('kasir');
     } else if (type === 'audit') {
         if (window.switchView) window.switchView('pasien');
+        if (erm) {
+            const searchInput = document.getElementById('pasienSearchInput');
+            if (searchInput) {
+                searchInput.value = erm;
+                setTimeout(() => {
+                    if (window.loadPasienMaster) {
+                        window.loadPasienMaster(true);
+                    }
+                }, 100);
+            }
+        }
     }
 };
 
@@ -1400,3 +1412,4 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
