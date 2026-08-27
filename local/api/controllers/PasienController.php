@@ -261,7 +261,38 @@ class PasienController {
     // Endpoint GET: Mendapatkan seluruh kapasitas (master) untuk Menu Pasien
     public function getAllKapasitas() {
         $date = isset($_GET['date']) ? $_GET['date'] : null;
+        $search = isset($_GET['search']) ? trim($_GET['search']) : null;
         
+        if (!empty($search)) {
+            $stmt = $this->kapasitas->searchAllKapasitas($search);
+            $num = $stmt->rowCount();
+            if($num > 0){
+                $kapasitas_arr = array();
+                $kapasitas_arr["records"] = array();
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                    extract($row);
+                    $kapasitas_item = array(
+                        "id" => $id,
+                        "no_erm" => $no_erm,
+                        "nama_pasien" => $nama_pasien,
+                        "id_paket" => $id_paket,
+                        "tanggal_beli" => $tanggal_beli,
+                        "sisa" => (int)$sisa,
+                        "status" => $status,
+                        "nama_paket" => $nama_paket,
+                        "total_sesi" => (int)$total_sesi
+                    );
+                    array_push($kapasitas_arr["records"], $kapasitas_item);
+                }
+                http_response_code(200);
+                echo json_encode($kapasitas_arr);
+            } else {
+                http_response_code(200);
+                echo json_encode(array("records" => array(), "message" => "Tidak ada paket aktif untuk pencarian ini."));
+            }
+            return;
+        }
+
         if (!$date) {
             http_response_code(200);
             echo json_encode(array("records" => array(), "message" => "Silakan pilih tanggal kunjungan terlebih dahulu."));

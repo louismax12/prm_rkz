@@ -862,18 +862,27 @@ window.loadTindakanDropdown = function () {
 const tablePasienMaster = document.getElementById('tablePasienMaster');
 const tablePasienDetail = document.getElementById('tablePasienDetail');
 
-window.loadPasienMaster = function () {
+window.loadPasienMaster = function (isGlobalSearch = false) {
     const tableBody = document.getElementById('tablePasienList');
     const dateFilter = document.getElementById('filterTanggalKunjungan').value;
+    const searchInput = document.getElementById('pasienSearchInput');
+    const searchTerm = searchInput ? searchInput.value.trim() : '';
 
-    if (!dateFilter) {
-        tableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-on-surface-variant">Silakan pilih Tanggal Kunjungan terlebih dahulu</td></tr>`;
-        return;
+    let fetchUrl = '';
+
+    if (isGlobalSearch && searchTerm) {
+        fetchUrl = `${API_BASE}/pasien?action=all_kapasitas&search=${encodeURIComponent(searchTerm)}`;
+    } else {
+        if (!dateFilter) {
+            tableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-on-surface-variant">Silakan pilih Tanggal Kunjungan terlebih dahulu</td></tr>`;
+            return;
+        }
+        fetchUrl = `${API_BASE}/pasien?action=all_kapasitas&date=${dateFilter}`;
     }
 
     tableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-on-surface-variant flex items-center justify-center gap-2"><span class="material-symbols-outlined animate-spin">sync</span> Memuat data...</td></tr>`;
 
-    apiFetch(`${API_BASE}/pasien?action=all_kapasitas&date=${dateFilter}`)
+    apiFetch(fetchUrl)
         .then(res => res.json())
         .then(data => {
             tableBody.innerHTML = '';
@@ -1375,4 +1384,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     document.getElementById('filterTanggalKunjungan').addEventListener('change', loadPasienMaster);
+});
+
+// Handle global search in Data Paket
+document.addEventListener('DOMContentLoaded', () => {
+    const pasienSearchInput = document.getElementById('pasienSearchInput');
+    if (pasienSearchInput) {
+        pasienSearchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (window.loadPasienMaster) {
+                    window.loadPasienMaster(true);
+                }
+            }
+        });
+    }
 });

@@ -35,6 +35,26 @@ class Kapasitas {
         return $stmt;
     }
 
+    function searchAllKapasitas($term){
+        $termQuery = "%{$term}%";
+        $query = "SELECT k.id, k.no_erm, 
+                         COALESCE(a.NAME, f.FCRNAMA, pu.fname, 'Tidak Diketahui') as nama_pasien, 
+                         k.id_paket, k.tanggal_beli, k.sisa, k.status, CONCAT_WS(' ', NULLIF(p.kode_paket, ''), p.nama) as nama_paket, p.total_sesi 
+                  FROM " . $this->table_name . " k 
+                  LEFT JOIN prm_master_paket p ON k.id_paket = p.id
+                  LEFT JOIN dbold.admpacust a ON a.RMNO = k.no_erm
+                  LEFT JOIN dbold.fisiosfjual f ON f.FCRCUST = k.no_erm
+                  LEFT JOIN dbold.poliumumupcust pu ON pu.idcust = k.no_erm
+                  WHERE k.status IN ('aktif', 'AKTIF', 'habis', 'HABIS') 
+                  AND (k.no_erm LIKE :term OR a.NAME LIKE :term OR f.FCRNAMA LIKE :term OR pu.fname LIKE :term OR p.nama LIKE :term OR p.kode_paket LIKE :term)
+                  GROUP BY k.id
+                  ORDER BY k.tanggal_beli DESC LIMIT 100";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':term', $termQuery);
+        $stmt->execute();
+        return $stmt;
+    }
+
     function readByVisitDatePaged($date, $offset, $limit){
         $query = "SELECT k.id, k.no_erm, 
                          COALESCE(a.NAME, f.FCRNAMA, pu.fname, 'Tidak Diketahui') as nama_pasien, 
