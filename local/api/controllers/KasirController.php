@@ -35,7 +35,7 @@ class KasirController {
         $baseFromWhere = "FROM dbold.fisiosfjual f
                   JOIN dbold.m_tindakan2026 t ON f.FCRBARANG = t.kode
                   LEFT JOIN dbold.kasir_jual_h kh ON f.FCRRSP = kh.FCRRSP
-                  LEFT JOIN dbold.prm_kasir_processed p ON p.id_transaksi = f.FCRRSP
+                  LEFT JOIN prm_kasir_processed p ON p.id_transaksi = f.ID
                   WHERE t.asaltabel = 'SFMASBIA' AND f.FCRTAMBAH = 'T'";
         
         $params = array();
@@ -132,6 +132,9 @@ class KasirController {
             $stmtInfo = $this->db->prepare($qInfo);
             $stmtInfo->execute($ids);
             $transaksiList = $stmtInfo->fetchAll(PDO::FETCH_ASSOC);
+
+            // LOGGING
+            file_put_contents('kasir_debug.log', "Received IDs: " . json_encode($ids) . "\nTransaksiList count: " . count($transaksiList) . "\n", FILE_APPEND);
 
             $stmtInsertProcessed = $this->db->prepare("INSERT IGNORE INTO prm_kasir_processed (id_transaksi, processed_at, processed_by) VALUES (:id, :at, :by)");
             $stmtInsertKapasitas = $this->db->prepare("INSERT INTO prm_kapasitas (no_erm, nomor_register, id_paket, sisa, tanggal_beli, tanggal_expired, status) VALUES (:no_erm, :nomor_register, :id_paket, :sisa, :tanggal_beli, :tanggal_expired, :status)");
