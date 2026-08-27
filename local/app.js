@@ -469,9 +469,9 @@ function loadKasirHistory(page = 1) {
                             </td>
                             <td class="py-5 px-6 text-right whitespace-nowrap">
                                 <div class="text-[14px] font-bold text-green-600">Rp ${biaya}</div>
-                                <div class="text-[10px] text-on-surface-variant mt-0.5">
+                                 <!-- <div class="text-[10px] text-on-surface-variant mt-0.5">
                                     RMV: ${r.rmv || '-'} | Unit: ${r.rmunit || '-'} | Cust: ${r.cust || '-'}
-                                </div>
+                                </div> -->
                             </td>
                         </tr>
                     `;
