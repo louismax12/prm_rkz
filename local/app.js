@@ -469,7 +469,7 @@ function loadKasirHistory(page = 1) {
                             </td>
                             <td class="py-5 px-6 text-right whitespace-nowrap">
                                 <div class="text-[14px] font-bold text-green-600">Rp ${biaya}</div>
-                                 <!-- <div class="text-[10px] text-on-surface-variant mt-0.5">
+                                <!-- <div class="text-[10px] text-on-surface-variant mt-0.5">
                                     RMV: ${r.rmv || '-'} | Unit: ${r.rmunit || '-'} | Cust: ${r.cust || '-'}
                                 </div> -->
                             </td>
@@ -1226,7 +1226,7 @@ function loadNotifications() {
                 const bgIcon = n.type === 'kasir' ? 'bg-primary/10 text-primary' : 'bg-surface-container-high text-on-surface-variant';
 
                 notifContainer.innerHTML += `
-                    <div class="p-3 hover:bg-surface-container-lowest rounded-xl transition-colors cursor-pointer flex gap-3 notif-item">
+                    <div class="p-3 hover:bg-surface-container-lowest rounded-xl transition-colors cursor-pointer flex gap-3 notif-item" onclick="handleNotifClick('${n.type}')">
                         <div class="w-8 h-8 rounded-full ${bgIcon} flex items-center justify-center shrink-0">
                             <span class="material-symbols-outlined text-[18px]">${n.icon}</span>
                         </div>
@@ -1243,7 +1243,18 @@ function loadNotifications() {
             if (notifBadge) notifBadge.classList.add('hidden');
         }
     });
+}
 
+window.handleNotifClick = function(type) {
+    const notifDropdown = document.getElementById('notifDropdown');
+    if (notifDropdown) notifDropdown.classList.add('hidden'); // Close dropdown
+
+    if (type === 'kasir') {
+        if (window.switchView) window.switchView('kasir');
+    } else if (type === 'audit') {
+        if (window.switchView) window.switchView('pasien');
+    }
+};
     if (btnReadNotif) {
         btnReadNotif.onclick = () => {
             if (notifBadge) notifBadge.classList.add('hidden');
