@@ -1246,6 +1246,13 @@ function loadNotifications() {
             if (notifBadge) notifBadge.classList.add('hidden');
         }
     });
+
+    if (btnReadNotif) {
+        btnReadNotif.onclick = () => {
+            if (notifBadge) notifBadge.classList.add('hidden');
+            notifContainer.querySelectorAll('.notif-item').forEach(el => el.classList.add('opacity-60'));
+        };
+    }
 }
 
 window.handleNotifClick = function(type) {
@@ -1258,13 +1265,6 @@ window.handleNotifClick = function(type) {
         if (window.switchView) window.switchView('pasien');
     }
 };
-    if (btnReadNotif) {
-        btnReadNotif.onclick = () => {
-            if (notifBadge) notifBadge.classList.add('hidden');
-            notifContainer.querySelectorAll('.notif-item').forEach(el => el.classList.add('opacity-60'));
-        };
-    }
-}
 
 
 // --- HEADER INTERACTIONS (DROPDOWNS) ---
