@@ -1216,7 +1216,7 @@ function loadNotifications() {
                     title: 'Penggunaan Sesi Pelayanan',
                     desc: `Sesi ${r.sesi_ke} pasien ${r.no_erm} untuk tindakan ${r.nama_tindakan} telah dicatat.`,
                     icon: 'assignment_turned_in',
-                    erm: r.no_erm
+                    erm: r.no_erm ? r.no_erm.trim() : ''
                 });
             });
         }
@@ -1239,7 +1239,7 @@ function loadNotifications() {
                 const bgIcon = n.type === 'kasir' ? 'bg-primary/10 text-primary' : 'bg-surface-container-high text-on-surface-variant';
 
                 notifContainer.innerHTML += `
-                    <div class="p-3 hover:bg-surface-container-lowest rounded-xl transition-colors cursor-pointer flex gap-3 notif-item" onclick="handleNotifClick('${n.type}', '${n.erm || ''}')">
+                    <div class="p-3 hover:bg-surface-container-lowest rounded-xl transition-colors cursor-pointer flex gap-3 notif-item" onclick="handleNotifClick('${n.type}', '${n.erm}')">
                         <div class="w-8 h-8 rounded-full ${bgIcon} flex items-center justify-center shrink-0">
                             <span class="material-symbols-outlined text-[18px]">${n.icon}</span>
                         </div>
@@ -1265,7 +1265,7 @@ function loadNotifications() {
     }
 }
 
-window.handleNotifClick = function(type, erm = '') {
+window.handleNotifClick = function (type, erm = '') {
     const notifDropdown = document.getElementById('notifDropdown');
     if (notifDropdown) notifDropdown.classList.add('hidden'); // Close dropdown
 
