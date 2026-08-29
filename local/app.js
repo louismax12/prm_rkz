@@ -1072,9 +1072,9 @@ window.renderDetailRiwayatPage = function (page) {
 
             tablePasienDetail.innerHTML += `
                 <tr class="hover:bg-surface-container-lowest transition-colors">
-                    <td class="py-2 pr-2">${tgl}</td>
-                    <td class="py-2 px-2">Sesi ${row.sesi_ke || '-'}</td>
-                    <td class="py-2 pl-2 text-on-surface-variant font-mono-data text-[13px] flex justify-between items-center">
+                    <td class="py-1 pr-2">${tgl}</td>
+                    <td class="py-1 px-2">Sesi ${row.sesi_ke || '-'}</td>
+                    <td class="py-1 pl-2 text-on-surface-variant font-mono-data text-[13px] flex justify-between items-center">
                         <span>No. Register ${row.no_erm || '-'}</span>
                         <div>
                             ${deleteBtnHTML}
