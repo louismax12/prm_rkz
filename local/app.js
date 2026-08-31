@@ -407,6 +407,7 @@ confirmUseBtn.addEventListener('click', () => {
 
             if (res.status === 201) {
                 showMessage(res.body.message, 'success');
+                if (typeof loadNotifications === 'function') loadNotifications();
                 // Refresh data
                 if (window.loadPasienMaster) {
                     window.loadPasienMaster().then(() => {
