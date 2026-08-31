@@ -408,10 +408,13 @@ confirmUseBtn.addEventListener('click', () => {
             if (res.status === 201) {
                 showMessage(res.body.message, 'success');
                 // Refresh data
-                if (window.loadPasienMaster) window.loadPasienMaster();
-                // Close the detail modal after success
-                if (window.closeDetailModal) {
-                    window.closeDetailModal();
+                if (window.loadPasienMaster) {
+                    window.loadPasienMaster().then(() => {
+                        // Re-open detail modal with updated data
+                        if (window.openDetailModal && activeKapasitasData) {
+                            window.openDetailModal(activeKapasitasData.id);
+                        }
+                    });
                 }
             } else {
                 alert(res.body.message || 'Gagal memotong sesi.');
@@ -882,7 +885,7 @@ window.loadPasienMaster = function (isGlobalSearch = false) {
 
     tableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-on-surface-variant flex items-center justify-center gap-2"><span class="material-symbols-outlined animate-spin">sync</span> Memuat data...</td></tr>`;
 
-    apiFetch(fetchUrl)
+    return apiFetch(fetchUrl)
         .then(res => res.json())
         .then(data => {
             tableBody.innerHTML = '';
@@ -930,13 +933,25 @@ window.loadPasienMaster = function (isGlobalSearch = false) {
         });
 };
 
-window.filterPasienTable = function () {
+let pasienSearchTimeout = null;
+window.filterPasienTable = function (isFromInput = false) {
     const searchInput = document.getElementById('pasienSearchInput');
     const statusFilter = document.getElementById('pasienStatusFilter');
     if (!searchInput || !statusFilter) return;
 
-    const searchTerm = searchInput.value.toLowerCase();
+    const searchTerm = searchInput.value.toLowerCase().trim();
     const statusTerm = statusFilter.value.toUpperCase();
+
+    if (isFromInput) {
+        if (pasienSearchTimeout) clearTimeout(pasienSearchTimeout);
+        pasienSearchTimeout = setTimeout(() => {
+            if (window.loadPasienMaster) {
+                window.loadPasienMaster(searchTerm.length > 0).then(() => {
+                    window.filterPasienTable(false);
+                });
+            }
+        }, 500);
+    }
 
     const rows = document.querySelectorAll('#tablePasienList .pasien-row');
 
