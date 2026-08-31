@@ -826,9 +826,9 @@
                 </div>
             </div>
 
-            <div class="flex-1 overflow-auto bg-surface-container-lowest p-4 flex flex-col gap-2">
+            <div class="flex-1 overflow-auto bg-surface-container-lowest p-2 sm:p-3 flex flex-col gap-2">
                 <!-- Top Cards (Redesigned) -->
-                <div class="border border-on-surface bg-[#d9f99d] p-3 flex flex-col gap-1 shadow-sm rounded-md">
+                <div class="border border-on-surface bg-[#d9f99d] p-1.5 flex flex-col gap-[2px] shadow-sm rounded-md">
                     <!-- Nama -->
                     <div
                         class="flex items-center justify-between border border-on-surface bg-[#4ade80] py-1 px-2 text-on-surface">
@@ -880,22 +880,23 @@
                 </div>
 
                 <!-- Bottom Cards -->
-                <div class="grid grid-cols-1 gap-3 mt-1">
+                <div class="grid grid-cols-1 gap-2 mt-1">
                     <!-- Riwayat Penggunaan -->
-                    <div class="bg-surface border border-outline-variant rounded-xl p-4 shadow-sm flex flex-col">
-                        <h4 class="font-bold text-on-surface mb-2">Riwayat Penggunaan</h4>
+                    <div class="bg-surface border border-outline-variant rounded-xl p-2 sm:p-3 shadow-sm flex flex-col">
+                        <h4 class="font-bold text-on-surface mb-2 text-sm">Riwayat Penggunaan</h4>
                         <div class="overflow-auto flex-1">
                             <table class="w-full text-left font-body-sm text-on-surface">
                                 <thead class="text-on-surface-variant border-b border-outline-variant font-label-sm">
                                     <tr>
+                                        <th class="py-1 font-medium w-16">Sesi</th>
                                         <th class="py-1 font-medium">Tanggal</th>
-                                        <th class="py-1 font-medium">Tindakan</th>
-                                        <th class="py-1 font-medium">Keterangan</th>
+                                        <th class="py-1 font-medium">Tindakan / Terapi</th>
+                                        <th class="py-1 font-medium text-right">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tablePasienDetail" class="divide-y divide-outline-variant/50">
                                     <tr>
-                                        <td colspan="3" class="text-center py-6 text-on-surface-variant italic">
+                                        <td colspan="4" class="text-center py-6 text-on-surface-variant italic">
                                             Belum ada penggunaan
                                         </td>
                                     </tr>

@@ -50,11 +50,11 @@ class AuthController {
             } else {
                 http_response_code(401);
                 $debugMsg = "Login gagal. Debug: U='" . $username . "' P='" . $password . "' HASH='" . md5($password) . "'";
-                echo json_encode(["message" => $debugMsg]);
+                echo json_encode(array("message" => $debugMsg));
             }
         } else {
             http_response_code(400);
-            echo json_encode(["message" => "Username dan Password tidak boleh kosong. U='" . $username . "'"]);
+            echo json_encode(array("message" => "Username dan Password tidak boleh kosong. U='" . $username . "'"));
         }
     }
 }

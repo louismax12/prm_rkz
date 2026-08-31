@@ -72,11 +72,11 @@ class PaketController {
                 $this->deletePaket($data);
             } else {
                 http_response_code(400);
-                echo json_encode(["message" => "Aksi POST tidak valid."]);
+                echo json_encode(array("message" => "Aksi POST tidak valid."));
             }
         } else {
             http_response_code(405);
-            echo json_encode(["message" => "Metode tidak diizinkan."]);
+            echo json_encode(array("message" => "Metode tidak diizinkan."));
         }
     }
 
@@ -89,14 +89,14 @@ class PaketController {
 
             if ($this->paket->create()) {
                 http_response_code(201);
-                echo json_encode(["message" => "Paket berhasil ditambahkan."]);
+                echo json_encode(array("message" => "Paket berhasil ditambahkan."));
             } else {
                 http_response_code(503);
-                echo json_encode(["message" => "Gagal menambahkan paket."]);
+                echo json_encode(array("message" => "Gagal menambahkan paket."));
             }
         } else {
             http_response_code(400);
-            echo json_encode(["message" => "Data tidak lengkap."]);
+            echo json_encode(array("message" => "Data tidak lengkap."));
         }
     }
 
@@ -110,14 +110,14 @@ class PaketController {
 
             if ($this->paket->update()) {
                 http_response_code(200);
-                echo json_encode(["message" => "Paket berhasil diupdate."]);
+                echo json_encode(array("message" => "Paket berhasil diupdate."));
             } else {
                 http_response_code(503);
-                echo json_encode(["message" => "Gagal mengupdate paket."]);
+                echo json_encode(array("message" => "Gagal mengupdate paket."));
             }
         } else {
             http_response_code(400);
-            echo json_encode(["message" => "Data tidak lengkap untuk update."]);
+            echo json_encode(array("message" => "Data tidak lengkap untuk update."));
         }
     }
 
@@ -127,14 +127,14 @@ class PaketController {
             
             if ($this->paket->delete()) {
                 http_response_code(200);
-                echo json_encode(["message" => "Paket berhasil dihapus."]);
+                echo json_encode(array("message" => "Paket berhasil dihapus."));
             } else {
                 http_response_code(503);
-                echo json_encode(["message" => "Gagal menghapus paket. Paket mungkin masih digunakan."]);
+                echo json_encode(array("message" => "Gagal menghapus paket. Paket mungkin masih digunakan."));
             }
         } else {
             http_response_code(400);
-            echo json_encode(["message" => "ID tidak diberikan."]);
+            echo json_encode(array("message" => "ID tidak diberikan."));
         }
     }
 }

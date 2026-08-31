@@ -989,7 +989,7 @@ window.openDetailModal = function (id_kapasitas) {
     const tablePasienDetail = document.getElementById('tablePasienDetail');
     if (!tablePasienDetail) return;
 
-    tablePasienDetail.innerHTML = '<tr><td colspan="3" class="text-center py-8">Memuat data...</td></tr>';
+    tablePasienDetail.innerHTML = '<tr><td colspan="4" class="text-center py-8">Memuat data...</td></tr>';
 
     // Show modal
     const modal = document.getElementById('detailPasienModal');
@@ -1046,13 +1046,13 @@ window.openDetailModal = function (id_kapasitas) {
                 window.currentDetailRiwayat = data.records;
                 renderDetailRiwayatPage(1);
             } else {
-                tablePasienDetail.innerHTML = '<tr><td colspan="3" class="text-center py-6 text-on-surface-variant italic">Belum ada penggunaan</td></tr>';
+                tablePasienDetail.innerHTML = '<tr><td colspan="4" class="text-center py-6 text-on-surface-variant italic">Belum ada penggunaan</td></tr>';
                 document.getElementById('detailPagination').classList.add('hidden');
             }
         })
         .catch(err => {
             console.error(err);
-            tablePasienDetail.innerHTML = '<tr><td colspan="3" class="text-center py-6 text-error">Gagal memuat riwayat pemakaian.</td></tr>';
+            tablePasienDetail.innerHTML = '<tr><td colspan="4" class="text-center py-6 text-error">Gagal memuat riwayat pemakaian.</td></tr>';
         });
 };
 
@@ -1088,13 +1088,13 @@ window.renderDetailRiwayatPage = function (page) {
 
             tablePasienDetail.innerHTML += `
                 <tr class="hover:bg-surface-container-lowest transition-colors">
-                    <td class="py-1 pr-2">${tgl}</td>
-                    <td class="py-1 px-2">Sesi ${row.sesi_ke || '-'}</td>
-                    <td class="py-1 pl-2 text-on-surface-variant font-mono-data text-[13px] flex justify-between items-center">
-                        <span>No. Register ${row.no_erm || '-'}</span>
-                        <div>
-                            ${deleteBtnHTML}
-                        </div>
+                    <td class="py-1 pr-2 font-medium">Sesi ${row.sesi_ke || '-'}</td>
+                    <td class="py-1 px-2 whitespace-nowrap">${tgl}</td>
+                    <td class="py-1 px-2 text-on-surface-variant text-[13px]">
+                        ${row.nama_tindakan || row.nama_paket || '-'}
+                    </td>
+                    <td class="py-1 pl-2 text-right">
+                        ${deleteBtnHTML}
                     </td>
                 </tr>
             `;
@@ -1122,7 +1122,7 @@ window.renderDetailRiwayatPage = function (page) {
             if (paginationContainer) paginationContainer.classList.add('hidden');
         }
     } else {
-        tablePasienDetail.innerHTML = '<tr><td colspan="3" class="text-center py-6 text-on-surface-variant italic">Belum ada penggunaan</td></tr>';
+        tablePasienDetail.innerHTML = '<tr><td colspan="4" class="text-center py-6 text-on-surface-variant italic">Belum ada penggunaan</td></tr>';
         if (paginationContainer) paginationContainer.classList.add('hidden');
     }
 };
@@ -1411,7 +1411,13 @@ document.addEventListener('DOMContentLoaded', () => {
         filterTanggalKasir.value = `${yyyy}-${mm}`;
     }
 
-    document.getElementById('filterTanggalKunjungan').addEventListener('change', loadPasienMaster);
+    document.getElementById('filterTanggalKunjungan').addEventListener('change', () => {
+        const searchInput = document.getElementById('pasienSearchInput');
+        if (searchInput) {
+            searchInput.value = '';
+        }
+        loadPasienMaster(false);
+    });
 });
 
 // Handle global search in Data Paket

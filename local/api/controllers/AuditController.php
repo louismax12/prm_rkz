@@ -23,11 +23,11 @@ class AuditController {
                 $this->getLogs();
             } else {
                 http_response_code(400);
-                echo json_encode(["message" => "Aksi GET tidak valid."]);
+                echo json_encode(array("message" => "Aksi GET tidak valid."));
             }
         } else {
             http_response_code(405);
-            echo json_encode(["message" => "Metode tidak diizinkan."]);
+            echo json_encode(array("message" => "Metode tidak diizinkan."));
         }
     }
 
@@ -51,8 +51,8 @@ class AuditController {
                         "no_register_kunjungan" => $no_register_kunjungan,
                         "tanggal_paket" => $tanggal_paket,
                         "sesi_ke" => $sesi_ke,
-                        "nama_tindakan" => $nama_tindakan ? $nama_tindakan : "-",
-                        "nama_paket" => $nama_paket ? $nama_paket : "-"
+                        "nama_tindakan" => isset($nama_tindakan) ? $nama_tindakan : (isset($nama_paket) ? $nama_paket : "-"),
+                        "nama_paket" => isset($nama_paket) ? $nama_paket : "-"
                     );
                     array_push($logs_arr, $log_item);
                 }
@@ -90,8 +90,8 @@ class AuditController {
                     "no_register_kunjungan" => $no_register_kunjungan,
                     "tanggal_paket" => $tanggal_paket,
                     "sesi_ke" => $sesi_ke,
-                    "nama_tindakan" => $nama_tindakan ? $nama_tindakan : "-",
-                    "nama_paket" => $nama_paket ? $nama_paket : "-"
+                    "nama_tindakan" => isset($nama_tindakan) ? $nama_tindakan : (isset($nama_paket) ? $nama_paket : "-"),
+                    "nama_paket" => isset($nama_paket) ? $nama_paket : "-"
                 );
                 array_push($result["records"], $log_item);
             }

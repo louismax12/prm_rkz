@@ -114,14 +114,14 @@ if ($endpoint === 'auth') {
         $controller->getRiwayatByKapasitas();
     } elseif ($requestMethod == 'POST' && $action == 'gunakan_sesi') {
         // Cek Role (Kasir dan Admin boleh memotong sesi)
-        if(in_array($userPayload['role'], ['admin', 'erm', 'kasir'])) {
+        if(in_array($userPayload['role'], array('admin', 'erm', 'kasir'))) {
             $controller->gunakanSesi();
         } else {
             http_response_code(403);
             echo json_encode(array("message" => "Anda tidak memiliki hak akses untuk memotong sesi."));
         }
     } elseif ($requestMethod == 'POST' && $action == 'batal_sesi') {
-        if(in_array($userPayload['role'], ['admin', 'erm', 'kasir'])) {
+        if(in_array($userPayload['role'], array('admin', 'erm', 'kasir'))) {
             $controller->batalSesi();
         } else {
             http_response_code(403);
@@ -139,7 +139,7 @@ if ($endpoint === 'auth') {
     if ($requestMethod == 'GET') {
         $routeAction = isset($_GET['action']) ? $_GET['action'] : '';
         if ($routeAction === 'history' || strpos($_SERVER['REQUEST_URI'], 'action=history') !== false) {
-            if(in_array($userPayload['role'], ['admin', 'kasir'])) {
+            if(in_array($userPayload['role'], array('admin', 'kasir'))) {
                 $controller->getHistory();
             } else {
                 http_response_code(403);
@@ -152,7 +152,7 @@ if ($endpoint === 'auth') {
     } elseif ($requestMethod == 'POST') {
         $routeAction = isset($_GET['action']) ? $_GET['action'] : '';
         if ($routeAction === 'mark_processed') {
-            if(in_array($userPayload['role'], ['admin', 'kasir'])) {
+            if(in_array($userPayload['role'], array('admin', 'kasir'))) {
                 $controller->markProcessed();
             } else {
                 http_response_code(403);
@@ -178,7 +178,7 @@ if ($endpoint === 'auth') {
         echo json_encode(array("message" => "Method Not Allowed"));
     }
 } elseif ($endpoint === 'master') {
-    if(in_array($userPayload['role'], ['admin'])) {
+    if(in_array($userPayload['role'], array('admin'))) {
         include_once 'controllers/PaketController.php';
         $controller = new PaketController();
         $controller->handleRequest();
@@ -187,7 +187,7 @@ if ($endpoint === 'auth') {
         echo json_encode(array("message" => "Anda tidak memiliki hak akses untuk modul master data."));
     }
 } elseif ($endpoint === 'audit') {
-    if(in_array($userPayload['role'], ['admin', 'manajemen'])) {
+    if(in_array($userPayload['role'], array('admin', 'manajemen'))) {
         include_once 'controllers/AuditController.php';
         $controller = new AuditController();
         $controller->handleRequest();

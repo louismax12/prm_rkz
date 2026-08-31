@@ -142,21 +142,21 @@ class KasirController {
                          JOIN prm_master_paket mp ON m.id_paket_master = mp.id 
                          WHERE m.nama_paket_kasir = ?";
                 $stmtMap = $this->db->prepare($qMap);
-                $stmtMap->execute([$transaksi['nama_paket_kasir']]);
+                $stmtMap->execute(array($transaksi['nama_paket_kasir']));
                 $mapResult = $stmtMap->fetch(PDO::FETCH_ASSOC);
 
                 if (!$mapResult) {
                     // [AUTO-MAPPING] Otomatis buatkan Master Paket baru dengan nama asli dari Kasir
                     $stmtNewMaster = $this->db->prepare("INSERT INTO prm_master_paket (nama, tipe_paket, total_sesi, masa_berlaku_hari) VALUES (?, 'Otomatis dari Kasir', 10, 30)");
-                    $stmtNewMaster->execute([$transaksi['nama_paket_kasir']]);
+                    $stmtNewMaster->execute(array($transaksi['nama_paket_kasir']));
                     $newMasterId = $this->db->lastInsertId();
 
                     // Buatkan mappingnya
                     $stmtInsertMap = $this->db->prepare("INSERT IGNORE INTO prm_kasir_paket_mapping (nama_paket_kasir, id_paket_master) VALUES (?, ?)");
-                    $stmtInsertMap->execute([$transaksi['nama_paket_kasir'], $newMasterId]);
+                    $stmtInsertMap->execute(array($transaksi['nama_paket_kasir'], $newMasterId));
 
                     // Ambil ulang hasil mappingnya
-                    $stmtMap->execute([$transaksi['nama_paket_kasir']]);
+                    $stmtMap->execute(array($transaksi['nama_paket_kasir']));
                     $mapResult = $stmtMap->fetch(PDO::FETCH_ASSOC);
 
                     if (!$mapResult) {
@@ -169,7 +169,7 @@ class KasirController {
                 $tanggalExpired = date('Y-m-d H:i:s', strtotime($tanggalBeli . " + $masaBerlaku days"));
 
                 // Insert into prm_kapasitas
-                $stmtInsertKapasitas->execute([
+                $stmtInsertKapasitas->execute(array(
                     ':no_erm' => $transaksi['no_erm'],
                     ':nomor_register' => $transaksi['nomor_register'],
                     ':id_paket' => $mapResult['id_paket_master'],
@@ -177,14 +177,14 @@ class KasirController {
                     ':tanggal_beli' => $tanggalBeli,
                     ':tanggal_expired' => $tanggalExpired,
                     ':status' => 'AKTIF'
-                ]);
+                ));
 
                 // Insert into processed
-                $stmtInsertProcessed->execute([
+                $stmtInsertProcessed->execute(array(
                     ':id' => $transaksi['id_transaksi'],
                     ':at' => $processedAt,
                     ':by' => $processedBy
-                ]);
+                ));
 
                 $successCount++;
             }
