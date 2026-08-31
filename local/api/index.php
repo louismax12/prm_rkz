@@ -6,6 +6,19 @@ header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
+// Polyfill untuk http_response_code (PHP < 5.4)
+if (!function_exists('http_response_code')) {
+    function http_response_code($code = NULL) {
+        if ($code !== NULL) {
+            header('X-PHP-Response-Code: ' . $code, true, $code);
+            $GLOBALS['http_response_code'] = $code;
+        } else {
+            $code = (isset($GLOBALS['http_response_code']) ? $GLOBALS['http_response_code'] : 200);
+        }
+        return $code;
+    }
+}
+
 // simple router
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri = explode( '/', $uri );
@@ -13,8 +26,13 @@ $uri = explode( '/', $uri );
 // mencari posisi 'index.php' di dalam array URI untuk menentukan letak endpoint
 $endpoint = '';
 $indexPos = array_search('index.php', $uri);
-if ($indexPos !== false && isset($uri[$indexPos + 1])) {
+if ($indexPos !== false && isset($uri[$indexPos + 1]) && $uri[$indexPos + 1] !== '') {
     $endpoint = $uri[$indexPos + 1];
+}
+
+// Fallback ke Query Parameter jika URL format PATH_INFO diblokir (misal: index.php?endpoint=kasir)
+if (isset($_GET['endpoint']) && $_GET['endpoint'] !== '') {
+    $endpoint = $_GET['endpoint'];
 }
 
 $action = isset($_GET['action']) ? $_GET['action'] : ''; // parameter tambahan untuk action

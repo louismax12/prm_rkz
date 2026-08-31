@@ -26,27 +26,27 @@ class AuthController {
             if($this->user->login($username, $password)) {
                 
                 // Generate Payload
-                $payload = [
+                $payload = array(
                     'id' => $this->user->id,
                     'username' => $this->user->username,
                     'nama_lengkap' => $this->user->nama_lengkap,
                     'role' => $this->user->role,
                     'exp' => time() + (60 * 60 * 24) // Expired dalam 24 jam
-                ];
+                );
 
                 // Encode jadi JWT
                 $jwt = JWT::encode($payload);
 
                 http_response_code(200);
-                echo json_encode([
+                echo json_encode(array(
                     "message" => "Login sukses.",
                     "token" => $jwt,
-                    "user" => [
+                    "user" => array(
                         "username" => $this->user->username,
                         "nama_lengkap" => $this->user->nama_lengkap,
                         "role" => $this->user->role
-                    ]
-                ]);
+                    )
+                ));
             } else {
                 http_response_code(401);
                 $debugMsg = "Login gagal. Debug: U='" . $username . "' P='" . $password . "' HASH='" . md5($password) . "'";

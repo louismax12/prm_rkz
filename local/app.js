@@ -71,7 +71,7 @@ loginForm.addEventListener('submit', (e) => {
     document.getElementById('loginLoader').classList.remove('hidden');
     loginMessage.classList.add('hidden');
 
-    fetch(`${API_BASE}/auth?action=login`, {
+    fetch(`\${API_BASE}?endpoint=auth&action=login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
@@ -234,7 +234,7 @@ function fetchKapasitas(noErm) {
     messageContainer.classList.add('hidden');
     resultSection.classList.add('hidden');
 
-    apiFetch(`${API_BASE}/pasien?action=kapasitas_aktif&no_erm=${noErm}`)
+    apiFetch(`\${API_BASE}?endpoint=pasien&action=kapasitas_aktif&no_erm=${noErm}`)
         .then(parseJsonOrText)
         .then(res => {
             btnSearch.textContent = 'Cari';
@@ -260,7 +260,7 @@ function fetchRiwayatSesi(noErm) {
     const historyContainer = document.getElementById('historyContainer');
     historyContainer.innerHTML = '<div class="p-2 text-center text-on-surface-variant font-body-sm">Memuat riwayat...</div>';
 
-    apiFetch(`${API_BASE}/pasien?action=riwayat_sesi&no_erm=${noErm}`)
+    apiFetch(`\${API_BASE}?endpoint=pasien&action=riwayat_sesi&no_erm=${noErm}`)
         .then(parseJsonOrText)
         .then(res => {
             historyContainer.innerHTML = '';
@@ -394,7 +394,7 @@ confirmUseBtn.addEventListener('click', () => {
         sesi_ke: (activeKapasitasData.total_sesi - activeKapasitasData.sisa) + 1
     };
 
-    apiFetch(`${API_BASE}/pasien?action=gunakan_sesi`, {
+    apiFetch(`\${API_BASE}?endpoint=pasien&action=gunakan_sesi`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -446,7 +446,7 @@ function loadKasirHistory(page = 1) {
     const fStatus = document.getElementById('filterStatusDropdown') ? document.getElementById('filterStatusDropdown').value : '';
     const fTanggal = filterTanggalKasir ? filterTanggalKasir.value : '';
 
-    apiFetch(`${API_BASE}/kasir?action=history&page=${page}&nama_drop=${encodeURIComponent(fNamaDrop)}&nama_text=${encodeURIComponent(fNamaText)}&status=${encodeURIComponent(fStatus)}&tanggal=${encodeURIComponent(fTanggal)}`)
+    apiFetch(`\${API_BASE}?endpoint=kasir&action=history&page=${page}&nama_drop=${encodeURIComponent(fNamaDrop)}&nama_text=${encodeURIComponent(fNamaText)}&status=${encodeURIComponent(fStatus)}&tanggal=${encodeURIComponent(fTanggal)}`)
         .then(res => res.json())
         .then(data => {
             tableKasirHistory.innerHTML = '';
@@ -557,7 +557,7 @@ function simpanProsesKasir() {
     btnSimpan.innerHTML = '<span class="material-symbols-outlined spin text-[18px]">progress_activity</span><span>Menyimpan...</span>';
     btnSimpan.setAttribute('disabled', 'true');
 
-    apiFetch(`${API_BASE}/kasir?action=mark_processed`, {
+    apiFetch(`\${API_BASE}?endpoint=kasir&action=mark_processed`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ids: ids })
@@ -626,7 +626,7 @@ if (formMasterPaket) {
 
         const action = id ? 'update_paket' : 'add_paket';
 
-        apiFetch(`${API_BASE}/master?action=${action}`, {
+        apiFetch(`\${API_BASE}?endpoint=master&action=${action}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -644,7 +644,7 @@ if (formMasterPaket) {
 }
 
 function loadMasterData(page = 1) {
-    apiFetch(`${API_BASE}/paket?page=${page}`)
+    apiFetch(`\${API_BASE}?endpoint=paket&page=${page}`)
         .then(res => res.json())
         .then(data => {
             tableMasterPaket.innerHTML = '';
@@ -725,7 +725,7 @@ window.editPaket = function (p) {
 
 window.hapusPaket = function (id) {
     if (confirm('Apakah Anda yakin ingin menghapus paket ini?')) {
-        apiFetch(`${API_BASE}/master?action=delete_paket`, {
+        apiFetch(`\${API_BASE}?endpoint=master&action=delete_paket`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: id })
@@ -749,7 +749,7 @@ const tableAuditLogs = document.getElementById('tableAuditLogs');
 
 function loadAuditData(page = 1) {
     // Load Summary
-    apiFetch(`${API_BASE}/audit?action=summary`)
+    apiFetch(`\${API_BASE}?endpoint=audit&action=summary`)
         .then(res => res.json())
         .then(data => {
             if (auditTotalPasien) auditTotalPasien.textContent = data.total_pasien_aktif || 0;
@@ -758,7 +758,7 @@ function loadAuditData(page = 1) {
         });
 
     // Load Logs
-    apiFetch(`${API_BASE}/audit?action=logs&page=${page}`)
+    apiFetch(`\${API_BASE}?endpoint=audit&action=logs&page=${page}`)
         .then(res => res.json())
         .then(data => {
             if (tableAuditLogs) {
@@ -846,7 +846,7 @@ window.loadTindakanDropdown = function () {
     const dropdown = document.getElementById('modalTindakanDropdown');
     if (!dropdown) return;
 
-    apiFetch(`${API_BASE}/tindakan`)
+    apiFetch(`\${API_BASE}?endpoint=tindakan`)
         .then(res => res.json())
         .then(data => {
             dropdown.innerHTML = '<option value="" disabled selected>Pilih Tindakan...</option>';
@@ -875,13 +875,13 @@ window.loadPasienMaster = function (isGlobalSearch = false) {
     let fetchUrl = '';
 
     if (isGlobalSearch && searchTerm) {
-        fetchUrl = `${API_BASE}/pasien?action=all_kapasitas&search=${encodeURIComponent(searchTerm)}`;
+        fetchUrl = `\${API_BASE}?endpoint=pasien&action=all_kapasitas&search=${encodeURIComponent(searchTerm)}`;
     } else {
         if (!dateFilter) {
             tableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-on-surface-variant">Silakan pilih Tanggal Kunjungan terlebih dahulu</td></tr>`;
             return;
         }
-        fetchUrl = `${API_BASE}/pasien?action=all_kapasitas&date=${dateFilter}`;
+        fetchUrl = `\${API_BASE}?endpoint=pasien&action=all_kapasitas&date=${dateFilter}`;
     }
 
     tableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-on-surface-variant flex items-center justify-center gap-2"><span class="material-symbols-outlined animate-spin">sync</span> Memuat data...</td></tr>`;
@@ -1039,7 +1039,7 @@ window.openDetailModal = function (id_kapasitas) {
         }
     }
 
-    apiFetch(`${API_BASE}/pasien?action=riwayat_by_kapasitas&id_kapasitas=${id_kapasitas}&all=true`)
+    apiFetch(`\${API_BASE}?endpoint=pasien&action=riwayat_by_kapasitas&id_kapasitas=${id_kapasitas}&all=true`)
         .then(res => res.json())
         .then(data => {
             if (data && data.records) {
@@ -1135,7 +1135,7 @@ window.closeDetailModal = function () {
 window.batalSesi = function (id) {
     if (!confirm('Apakah Anda yakin ingin membatalkan penggunaan sesi ini? Sisa sesi akan dikembalikan.')) return;
 
-    apiFetch(`${API_BASE}/pasien?action=batal_sesi`, {
+    apiFetch(`\${API_BASE}?endpoint=pasien&action=batal_sesi`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: id })
@@ -1157,7 +1157,7 @@ window.batalSesi = function (id) {
 };
 
 function exportAuditCSV() {
-    apiFetch(`${API_BASE}/audit?action=logs&all=true`)
+    apiFetch(`\${API_BASE}?endpoint=audit&action=logs&all=true`)
         .then(res => res.json())
         .then(data => {
             if (!data || data.length === 0) {
@@ -1207,8 +1207,8 @@ function loadNotifications() {
     if (!notifContainer) return;
 
     Promise.all([
-        apiFetch(`${API_BASE}/kasir?action=history`).then(res => res.json()).catch(() => ({ records: [] })),
-        apiFetch(`${API_BASE}/audit?action=logs&all=true`).then(res => res.json()).catch(() => [])
+        apiFetch(`\${API_BASE}?endpoint=kasir&action=history`).then(res => res.json()).catch(() => ({ records: [] })),
+        apiFetch(`\${API_BASE}?endpoint=audit&action=logs&all=true`).then(res => res.json()).catch(() => [])
     ]).then(([kasirData, auditData]) => {
         let notifications = [];
 
