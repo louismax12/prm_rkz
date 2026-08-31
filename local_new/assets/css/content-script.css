@@ -1,0 +1,252 @@
+.canvas[data-v-2a7f8d9b] {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    user-select: none;
+    cursor: crosshair;
+    background: rgba(0, 0, 0, .5)
+}
+
+.canvas.selected[data-v-2a7f8d9b] {
+    background: rgba(0, 0, 0, 0)
+}
+
+.canvas.locked[data-v-2a7f8d9b] {
+    pointer-events: none;
+    cursor: default
+}
+
+.selection[data-v-2a7f8d9b] {
+    position: absolute;
+    border: 1px solid #1e83ff;
+    box-sizing: border-box;
+    cursor: move;
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, .5);
+    background: rgba(0, 0, 0, 0)
+}
+
+.handle[data-v-2a7f8d9b] {
+    position: absolute;
+    width: 10px;
+    height: 10px
+}
+
+.tl[data-v-2a7f8d9b] {
+    top: -1px;
+    left: -1px;
+    cursor: nwse-resize;
+    z-index: 10
+}
+
+.tm[data-v-2a7f8d9b] {
+    top: -1px;
+    width: 100%;
+    cursor: ns-resize
+}
+
+.tr[data-v-2a7f8d9b] {
+    top: -1px;
+    right: -1px;
+    cursor: nesw-resize;
+    z-index: 10
+}
+
+.ml[data-v-2a7f8d9b] {
+    left: -1px;
+    height: 100%;
+    cursor: ew-resize
+}
+
+.mr[data-v-2a7f8d9b] {
+    right: -1px;
+    height: 100%;
+    cursor: ew-resize
+}
+
+.bl[data-v-2a7f8d9b] {
+    bottom: -1px;
+    left: -1px;
+    cursor: nesw-resize;
+    z-index: 10
+}
+
+.bm[data-v-2a7f8d9b] {
+    bottom: -1px;
+    width: 100%;
+    cursor: ns-resize
+}
+
+.br[data-v-2a7f8d9b] {
+    bottom: -1px;
+    right: -1px;
+    cursor: nwse-resize;
+    z-index: 10
+}
+
+.app-time-display[data-v-7537ec50] {
+    display: flex;
+    align-items: center;
+    justify-content: center
+}
+
+.app-time-display .separator[data-v-7537ec50] {
+    width: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center
+}
+
+.app-time-display .number[data-v-7537ec50] {
+    width: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center
+}
+
+.app-main[data-v-41f0181c] {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2147483646;
+    font-family: sans-serif
+}
+
+.app-main .controls[data-v-41f0181c] {
+    position: fixed;
+    z-index: 100;
+    top: 0;
+    left: 0;
+    background: #fff;
+    padding: 6px;
+    box-sizing: border-box;
+    border-radius: 50px;
+    display: flex;
+    gap: 8px;
+    pointer-events: none;
+    opacity: 0
+}
+
+.app-main .controls.show[data-v-41f0181c] {
+    opacity: 1;
+    pointer-events: all
+}
+
+.app-main .controls .button[data-v-41f0181c] {
+    background: #239bf5;
+    color: #fff;
+    border-radius: 30px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: .2s ease;
+    font-size: 13px;
+    font-family: "Poppins", sans-serif;
+    line-height: 1;
+    flex-shrink: 0;
+    text-decoration: none;
+    cursor: pointer;
+    box-sizing: border-box;
+    line-height: 1;
+    padding-left: 14px;
+    padding-right: 16px
+}
+
+.app-main .controls .button svg[data-v-41f0181c] {
+    fill: #8acfff;
+    height: 30%;
+    width: auto;
+    outline: none
+}
+
+.app-main .controls .button .dot[data-v-41f0181c] {
+    background: #fff;
+    border-radius: 50%;
+    width: 14px;
+    height: 14px
+}
+
+.app-main .controls .button .dot.pulse[data-v-41f0181c] {
+    animation: pulse-41f0181c 2s infinite
+}
+
+@keyframes pulse-41f0181c {
+    0% {
+        opacity: 1
+    }
+
+    50% {
+        opacity: .2
+    }
+
+    100% {
+        opacity: 1
+    }
+}
+
+.app-main .controls .button.start.disabled[data-v-41f0181c] {
+    pointer-events: none
+}
+
+.app-main .controls .button.start span[data-v-41f0181c] {
+    width: 56px;
+    text-align: center;
+    line-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center
+}
+
+.app-main .controls .button.light[data-v-41f0181c] {
+    border: 1px solid #eaf7ff;
+    background: #e7f6ff;
+    border-color: #8acfff
+}
+
+.app-main .controls .button.light[data-v-41f0181c]:hover {
+    background: #e0f4ff;
+    border-color: #8acfff
+}
+
+.app-main .controls .button.round[data-v-41f0181c] {
+    aspect-ratio: 1;
+    width: auto;
+    padding: 0
+}
+
+.app-main .controls .button.primary[data-v-41f0181c]:hover {
+    background: rgb(64.2695652174, 168.3043478261, 246.3304347826);
+    color: #fff
+}
+
+.app-main .controls .button.stop-btn[data-v-41f0181c] {
+    background: #ff4949
+}
+
+.app-main .controls .button.stop-btn[data-v-41f0181c]:hover {
+    background: rgb(255, 103.6, 103.6)
+}
+
+.app-main .controls .button.stop-btn div[data-v-41f0181c] {
+    border-radius: 3px;
+    height: 14px;
+    width: 14px;
+    background: #fff
+}
+
+.app-main .controls .time-holder[data-v-41f0181c] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: 20px;
+    border: 1px solid #eaf7ff;
+    background: #f7fcff;
+    border-color: #8acfff;
+    color: #239bf5;
+    height: 46px;
+    padding: 0 14px
+}

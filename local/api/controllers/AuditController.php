@@ -60,7 +60,7 @@ class AuditController {
                 echo json_encode($logs_arr);
             } else {
                 http_response_code(200);
-                echo json_encode([]);
+                echo json_encode(array());
             }
             return;
         }

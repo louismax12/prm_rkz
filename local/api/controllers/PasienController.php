@@ -407,7 +407,7 @@ class PasienController {
                 echo json_encode($riwayat_arr);
             } else {
                 http_response_code(200);
-                echo json_encode(array("records" => []));
+                echo json_encode(array("records" => array()));
             }
             return;
         }
@@ -447,7 +447,7 @@ class PasienController {
             echo json_encode($riwayat_arr);
         } else {
             http_response_code(200);
-            echo json_encode(array("records" => [], "total_pages" => 0));
+            echo json_encode(array("records" => array(), "total_pages" => 0));
         }
     }
 }
