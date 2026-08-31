@@ -170,11 +170,11 @@ function switchView(viewKey) {
     // Update Nav
     document.querySelectorAll('.nav-item').forEach(nav => {
         nav.classList.remove('bg-primary-container', 'text-on-primary-container', 'font-bold', 'border-r-4', 'border-primary');
-        nav.classList.add('text-on-surface-variant');
+        nav.classList.add('text-on-surface-variant', 'hover:bg-surface-container-high');
     });
 
     if (menus[viewKey]) {
-        menus[viewKey].classList.remove('text-on-surface-variant');
+        menus[viewKey].classList.remove('text-on-surface-variant', 'hover:bg-surface-container-high');
         menus[viewKey].classList.add('bg-primary-container', 'text-on-primary-container', 'font-bold', 'border-r-4', 'border-primary');
     }
 
