@@ -76,7 +76,13 @@ loginForm.addEventListener('submit', (e) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
     })
-        .then(res => res.json().then(data => ({ status: res.status, body: data })))
+        .then(res => res.text().then(text => {
+            try {
+                return { status: res.status, body: JSON.parse(text) };
+            } catch (e) {
+                return { status: res.status, body: { message: text || 'Empty response from server (500)' } };
+            }
+        }))
         .then(res => {
             btnLogin.disabled = false;
             document.getElementById('loginText').classList.remove('hidden');
@@ -95,7 +101,7 @@ loginForm.addEventListener('submit', (e) => {
             btnLogin.disabled = false;
             document.getElementById('loginText').classList.remove('hidden');
             document.getElementById('loginLoader').classList.add('hidden');
-            loginMessage.textContent = 'Network Error';
+            loginMessage.textContent = 'Fetch Error: ' + err.message;
             loginMessage.classList.remove('hidden');
         });
 });
@@ -449,6 +455,7 @@ function loadKasirHistory(page = 1) {
     apiFetch(`${API_BASE}?endpoint=kasir&action=history&page=${page}&nama_drop=${encodeURIComponent(fNamaDrop)}&nama_text=${encodeURIComponent(fNamaText)}&status=${encodeURIComponent(fStatus)}&tanggal=${encodeURIComponent(fTanggal)}`)
         .then(res => res.json())
         .then(data => {
+            try {
             tableKasirHistory.innerHTML = '';
             const paginationContainer = document.getElementById('kasirPagination');
             if (paginationContainer) paginationContainer.innerHTML = '';
@@ -529,9 +536,13 @@ function loadKasirHistory(page = 1) {
             } else {
                 tableKasirHistory.innerHTML = '<tr><td colspan="8" class="p-6 text-center text-on-surface-variant italic">Belum ada transaksi kasir.</td></tr>';
             }
+            } catch (innerErr) {
+                console.error("Kasir render error:", innerErr);
+                tableKasirHistory.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-error">Terjadi kesalahan pada tampilan Kasir. Cek Console (F12).</td></tr>`;
+            }
         })
         .catch(err => {
-            console.error("Kasir error:", err);
+            console.error("Kasir fetch error:", err);
             tableKasirHistory.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-error">Gagal terhubung ke server Kasir.</td></tr>`;
         });
 }
@@ -577,7 +588,7 @@ function simpanProsesKasir() {
         })
         .catch(err => {
             console.error(err);
-            alert('Terjadi kesalahan jaringan.');
+            alert('Terjadi Error:\n' + err.message + '\n\nSilakan cek tab Network -> Response untuk melihat error PHP aslinya.');
             btnSimpan.removeAttribute('disabled');
             btnSimpan.innerHTML = '<span class="material-symbols-outlined text-[18px]">save</span><span>Simpan & Kunci</span>';
         });
@@ -647,6 +658,7 @@ function loadMasterData(page = 1) {
     apiFetch(`${API_BASE}?endpoint=paket&page=${page}`)
         .then(res => res.json())
         .then(data => {
+
             tableMasterPaket.innerHTML = '';
             if (data.records && data.records.length > 0) {
                 data.records.forEach(p => {
@@ -761,6 +773,7 @@ function loadAuditData(page = 1) {
     apiFetch(`${API_BASE}?endpoint=audit&action=logs&page=${page}`)
         .then(res => res.json())
         .then(data => {
+
             if (tableAuditLogs) {
                 tableAuditLogs.innerHTML = '';
                 if (data.records && data.records.length > 0) {
@@ -849,6 +862,7 @@ window.loadTindakanDropdown = function () {
     apiFetch(`${API_BASE}?endpoint=tindakan`)
         .then(res => res.json())
         .then(data => {
+
             dropdown.innerHTML = '<option value="" disabled selected>Pilih Tindakan...</option>';
             if (data.records && data.records.length > 0) {
                 data.records.forEach(t => {
@@ -889,6 +903,7 @@ window.loadPasienMaster = function (isGlobalSearch = false) {
     return apiFetch(fetchUrl)
         .then(res => res.json())
         .then(data => {
+
             tableBody.innerHTML = '';
             // Reset detail
             if (tablePasienDetail) {
@@ -1160,7 +1175,8 @@ function exportAuditCSV() {
     apiFetch(`${API_BASE}?endpoint=audit&action=logs&all=true`)
         .then(res => res.json())
         .then(data => {
-            if (!data || data.length === 0) {
+            const records = data.records || data;
+            if (!records || records.length === 0) {
                 alert('Tidak ada data untuk diexport.');
                 return;
             }
@@ -1168,7 +1184,7 @@ function exportAuditCSV() {
             // Create CSV headers
             let csvContent = "Tanggal,No ERM,No Register,Nama Paket,Sesi Ke,Nama Tindakan\n";
 
-            data.forEach(log => {
+            records.forEach(log => {
                 // Escape fields with quotes if they contain commas
                 const escapeCsv = (str) => `"${(str || '').toString().replace(/"/g, '""')}"`;
 
@@ -1224,8 +1240,9 @@ function loadNotifications() {
             });
         }
 
-        if (auditData && Array.isArray(auditData)) {
-            auditData.slice(0, 10).forEach(r => {
+        const auditRecords = (auditData && Array.isArray(auditData.records)) ? auditData.records : (Array.isArray(auditData) ? auditData : []);
+        if (auditRecords.length > 0) {
+            auditRecords.slice(0, 10).forEach(r => {
                 notifications.push({
                     type: 'audit',
                     date: new Date(r.tanggal_paket),

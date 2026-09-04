@@ -9,6 +9,7 @@ class Paket {
     public $tipe_paket;
     public $total_sesi;
     public $masa_berlaku_hari;
+    public $last_query = "";
 
     // constructor with $db as database connection
     public function __construct($db){
@@ -18,6 +19,7 @@ class Paket {
     // read all paket
     function read(){
         $query = "SELECT id, CONCAT_WS(' ', NULLIF(kode_paket, ''), nama) as nama, tipe_paket, total_sesi, masa_berlaku_hari FROM " . $this->table_name;
+        $this->last_query = $query;
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         return $stmt;
@@ -26,6 +28,7 @@ class Paket {
     // read all paket with pagination
     function readPaged($offset, $limit){
         $query = "SELECT id, CONCAT_WS(' ', NULLIF(kode_paket, ''), nama) as nama, tipe_paket, total_sesi, masa_berlaku_hari FROM " . $this->table_name . " ORDER BY id DESC LIMIT ?, ?";
+        $this->last_query = $query;
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1, $offset, PDO::PARAM_INT);
         $stmt->bindParam(2, $limit, PDO::PARAM_INT);

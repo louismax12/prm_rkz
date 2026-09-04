@@ -35,8 +35,8 @@ class PasienController {
                 extract($row);
                 $kapasitas_item = array(
                     "id" => $id,
-                    "no_erm" => $no_erm,
-                    "nomor_register" => $nomor_register,
+                    "no_erm" => isset($nik) ? $nik : $no_erm,
+                    "nomor_register" => isset($noreg) ? $noreg : '',
                     "id_paket" => $id_paket,
                     "nama_paket" => isset($nama_paket) ? $nama_paket : '',
                     "total_sesi" => isset($total_sesi) ? $total_sesi : 0,
@@ -78,7 +78,7 @@ class PasienController {
                     "id" => $id,
                     "id_kapasitas" => $id_kapasitas,
                     "nama_tindakan" => isset($nama_tindakan) ? $nama_tindakan : (isset($nama_paket) ? $nama_paket : 'Terapi'),
-                    "no_register_kunjungan" => $no_register_kunjungan,
+                    "no_register_kunjungan" => isset($no_register_kunjungan) ? $no_register_kunjungan : '',
                     "tanggal_paket" => $tanggal_paket,
                     "sesi_ke" => $sesi_ke
                 );
@@ -143,8 +143,8 @@ class PasienController {
             // Set data catatan
             $this->catatan->id_kapasitas = $data->id_kapasitas;
             $this->catatan->id_tindakan = null; // Dihapus sesuai permintaan
-            $this->catatan->no_erm = $data->no_erm;
-            $this->catatan->no_register_kunjungan = $no_register_kunjungan;
+            $this->catatan->nik = $data->no_erm;
+            $this->catatan->noreg = $no_register_kunjungan;
             $this->catatan->tanggal_paket = $data->tanggal_paket;
             $this->catatan->sesi_ke = $sesi_ke_sebenarnya;
 
@@ -273,8 +273,9 @@ class PasienController {
                     extract($row);
                     $kapasitas_item = array(
                         "id" => $id,
-                        "no_erm" => $no_erm,
+                        "no_erm" => isset($nik) ? $nik : '',
                         "nama_pasien" => $nama_pasien,
+                        "nomor_register" => isset($noreg) ? $noreg : '',
                         "id_paket" => $id_paket,
                         "tanggal_beli" => $tanggal_beli,
                         "sisa" => (int)$sisa,
@@ -309,9 +310,9 @@ class PasienController {
                     extract($row);
                     $kapasitas_item = array(
                         "id" => $id,
-                        "no_erm" => $no_erm,
+                        "no_erm" => isset($nik) ? $nik : '',
                         "nama_pasien" => isset($nama_pasien) ? $nama_pasien : 'Tidak diketahui',
-                        "nomor_register" => isset($nomor_register) ? $nomor_register : '',
+                        "nomor_register" => isset($noreg) ? $noreg : '',
                         "id_paket" => $id_paket,
                         "nama_paket" => isset($nama_paket) ? $nama_paket : '',
                         "total_sesi" => isset($total_sesi) ? $total_sesi : 0,
@@ -322,6 +323,7 @@ class PasienController {
                     );
                     array_push($kapasitas_arr["records"], $kapasitas_item);
                 }
+
                 http_response_code(200);
                 echo json_encode($kapasitas_arr);
             } else {
@@ -352,9 +354,9 @@ class PasienController {
                 extract($row);
                 $kapasitas_item = array(
                     "id" => $id,
-                    "no_erm" => $no_erm,
+                    "no_erm" => isset($nik) ? $nik : '',
                     "nama_pasien" => isset($nama_pasien) ? $nama_pasien : 'Tidak diketahui',
-                    "nomor_register" => isset($nomor_register) ? $nomor_register : '',
+                    "nomor_register" => isset($noreg) ? $noreg : '',
                     "id_paket" => $id_paket,
                     "nama_paket" => isset($nama_paket) ? $nama_paket : '',
                     "total_sesi" => isset($total_sesi) ? $total_sesi : 0,
@@ -365,6 +367,7 @@ class PasienController {
                 );
                 array_push($kapasitas_arr["records"], $kapasitas_item);
             }
+
 
             http_response_code(200);
             echo json_encode($kapasitas_arr);
@@ -396,8 +399,8 @@ class PasienController {
                         "id" => $id,
                         "id_kapasitas" => $id_kapasitas,
                         "nama_tindakan" => isset($nama_tindakan) ? $nama_tindakan : (isset($nama_paket) ? $nama_paket : 'Terapi'),
-                        "no_register_kunjungan" => $no_register_kunjungan,
-                        "no_erm" => $no_erm,
+                        "no_register_kunjungan" => isset($no_register_kunjungan) ? $no_register_kunjungan : '',
+                        "no_erm" => isset($noreg) ? $noreg : '',
                         "tanggal_paket" => $tanggal_paket,
                         "sesi_ke" => $sesi_ke
                     );
@@ -435,8 +438,8 @@ class PasienController {
                     "id" => $id,
                     "id_kapasitas" => $id_kapasitas,
                     "nama_tindakan" => isset($nama_tindakan) ? $nama_tindakan : (isset($nama_paket) ? $nama_paket : 'Terapi'),
-                    "no_register_kunjungan" => $no_register_kunjungan,
-                    "no_erm" => $no_erm,
+                    "no_register_kunjungan" => isset($no_register_kunjungan) ? $no_register_kunjungan : '',
+                    "no_erm" => isset($noreg) ? $noreg : '',
                     "tanggal_paket" => $tanggal_paket,
                     "sesi_ke" => $sesi_ke
                 );

@@ -47,7 +47,7 @@ class AuditController {
                     extract($row);
                     $log_item = array(
                         "id" => $id,
-                        "no_erm" => $no_erm,
+                        "no_erm" => isset($noreg) ? $noreg : (isset($nik) ? $nik : '-'),
                         "no_register_kunjungan" => $no_register_kunjungan,
                         "tanggal_paket" => $tanggal_paket,
                         "sesi_ke" => $sesi_ke,
@@ -56,8 +56,9 @@ class AuditController {
                     );
                     array_push($logs_arr, $log_item);
                 }
+                $response = array("records" => $logs_arr);
                 http_response_code(200);
-                echo json_encode($logs_arr);
+                echo json_encode($response);
             } else {
                 http_response_code(200);
                 echo json_encode(array());
@@ -86,7 +87,7 @@ class AuditController {
                 extract($row);
                 $log_item = array(
                     "id" => $id,
-                    "no_erm" => $no_erm,
+                    "no_erm" => isset($noreg) ? $noreg : (isset($nik) ? $nik : '-'),
                     "no_register_kunjungan" => $no_register_kunjungan,
                     "tanggal_paket" => $tanggal_paket,
                     "sesi_ke" => $sesi_ke,
@@ -96,6 +97,7 @@ class AuditController {
                 array_push($result["records"], $log_item);
             }
             
+
             http_response_code(200);
             echo json_encode($result);
         } else {

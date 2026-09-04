@@ -81,7 +81,10 @@ class Database {
         } catch(PDOException $exception) {
             $debug = sprintf("Connection error (%s:%s db=%s user=%s): %s", $config['host'], $config['port'], $config['name'], $config['user'], $exception->getMessage());
             error_log($debug);
-            echo "Connection error: " . $exception->getMessage();
+            
+            http_response_code(500);
+            echo json_encode(array("message" => "Database connection error: " . $exception->getMessage()));
+            exit;
         }
 
         return $this->conn;

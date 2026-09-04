@@ -60,11 +60,19 @@ class KasirController {
 
         if ($tanggal !== '') {
             if (strlen($tanggal) === 7) { // YYYY-MM format
-                $baseFromWhere .= " AND DATE_FORMAT(f.FCRDATE, '%Y-%m') = :tanggal";
-            } else {
-                $baseFromWhere .= " AND DATE(f.FCRDATE) = :tanggal";
+                // Menggunakan >= dan < agar index database tetap bekerja
+                $baseFromWhere .= " AND f.FCRDATE >= :tanggal_awal AND f.FCRDATE < :tanggal_akhir";
+                $params[':tanggal_awal'] = $tanggal . '-01 00:00:00';
+                $params[':tanggal_akhir'] = date('Y-m-d', strtotime($tanggal . '+1 month')) . ' 00:00:00';
+            } else { // YYYY-MM-DD format
+                $baseFromWhere .= " AND f.FCRDATE >= :tanggal_awal AND f.FCRDATE <= :tanggal_akhir";
+                $params[':tanggal_awal'] = $tanggal . ' 00:00:00';
+                $params[':tanggal_akhir'] = $tanggal . ' 23:59:59';
             }
-            $params[':tanggal'] = $tanggal;
+        }
+        else {
+            // Default filter HARI INI saja tanpa merusak Index
+            $baseFromWhere .= " AND f.FCRDATE >= CURDATE() AND f.FCRDATE < DATE_ADD(CURDATE(), INTERVAL 1 DAY)";
         }
 
         $countQuery = $countSelect . $baseFromWhere;
@@ -90,6 +98,9 @@ class KasirController {
 
             http_response_code(200);
             echo json_encode(array(
+                "debug_query" => $query,             // <-- ECHO QUERY UTAMA
+                "debug_count_query" => $countQuery,  // <-- ECHO QUERY HITUNG TOTAL
+                "debug_params" => $params,           // <-- ECHO ISI PARAMETER
                 "records" => $records,
                 "total_records" => $totalRecords,
                 "total_pages" => $totalPages,
@@ -122,6 +133,7 @@ class KasirController {
                         f.ID as id_transaksi,
                         f.FCRID as nomor_register, 
                         f.FCRCUST as no_erm,
+                        f.FCRNAMA as nama_pasien,
                         f.FCRDATE as tanggal_beli,
                         t.nama as nama_paket_kasir
                       FROM dbold.fisiosfjual f
@@ -133,7 +145,7 @@ class KasirController {
             $transaksiList = $stmtInfo->fetchAll(PDO::FETCH_ASSOC);
 
             $stmtInsertProcessed = $this->db->prepare("INSERT IGNORE INTO prm_kasir_processed (id_transaksi, processed_at, processed_by) VALUES (:id, :at, :by)");
-            $stmtInsertKapasitas = $this->db->prepare("INSERT INTO prm_kapasitas (no_erm, nomor_register, id_paket, sisa, tanggal_beli, tanggal_expired, status) VALUES (:no_erm, :nomor_register, :id_paket, :sisa, :tanggal_beli, :tanggal_expired, :status)");
+            $stmtInsertKapasitas = $this->db->prepare("INSERT INTO prm_kapasitas (nik, noreg, nama, id_paket, sisa, tanggal_beli, tanggal_expired, status) VALUES (:nik, :noreg, :nama, :id_paket, :sisa, :tanggal_beli, :tanggal_expired, :status)");
             
             foreach ($transaksiList as $transaksi) {
                 // Cari mapping
@@ -170,8 +182,9 @@ class KasirController {
 
                 // Insert into prm_kapasitas
                 $stmtInsertKapasitas->execute(array(
-                    ':no_erm' => $transaksi['no_erm'],
-                    ':nomor_register' => $transaksi['nomor_register'],
+                    ':nik' => $transaksi['no_erm'],
+                    ':noreg' => $transaksi['nomor_register'],
+                    ':nama' => $transaksi['nama_pasien'],
                     ':id_paket' => $mapResult['id_paket_master'],
                     ':sisa' => $mapResult['total_sesi'],
                     ':tanggal_beli' => $tanggalBeli,
